@@ -7,14 +7,16 @@
     "url": "https://github.com/chrischall/accessoticketing-mcp",
     "source": "github"
   },
-  "version": "0.0.0",
+  "version": "0.1.0",
   "packages": [
     {
       "registryType": "npm",
       "registryBaseUrl": "https://registry.npmjs.org",
       "identifier": "@chrischall/accessoticketing-mcp",
-      "version": "0.0.0",
-      "transport": { "type": "stdio" },
+      "version": "0.1.0",
+      "transport": {
+        "type": "stdio"
+      },
       "environmentVariables": [
         {
           "name": "ACCESSO_TICKET_URL",

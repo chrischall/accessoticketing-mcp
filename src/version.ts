@@ -6,4 +6,4 @@
  * Everything that needs a version imports this constant, so there is exactly
  * one line to keep in sync and `versionSyncTest` has exactly one to check.
  */
-export const VERSION = '0.0.0'; // x-release-please-version
+export const VERSION = '0.1.0'; // x-release-please-version

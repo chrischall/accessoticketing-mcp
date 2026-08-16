@@ -1,20 +1,32 @@
 {
   "name": "accessoticketing",
-  "owner": { "name": "chrischall", "url": "https://github.com/chrischall" },
+  "owner": {
+    "name": "chrischall",
+    "url": "https://github.com/chrischall"
+  },
   "metadata": {
     "description": "accesso ticketing tools for Claude — read emailed mobile ticket links.",
-    "version": "0.0.0"
+    "version": "0.1.0"
   },
   "plugins": [
     {
       "name": "accessoticketing",
       "source": "./",
       "description": "Reads accesso Passport mobile-ticket links (the URL a venue emails after a purchase) and returns the order, its admissions, the barcode images and Google Wallet save links. The emailed link is the only credential; no account sign-in is involved.",
-      "version": "0.0.0",
-      "author": { "name": "Claude Code (AI)", "url": "https://www.anthropic.com/claude" },
+      "version": "0.1.0",
+      "author": {
+        "name": "Claude Code (AI)",
+        "url": "https://www.anthropic.com/claude"
+      },
       "homepage": "https://github.com/chrischall/accessoticketing-mcp",
       "license": "MIT",
-      "keywords": ["accesso", "tickets", "ticketing", "barcode", "google-wallet"],
+      "keywords": [
+        "accesso",
+        "tickets",
+        "ticketing",
+        "barcode",
+        "google-wallet"
+      ],
       "category": "productivity"
     }
   ]
