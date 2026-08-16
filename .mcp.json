@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "accessoticketing": {
+      "command": "npx",
+      "args": ["-y", "@chrischall/accessoticketing-mcp"],
+      "env": {}
+    }
+  }
+}

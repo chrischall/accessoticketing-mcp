@@ -1,0 +1,11 @@
+{
+  "name": "accessoticketing",
+  "version": "0.0.0",
+  "description": "Read accesso-powered mobile ticket links: orders, admissions, barcodes and Google Wallet passes.",
+  "author": { "name": "Claude Code (AI)", "url": "https://www.anthropic.com/claude" },
+  "homepage": "https://github.com/chrischall/accessoticketing-mcp",
+  "license": "MIT",
+  "keywords": ["accesso", "tickets", "ticketing", "barcode", "google-wallet"],
+  "mcpServers": "./.mcp.json",
+  "skills": "./skills/"
+}

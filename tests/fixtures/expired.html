@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+				<title>Ticket</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <meta name="robots" content="noindex, nofollow">
+        <link rel="stylesheet" href="/ticketassets/css/main_styles.css">
+        <script src="/ticketassets/js/polyfills.js"></script>
+        <script src="/ticketassets/js/ticket-functions.js"></script>
+        <script src="https://apis.google.com/js/platform.js"></script>
+
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-541VXHJ716"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag() {
+                dataLayer.push(arguments);
+            }
+            gtag('js', new Date());
+            gtag('config', 'G-541VXHJ716', {
+                page_title: 'Mobile Ticket',
+                page_location: 'ticket/v1/:island'
+            });
+        </script>
+
+        <script>
+            var headerBackgroundColor = "";
+            var headerTextColor = "";
+              var secondaryColor = "";
+              var tertiaryColor = "";
+            if (headerBackgroundColor) {
+                setCSSVariable('--ticket-background-color',headerBackgroundColor);
+            }
+            if (headerTextColor) {
+                setCSSVariable('--header-text-color',headerTextColor);
+            }
+              if (secondaryColor) {
+                setCSSVariable('--ticket-btn-color', secondaryColor);
+              }
+              if (tertiaryColor) {
+                setCSSVariable('--ticket-text-highlight-color', tertiaryColor);
+              }
+        </script>
+
+    </head>
+    <body>
+        <div id="order-summary-container" class="ticketHeader">
+              <img class="ticketHeader__merchantLogo margin-right-10" src="/assets/accesso-logo.png" alt="Accesso Logo" />
+                        <!-- Changed this to allow showing on orders without tickets-->
+                <span class="ticketHeader__orderNumber">Order #  </span>
+        </div>
+            <div class="center-content">
+                <div class='noTicket'>
+                  <img src="/assets/notickets.png" class="noTicket__image" />
+                  <span class="noTicket__header font-title">We are sorry, but there are no tickets available to print on this order.</span>
+            </div>
+            </body>
+</html>

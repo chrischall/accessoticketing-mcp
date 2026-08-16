@@ -1,0 +1,34 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-09-29/server.schema.json",
+  "name": "io.github.chrischall/accessoticketing-mcp",
+  "description": "Read accesso mobile ticket links: orders, admissions, barcodes and Google Wallet passes.",
+  "status": "active",
+  "repository": {
+    "url": "https://github.com/chrischall/accessoticketing-mcp",
+    "source": "github"
+  },
+  "version": "0.0.0",
+  "packages": [
+    {
+      "registryType": "npm",
+      "registryBaseUrl": "https://registry.npmjs.org",
+      "identifier": "@chrischall/accessoticketing-mcp",
+      "version": "0.0.0",
+      "transport": { "type": "stdio" },
+      "environmentVariables": [
+        {
+          "name": "ACCESSO_TICKET_URL",
+          "description": "Optional default accesso ticket link from an order-confirmation email.",
+          "isRequired": false,
+          "isSecret": true
+        },
+        {
+          "name": "ACCESSO_OUTPUT_DIR",
+          "description": "Optional directory for saved barcode images.",
+          "isRequired": false,
+          "isSecret": false
+        }
+      ]
+    }
+  ]
+}

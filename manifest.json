@@ -1,0 +1,42 @@
+{
+  "manifest_version": "0.2",
+  "name": "accessoticketing-mcp",
+  "display_name": "accesso Ticketing",
+  "version": "0.0.0",
+  "description": "Read accesso-powered mobile ticket links: orders, admissions, barcodes and Google Wallet passes.",
+  "long_description": "Reads the mobile-ticket links accesso Passport venues email after a purchase (theme parks, camps, festivals). Returns the order and every admission on it — product, participant, date, start time and merchant instructions — plus the scannable barcodes and Google Wallet save links. No login: the emailed link is the credential.",
+  "author": { "name": "Claude Code (AI)", "url": "https://www.anthropic.com/claude" },
+  "homepage": "https://github.com/chrischall/accessoticketing-mcp",
+  "documentation": "https://github.com/chrischall/accessoticketing-mcp#readme",
+  "support": "https://github.com/chrischall/accessoticketing-mcp/issues",
+  "license": "MIT",
+  "keywords": ["accesso", "tickets", "ticketing", "barcode", "google-wallet", "theme-park"],
+  "server": {
+    "type": "node",
+    "entry_point": "dist/bundle.js",
+    "mcp_config": {
+      "command": "node",
+      "args": ["${__dirname}/dist/bundle.js"],
+      "env": {
+        "ACCESSO_TICKET_URL": "${user_config.ticket_url}",
+        "ACCESSO_OUTPUT_DIR": "${user_config.output_dir}"
+      }
+    }
+  },
+  "user_config": {
+    "ticket_url": {
+      "type": "string",
+      "title": "Default ticket link",
+      "description": "Optional. An accesso ticket link from an order-confirmation email, used when a tool is called without one. Treat it as a secret — it grants the order's tickets.",
+      "sensitive": true,
+      "required": false
+    },
+    "output_dir": {
+      "type": "string",
+      "title": "Barcode output directory",
+      "description": "Optional. Where saved barcode images are written. Defaults to the working directory.",
+      "required": false
+    }
+  },
+  "compatibility": { "runtimes": { "node": ">=22.5" } }
+}

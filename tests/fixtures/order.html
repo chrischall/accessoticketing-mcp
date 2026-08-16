@@ -1,0 +1,2454 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+				<title>Ticket</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <meta name="robots" content="noindex, nofollow">
+        <link rel="stylesheet" href="/ticketassets/css/main_styles.css">
+        <script src="/ticketassets/js/polyfills.js"></script>
+        <script src="/ticketassets/js/ticket-functions.js"></script>
+        <script src="https://apis.google.com/js/platform.js"></script>
+
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-541VXHJ716"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag() {
+                dataLayer.push(arguments);
+            }
+            gtag('js', new Date());
+            gtag('config', 'G-541VXHJ716', {
+                page_title: 'Mobile Ticket',
+                page_location: 'ticket/v1/:island'
+            });
+        </script>
+
+        <script>
+            var headerBackgroundColor = "#ffffff";
+            var headerTextColor = "#000000";
+              var secondaryColor = "";
+              var tertiaryColor = "#BF3437";
+            if (headerBackgroundColor) {
+                setCSSVariable('--ticket-background-color',headerBackgroundColor);
+            }
+            if (headerTextColor) {
+                setCSSVariable('--header-text-color',headerTextColor);
+            }
+              if (secondaryColor) {
+                setCSSVariable('--ticket-btn-color', secondaryColor);
+              }
+              if (tertiaryColor) {
+                setCSSVariable('--ticket-text-highlight-color', tertiaryColor);
+              }
+        </script>
+
+    </head>
+    <body>
+        <div id="order-summary-container" class="ticketHeader">
+                <img class="ticketHeader__merchantLogo margin-right-10 " src="https://assets.accessocdn.com/assets/accesso155/images/Reciepts Logo - 200x109.jpg" alt="Merchant Logo" />
+            <!-- Changed this to allow showing on orders without tickets-->
+                <span class="ticketHeader__orderNumber">Order #  90000001</span>
+        </div>
+            <!-- View Tickets Heading -->
+            <div class="view-tickets-label h4"></div>
+                <!-- Ticket Count -->
+                <div class="ticket__count">
+                    <svg id="leftArrow" class="arrow" width="48" height="48" viewBox="0 0 48 48" fill="#474747" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M26.23 33.11L17.82 24.71C17.43 24.32 17.43 23.69 17.82 23.3L26.23 14.89C26.72 14.4 27.51 14.4 28 14.89C28.49 15.38 28.49 16.17 28 16.67L21.37 23.3C20.98 23.69 20.98 24.32 21.37 24.71L28 31.34C28.49 31.83 28.49 32.62 28 33.11C27.51 33.6 26.72 33.6 26.23 33.11Z"/>
+                    </svg>
+                    <div id="ticket-count-text-area">
+                        <span>Ticket</span>&nbsp;<span id="ticket-index-text"></span>
+                        <span>of 12</span>
+                    </div>
+                    <svg id="rightArrow" class="arrow" width="48" height="48" viewBox="0 0 48 48" fill="#474747" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M21.72 14.8902L30.13 23.3002C30.52 23.6902 30.52 24.3202 30.13 24.7102L21.72 33.1202C21.23 33.6102 20.44 33.6102 19.95 33.1202C19.46 32.6302 19.46 31.8402 19.95 31.3402L26.58 24.7102C26.97 24.3202 26.97 23.6902 26.58 23.3002L19.95 16.6702C19.46 16.1802 19.46 15.3902 19.95 14.9002C20.44 14.4102 21.23 14.4102 21.72 14.9002V14.8902Z"/>
+                    </svg>
+                </div>
+            <!-- Mobile / Tablet Tickets -->
+            <div id="ticket-grouping-container" class="ticketGrouping ">
+                <div id="ticket-item-container0" data-ticketidx="0" data-totaltickets="12" class="ticket">
+                    <div id="ticketContainer" class="ticketContainer">
+                        <div class="ticketContainer__ticketBody">
+                            <!-- Package Name -->
+                            <div class="ticket__packageName h4">
+                                Tiny Trekkers Full-Day (Ages 4-7)
+                            </div>
+                                <!-- Barcode, Add to Apple/Google Wallet -->
+                                <div class="flex column ticket__barcodeContainer">
+                                        <img alt="barcode" id="barcode0"  src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==">
+                                        <div class="ticket__barcodeText">ID  %RC90000001</div>
+                                    <!-- Next Up Section - Display when there's a next upcoming booking and not all bookings are used -->
+                                </div>
+                                <hr class="ticket__divider" />
+                            <!-- CT Name -->
+                            <div class="gap-font--body-1 margin-bottom-8 flex row">
+                                <span>Participant</span>
+                                <span>
+                                    
+                                    
+                                </span>
+                            </div>
+                                <!-- Customer Name / Additional Guest Names -->
+                                <div id="ticket-customer-container0" class="ticket__customerName margin-bottom-8">
+                                    <!-- Customer Name -->
+                                    <div>ALEX RIVERA</div>
+                                        <!-- Additional Guest Names -->
+                                        <div>
+                                        </div>
+                                </div>
+                            <div id="ticket-package-container" class="flex column">
+                                    <!-- Package Date / Time / Addl Info -->
+                                    <div class="flex row ticket__generalPackageInfo">
+                                            <!-- Date -->
+                                            <div class="ticket__date">
+                                                <div class="gap-font--overline uppercase">Date</div>
+                                                <div class="gap-font--body-2">08/17/2026</div>
+                                            </div>
+            
+                                        <div class="ticket__time">
+                                            <div class="gap-font--overline uppercase">Time</div>
+                                            <div class="gap-font--body-2">
+                                                    9:00 AM
+                                            </div>
+                                        </div>
+                                    </div>
+            
+                            </div>
+            
+            
+                            <div>
+                                    <!-- See Instructions Button -->
+                                    <span id="flip-ticket-details0" class="ticket__link --underline --normal" onclick="toggleHideClass('flip-ticket-info-container0');">See ticket details</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+                <div id="flip-ticket-info-container0" class="flipTicket hide">
+                    <div class="flipTicket__inner">
+                        <div class="flipTicket__header">
+                            <div class="h5">Instructions:</div>
+                            <div class="flipTicket__toggle" onclick="toggleHideClass('flip-ticket-info-container0');">
+                                <svg class="ticket__flipIcon" width="20" height="20" viewBox="0 0 24 24" fill="noxzc ne" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="flipTicket__content">
+                            <div class="h4">Tiny Trekkers Full-Day (Ages 4-7)</div>
+                        
+                            <!-- Guest Number-->
+                            <div>
+                                <div class="gap-font--overline uppercase">Guest Number:</div>
+                                <div class="gap-font--body-2">400000000001</div>
+                            </div>
+                        
+                            <!-- Client Order ID -->
+                            <div>
+                                <div class="gap-font--overline uppercase">Web Sales ID::</div>
+                                <div class="gap-font--body-2">290000000001</div>
+                            </div>
+                        
+                        
+                        
+                        
+                        
+                            <div>
+                            	<div class="flipTicket__content-heading gap-font--overline">Instructions:</div>
+                            	<div class="flipTicket__content gap-font--body-1">Please download the <a href="https://whitewater.org/wp-content/uploads/2026/01/Parent-Information-Packet-2026.pdf"target="_blank">Parent Information Packet</a>  for more information. <br> Please contact us at info@whitewater.org or (704) 391-3900 for more information. <br>Tax ID: 56-2248184</div>
+                            </div>
+                        
+                        
+                            <div>
+                            	<div class="flipTicket__content-heading gap-font--overline">Terms and Conditions:</div>
+                            	<div class="flipTicket__content gap-font--body-1"><br>All activities at the Whitewater Center expose the participants to hazards of risk. Each participant must sign the Assumption of Risk, Waiver and Release Agreement prior to participating in any activity at the Whitewater Center. This agreement can be found on the Whitewater Center website should a guest choose to sign the waiver prior to their visit. A parent or legal guardian will be required to sign for any participant under the age of 18. Whitewater Center activities will operate in the rain. Activities will go on standby during the threat of lightning or in the event of severe weather. Activities will re-open as soon as the weather permits. Please check the weather conditions before visiting the Whitewater Center. Passes, reservations, camps, instruction courses, and event registrations are non-refundable and non-transferable. This pass has no cash value and cannot be combined with any other offer. This pass may not be sold, copied, or redistributed in any way.</div>
+                            </div>
+                        </div>        </div>
+                </div>
+                <div id="ticket-item-container1" data-ticketidx="1" data-totaltickets="12" class="ticket">
+                    <div id="ticketContainer" class="ticketContainer">
+                        <div class="ticketContainer__ticketBody">
+                            <!-- Package Name -->
+                            <div class="ticket__packageName h4">
+                                Lunch Week 12
+                            </div>
+                                <!-- Barcode, Add to Apple/Google Wallet -->
+                                <div class="flex column ticket__barcodeContainer">
+                                        <img alt="barcode" id="barcode1"  src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==">
+                                        <div class="ticket__barcodeText">ID  %RC90000001</div>
+                                    <!-- Next Up Section - Display when there's a next upcoming booking and not all bookings are used -->
+                                </div>
+                                <hr class="ticket__divider" />
+                            <!-- CT Name -->
+                            <div class="gap-font--body-1 margin-bottom-8 flex row">
+                                <span>Participant</span>
+                                <span>
+                                    
+                                    
+                                </span>
+                            </div>
+                                <!-- Customer Name / Additional Guest Names -->
+                                <div id="ticket-customer-container1" class="ticket__customerName margin-bottom-8">
+                                    <!-- Customer Name -->
+                                    <div>ALEX RIVERA</div>
+                                        <!-- Additional Guest Names -->
+                                        <div>
+                                        </div>
+                                </div>
+                            <div id="ticket-package-container" class="flex column">
+                                    <!-- Package Date / Time / Addl Info -->
+                                    <div class="flex row ticket__generalPackageInfo">
+                                            <!-- Date -->
+                                            <div class="ticket__date">
+                                                <div class="gap-font--overline uppercase">Date</div>
+                                                <div class="gap-font--body-2">08/17/2026</div>
+                                            </div>
+            
+                                    </div>
+            
+                            </div>
+            
+            
+                            <div>
+                                    <!-- See Instructions Button -->
+                                    <span id="flip-ticket-details1" class="ticket__link --underline --normal" onclick="toggleHideClass('flip-ticket-info-container1');">See ticket details</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+                <div id="flip-ticket-info-container1" class="flipTicket hide">
+                    <div class="flipTicket__inner">
+                        <div class="flipTicket__header">
+                            <div class="h5">Instructions:</div>
+                            <div class="flipTicket__toggle" onclick="toggleHideClass('flip-ticket-info-container1');">
+                                <svg class="ticket__flipIcon" width="20" height="20" viewBox="0 0 24 24" fill="noxzc ne" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="flipTicket__content">
+                            <div class="h4">Lunch Week 12</div>
+                        
+                            <!-- Guest Number-->
+                            <div>
+                                <div class="gap-font--overline uppercase">Guest Number:</div>
+                                <div class="gap-font--body-2">400000000002</div>
+                            </div>
+                        
+                            <!-- Client Order ID -->
+                            <div>
+                                <div class="gap-font--overline uppercase">Web Sales ID::</div>
+                                <div class="gap-font--body-2">290000000001</div>
+                            </div>
+                        
+                        
+                        
+                        
+                        
+                            <div>
+                            	<div class="flipTicket__content-heading gap-font--overline">Instructions:</div>
+                            	<div class="flipTicket__content gap-font--body-1"><br> Please contact Outdoor School at campstaff@whitewater.org or call (704)-391-3900 ext. 287 for more information. <br>Tax ID: 56-2247955</div>
+                            </div>
+                        
+                        
+                            <div>
+                            	<div class="flipTicket__content-heading gap-font--overline">Terms and Conditions:</div>
+                            	<div class="flipTicket__content gap-font--body-1"><br>All activities at the Whitewater Center expose the participants to hazards of risk. Each participant must sign the Assumption of Risk, Waiver and Release Agreement prior to participating in any activity at the Whitewater Center. This agreement can be found on the Whitewater Center website should a guest choose to sign the waiver prior to their visit. A parent or legal guardian will be required to sign for any participant under the age of 18. Whitewater Center activities will operate in the rain. Activities will go on standby during the threat of lightning or in the event of severe weather. Activities will re-open as soon as the weather permits. Please check the weather conditions before visiting the Whitewater Center. Passes, reservations, camps, instruction courses, and event registrations are non-refundable and non-transferable. This pass has no cash value and cannot be combined with any other offer. This pass may not be sold, copied, or redistributed in any way.</div>
+                            </div>
+                        </div>        </div>
+                </div>
+                <div id="ticket-item-container2" data-ticketidx="2" data-totaltickets="12" class="ticket">
+                    <div id="ticketContainer" class="ticketContainer">
+                        <div class="ticketContainer__ticketBody">
+                            <!-- Package Name -->
+                            <div class="ticket__packageName h4">
+                                Lunch Week 12
+                            </div>
+                                <!-- Barcode, Add to Apple/Google Wallet -->
+                                <div class="flex column ticket__barcodeContainer">
+                                        <img alt="barcode" id="barcode2"  src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==">
+                                        <div class="ticket__barcodeText">ID  %RC90000001</div>
+                                    <!-- Next Up Section - Display when there's a next upcoming booking and not all bookings are used -->
+                                </div>
+                                <hr class="ticket__divider" />
+                            <!-- CT Name -->
+                            <div class="gap-font--body-1 margin-bottom-8 flex row">
+                                <span>Participant</span>
+                                <span>
+                                    
+                                    
+                                </span>
+                            </div>
+                                <!-- Customer Name / Additional Guest Names -->
+                                <div id="ticket-customer-container2" class="ticket__customerName margin-bottom-8">
+                                    <!-- Customer Name -->
+                                    <div>JORDAN RIVERA</div>
+                                        <!-- Additional Guest Names -->
+                                        <div>
+                                        </div>
+                                </div>
+                            <div id="ticket-package-container" class="flex column">
+                                    <!-- Package Date / Time / Addl Info -->
+                                    <div class="flex row ticket__generalPackageInfo">
+                                            <!-- Date -->
+                                            <div class="ticket__date">
+                                                <div class="gap-font--overline uppercase">Date</div>
+                                                <div class="gap-font--body-2">08/17/2026</div>
+                                            </div>
+            
+                                    </div>
+            
+                            </div>
+            
+            
+                            <div>
+                                    <!-- See Instructions Button -->
+                                    <span id="flip-ticket-details2" class="ticket__link --underline --normal" onclick="toggleHideClass('flip-ticket-info-container2');">See ticket details</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+                <div id="flip-ticket-info-container2" class="flipTicket hide">
+                    <div class="flipTicket__inner">
+                        <div class="flipTicket__header">
+                            <div class="h5">Instructions:</div>
+                            <div class="flipTicket__toggle" onclick="toggleHideClass('flip-ticket-info-container2');">
+                                <svg class="ticket__flipIcon" width="20" height="20" viewBox="0 0 24 24" fill="noxzc ne" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="flipTicket__content">
+                            <div class="h4">Lunch Week 12</div>
+                        
+                            <!-- Guest Number-->
+                            <div>
+                                <div class="gap-font--overline uppercase">Guest Number:</div>
+                                <div class="gap-font--body-2">400000000002</div>
+                            </div>
+                        
+                            <!-- Client Order ID -->
+                            <div>
+                                <div class="gap-font--overline uppercase">Web Sales ID::</div>
+                                <div class="gap-font--body-2">290000000001</div>
+                            </div>
+                        
+                        
+                        
+                        
+                        
+                            <div>
+                            	<div class="flipTicket__content-heading gap-font--overline">Instructions:</div>
+                            	<div class="flipTicket__content gap-font--body-1"><br> Please contact Outdoor School at campstaff@whitewater.org or call (704)-391-3900 ext. 287 for more information. <br>Tax ID: 56-2247955</div>
+                            </div>
+                        
+                        
+                            <div>
+                            	<div class="flipTicket__content-heading gap-font--overline">Terms and Conditions:</div>
+                            	<div class="flipTicket__content gap-font--body-1"><br>All activities at the Whitewater Center expose the participants to hazards of risk. Each participant must sign the Assumption of Risk, Waiver and Release Agreement prior to participating in any activity at the Whitewater Center. This agreement can be found on the Whitewater Center website should a guest choose to sign the waiver prior to their visit. A parent or legal guardian will be required to sign for any participant under the age of 18. Whitewater Center activities will operate in the rain. Activities will go on standby during the threat of lightning or in the event of severe weather. Activities will re-open as soon as the weather permits. Please check the weather conditions before visiting the Whitewater Center. Passes, reservations, camps, instruction courses, and event registrations are non-refundable and non-transferable. This pass has no cash value and cannot be combined with any other offer. This pass may not be sold, copied, or redistributed in any way.</div>
+                            </div>
+                        </div>        </div>
+                </div>
+                <div id="ticket-item-container3" data-ticketidx="3" data-totaltickets="12" class="ticket">
+                    <div id="ticketContainer" class="ticketContainer">
+                        <div class="ticketContainer__ticketBody">
+                            <!-- Package Name -->
+                            <div class="ticket__packageName h4">
+                                Lunch Week 12
+                            </div>
+                                <!-- Barcode, Add to Apple/Google Wallet -->
+                                <div class="flex column ticket__barcodeContainer">
+                                        <img alt="barcode" id="barcode3"  src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==">
+                                        <div class="ticket__barcodeText">ID  %RC90000001</div>
+                                    <!-- Next Up Section - Display when there's a next upcoming booking and not all bookings are used -->
+                                </div>
+                                <hr class="ticket__divider" />
+                            <!-- CT Name -->
+                            <div class="gap-font--body-1 margin-bottom-8 flex row">
+                                <span>Participant</span>
+                                <span>
+                                    
+                                    
+                                </span>
+                            </div>
+                                <!-- Customer Name / Additional Guest Names -->
+                                <div id="ticket-customer-container3" class="ticket__customerName margin-bottom-8">
+                                    <!-- Customer Name -->
+                                    <div>SAM RIVERA</div>
+                                        <!-- Additional Guest Names -->
+                                        <div>
+                                        </div>
+                                </div>
+                            <div id="ticket-package-container" class="flex column">
+                                    <!-- Package Date / Time / Addl Info -->
+                                    <div class="flex row ticket__generalPackageInfo">
+                                            <!-- Date -->
+                                            <div class="ticket__date">
+                                                <div class="gap-font--overline uppercase">Date</div>
+                                                <div class="gap-font--body-2">08/17/2026</div>
+                                            </div>
+            
+                                    </div>
+            
+                            </div>
+            
+            
+                            <div>
+                                    <!-- See Instructions Button -->
+                                    <span id="flip-ticket-details3" class="ticket__link --underline --normal" onclick="toggleHideClass('flip-ticket-info-container3');">See ticket details</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+                <div id="flip-ticket-info-container3" class="flipTicket hide">
+                    <div class="flipTicket__inner">
+                        <div class="flipTicket__header">
+                            <div class="h5">Instructions:</div>
+                            <div class="flipTicket__toggle" onclick="toggleHideClass('flip-ticket-info-container3');">
+                                <svg class="ticket__flipIcon" width="20" height="20" viewBox="0 0 24 24" fill="noxzc ne" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="flipTicket__content">
+                            <div class="h4">Lunch Week 12</div>
+                        
+                            <!-- Guest Number-->
+                            <div>
+                                <div class="gap-font--overline uppercase">Guest Number:</div>
+                                <div class="gap-font--body-2">400000000002</div>
+                            </div>
+                        
+                            <!-- Client Order ID -->
+                            <div>
+                                <div class="gap-font--overline uppercase">Web Sales ID::</div>
+                                <div class="gap-font--body-2">290000000001</div>
+                            </div>
+                        
+                        
+                        
+                        
+                        
+                            <div>
+                            	<div class="flipTicket__content-heading gap-font--overline">Instructions:</div>
+                            	<div class="flipTicket__content gap-font--body-1"><br> Please contact Outdoor School at campstaff@whitewater.org or call (704)-391-3900 ext. 287 for more information. <br>Tax ID: 56-2247955</div>
+                            </div>
+                        
+                        
+                            <div>
+                            	<div class="flipTicket__content-heading gap-font--overline">Terms and Conditions:</div>
+                            	<div class="flipTicket__content gap-font--body-1"><br>All activities at the Whitewater Center expose the participants to hazards of risk. Each participant must sign the Assumption of Risk, Waiver and Release Agreement prior to participating in any activity at the Whitewater Center. This agreement can be found on the Whitewater Center website should a guest choose to sign the waiver prior to their visit. A parent or legal guardian will be required to sign for any participant under the age of 18. Whitewater Center activities will operate in the rain. Activities will go on standby during the threat of lightning or in the event of severe weather. Activities will re-open as soon as the weather permits. Please check the weather conditions before visiting the Whitewater Center. Passes, reservations, camps, instruction courses, and event registrations are non-refundable and non-transferable. This pass has no cash value and cannot be combined with any other offer. This pass may not be sold, copied, or redistributed in any way.</div>
+                            </div>
+                        </div>        </div>
+                </div>
+                <div id="ticket-item-container4" data-ticketidx="4" data-totaltickets="12" class="ticket">
+                    <div id="ticketContainer" class="ticketContainer">
+                        <div class="ticketContainer__ticketBody">
+                            <!-- Package Name -->
+                            <div class="ticket__packageName h4">
+                                Snack Week 12
+                            </div>
+                                <!-- Barcode, Add to Apple/Google Wallet -->
+                                <div class="flex column ticket__barcodeContainer">
+                                        <img alt="barcode" id="barcode4"  src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==">
+                                        <div class="ticket__barcodeText">ID  %RC90000001</div>
+                                    <!-- Next Up Section - Display when there's a next upcoming booking and not all bookings are used -->
+                                </div>
+                                <hr class="ticket__divider" />
+                            <!-- CT Name -->
+                            <div class="gap-font--body-1 margin-bottom-8 flex row">
+                                <span>Participant</span>
+                                <span>
+                                    
+                                    
+                                </span>
+                            </div>
+                                <!-- Customer Name / Additional Guest Names -->
+                                <div id="ticket-customer-container4" class="ticket__customerName margin-bottom-8">
+                                    <!-- Customer Name -->
+                                    <div>ALEX RIVERA</div>
+                                        <!-- Additional Guest Names -->
+                                        <div>
+                                        </div>
+                                </div>
+                            <div id="ticket-package-container" class="flex column">
+                                    <!-- Package Date / Time / Addl Info -->
+                                    <div class="flex row ticket__generalPackageInfo">
+                                            <!-- Date -->
+                                            <div class="ticket__date">
+                                                <div class="gap-font--overline uppercase">Date</div>
+                                                <div class="gap-font--body-2">08/17/2026</div>
+                                            </div>
+            
+                                    </div>
+            
+                            </div>
+            
+            
+                            <div>
+                                    <!-- See Instructions Button -->
+                                    <span id="flip-ticket-details4" class="ticket__link --underline --normal" onclick="toggleHideClass('flip-ticket-info-container4');">See ticket details</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+                <div id="flip-ticket-info-container4" class="flipTicket hide">
+                    <div class="flipTicket__inner">
+                        <div class="flipTicket__header">
+                            <div class="h5">Instructions:</div>
+                            <div class="flipTicket__toggle" onclick="toggleHideClass('flip-ticket-info-container4');">
+                                <svg class="ticket__flipIcon" width="20" height="20" viewBox="0 0 24 24" fill="noxzc ne" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="flipTicket__content">
+                            <div class="h4">Snack Week 12</div>
+                        
+                            <!-- Guest Number-->
+                            <div>
+                                <div class="gap-font--overline uppercase">Guest Number:</div>
+                                <div class="gap-font--body-2">400000000002</div>
+                            </div>
+                        
+                            <!-- Client Order ID -->
+                            <div>
+                                <div class="gap-font--overline uppercase">Web Sales ID::</div>
+                                <div class="gap-font--body-2">290000000001</div>
+                            </div>
+                        
+                        
+                        
+                        
+                        
+                            <div>
+                            	<div class="flipTicket__content-heading gap-font--overline">Instructions:</div>
+                            	<div class="flipTicket__content gap-font--body-1"><br> Please contact Outdoor School at campstaff@whitewater.org or call (704)-391-3900 ext. 287 for more information. <br>Tax ID: 56-2247955</div>
+                            </div>
+                        
+                        
+                            <div>
+                            	<div class="flipTicket__content-heading gap-font--overline">Terms and Conditions:</div>
+                            	<div class="flipTicket__content gap-font--body-1"><br>All activities at the Whitewater Center expose the participants to hazards of risk. Each participant must sign the Assumption of Risk, Waiver and Release Agreement prior to participating in any activity at the Whitewater Center. This agreement can be found on the Whitewater Center website should a guest choose to sign the waiver prior to their visit. A parent or legal guardian will be required to sign for any participant under the age of 18. Whitewater Center activities will operate in the rain. Activities will go on standby during the threat of lightning or in the event of severe weather. Activities will re-open as soon as the weather permits. Please check the weather conditions before visiting the Whitewater Center. Passes, reservations, camps, instruction courses, and event registrations are non-refundable and non-transferable. This pass has no cash value and cannot be combined with any other offer. This pass may not be sold, copied, or redistributed in any way.</div>
+                            </div>
+                        </div>        </div>
+                </div>
+                <div id="ticket-item-container5" data-ticketidx="5" data-totaltickets="12" class="ticket">
+                    <div id="ticketContainer" class="ticketContainer">
+                        <div class="ticketContainer__ticketBody">
+                            <!-- Package Name -->
+                            <div class="ticket__packageName h4">
+                                Snack Week 12
+                            </div>
+                                <!-- Barcode, Add to Apple/Google Wallet -->
+                                <div class="flex column ticket__barcodeContainer">
+                                        <img alt="barcode" id="barcode5"  src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==">
+                                        <div class="ticket__barcodeText">ID  %RC90000001</div>
+                                    <!-- Next Up Section - Display when there's a next upcoming booking and not all bookings are used -->
+                                </div>
+                                <hr class="ticket__divider" />
+                            <!-- CT Name -->
+                            <div class="gap-font--body-1 margin-bottom-8 flex row">
+                                <span>Participant</span>
+                                <span>
+                                    
+                                    
+                                </span>
+                            </div>
+                                <!-- Customer Name / Additional Guest Names -->
+                                <div id="ticket-customer-container5" class="ticket__customerName margin-bottom-8">
+                                    <!-- Customer Name -->
+                                    <div>JORDAN RIVERA</div>
+                                        <!-- Additional Guest Names -->
+                                        <div>
+                                        </div>
+                                </div>
+                            <div id="ticket-package-container" class="flex column">
+                                    <!-- Package Date / Time / Addl Info -->
+                                    <div class="flex row ticket__generalPackageInfo">
+                                            <!-- Date -->
+                                            <div class="ticket__date">
+                                                <div class="gap-font--overline uppercase">Date</div>
+                                                <div class="gap-font--body-2">08/17/2026</div>
+                                            </div>
+            
+                                    </div>
+            
+                            </div>
+            
+            
+                            <div>
+                                    <!-- See Instructions Button -->
+                                    <span id="flip-ticket-details5" class="ticket__link --underline --normal" onclick="toggleHideClass('flip-ticket-info-container5');">See ticket details</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+                <div id="flip-ticket-info-container5" class="flipTicket hide">
+                    <div class="flipTicket__inner">
+                        <div class="flipTicket__header">
+                            <div class="h5">Instructions:</div>
+                            <div class="flipTicket__toggle" onclick="toggleHideClass('flip-ticket-info-container5');">
+                                <svg class="ticket__flipIcon" width="20" height="20" viewBox="0 0 24 24" fill="noxzc ne" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="flipTicket__content">
+                            <div class="h4">Snack Week 12</div>
+                        
+                            <!-- Guest Number-->
+                            <div>
+                                <div class="gap-font--overline uppercase">Guest Number:</div>
+                                <div class="gap-font--body-2">400000000002</div>
+                            </div>
+                        
+                            <!-- Client Order ID -->
+                            <div>
+                                <div class="gap-font--overline uppercase">Web Sales ID::</div>
+                                <div class="gap-font--body-2">290000000001</div>
+                            </div>
+                        
+                        
+                        
+                        
+                        
+                            <div>
+                            	<div class="flipTicket__content-heading gap-font--overline">Instructions:</div>
+                            	<div class="flipTicket__content gap-font--body-1"><br> Please contact Outdoor School at campstaff@whitewater.org or call (704)-391-3900 ext. 287 for more information. <br>Tax ID: 56-2247955</div>
+                            </div>
+                        
+                        
+                            <div>
+                            	<div class="flipTicket__content-heading gap-font--overline">Terms and Conditions:</div>
+                            	<div class="flipTicket__content gap-font--body-1"><br>All activities at the Whitewater Center expose the participants to hazards of risk. Each participant must sign the Assumption of Risk, Waiver and Release Agreement prior to participating in any activity at the Whitewater Center. This agreement can be found on the Whitewater Center website should a guest choose to sign the waiver prior to their visit. A parent or legal guardian will be required to sign for any participant under the age of 18. Whitewater Center activities will operate in the rain. Activities will go on standby during the threat of lightning or in the event of severe weather. Activities will re-open as soon as the weather permits. Please check the weather conditions before visiting the Whitewater Center. Passes, reservations, camps, instruction courses, and event registrations are non-refundable and non-transferable. This pass has no cash value and cannot be combined with any other offer. This pass may not be sold, copied, or redistributed in any way.</div>
+                            </div>
+                        </div>        </div>
+                </div>
+                <div id="ticket-item-container6" data-ticketidx="6" data-totaltickets="12" class="ticket">
+                    <div id="ticketContainer" class="ticketContainer">
+                        <div class="ticketContainer__ticketBody">
+                            <!-- Package Name -->
+                            <div class="ticket__packageName h4">
+                                Snack Week 12
+                            </div>
+                                <!-- Barcode, Add to Apple/Google Wallet -->
+                                <div class="flex column ticket__barcodeContainer">
+                                        <img alt="barcode" id="barcode6"  src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==">
+                                        <div class="ticket__barcodeText">ID  %RC90000001</div>
+                                    <!-- Next Up Section - Display when there's a next upcoming booking and not all bookings are used -->
+                                </div>
+                                <hr class="ticket__divider" />
+                            <!-- CT Name -->
+                            <div class="gap-font--body-1 margin-bottom-8 flex row">
+                                <span>Participant</span>
+                                <span>
+                                    
+                                    
+                                </span>
+                            </div>
+                                <!-- Customer Name / Additional Guest Names -->
+                                <div id="ticket-customer-container6" class="ticket__customerName margin-bottom-8">
+                                    <!-- Customer Name -->
+                                    <div>SAM RIVERA</div>
+                                        <!-- Additional Guest Names -->
+                                        <div>
+                                        </div>
+                                </div>
+                            <div id="ticket-package-container" class="flex column">
+                                    <!-- Package Date / Time / Addl Info -->
+                                    <div class="flex row ticket__generalPackageInfo">
+                                            <!-- Date -->
+                                            <div class="ticket__date">
+                                                <div class="gap-font--overline uppercase">Date</div>
+                                                <div class="gap-font--body-2">08/17/2026</div>
+                                            </div>
+            
+                                    </div>
+            
+                            </div>
+            
+            
+                            <div>
+                                    <!-- See Instructions Button -->
+                                    <span id="flip-ticket-details6" class="ticket__link --underline --normal" onclick="toggleHideClass('flip-ticket-info-container6');">See ticket details</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+                <div id="flip-ticket-info-container6" class="flipTicket hide">
+                    <div class="flipTicket__inner">
+                        <div class="flipTicket__header">
+                            <div class="h5">Instructions:</div>
+                            <div class="flipTicket__toggle" onclick="toggleHideClass('flip-ticket-info-container6');">
+                                <svg class="ticket__flipIcon" width="20" height="20" viewBox="0 0 24 24" fill="noxzc ne" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="flipTicket__content">
+                            <div class="h4">Snack Week 12</div>
+                        
+                            <!-- Guest Number-->
+                            <div>
+                                <div class="gap-font--overline uppercase">Guest Number:</div>
+                                <div class="gap-font--body-2">400000000002</div>
+                            </div>
+                        
+                            <!-- Client Order ID -->
+                            <div>
+                                <div class="gap-font--overline uppercase">Web Sales ID::</div>
+                                <div class="gap-font--body-2">290000000001</div>
+                            </div>
+                        
+                        
+                        
+                        
+                        
+                            <div>
+                            	<div class="flipTicket__content-heading gap-font--overline">Instructions:</div>
+                            	<div class="flipTicket__content gap-font--body-1"><br> Please contact Outdoor School at campstaff@whitewater.org or call (704)-391-3900 ext. 287 for more information. <br>Tax ID: 56-2247955</div>
+                            </div>
+                        
+                        
+                            <div>
+                            	<div class="flipTicket__content-heading gap-font--overline">Terms and Conditions:</div>
+                            	<div class="flipTicket__content gap-font--body-1"><br>All activities at the Whitewater Center expose the participants to hazards of risk. Each participant must sign the Assumption of Risk, Waiver and Release Agreement prior to participating in any activity at the Whitewater Center. This agreement can be found on the Whitewater Center website should a guest choose to sign the waiver prior to their visit. A parent or legal guardian will be required to sign for any participant under the age of 18. Whitewater Center activities will operate in the rain. Activities will go on standby during the threat of lightning or in the event of severe weather. Activities will re-open as soon as the weather permits. Please check the weather conditions before visiting the Whitewater Center. Passes, reservations, camps, instruction courses, and event registrations are non-refundable and non-transferable. This pass has no cash value and cannot be combined with any other offer. This pass may not be sold, copied, or redistributed in any way.</div>
+                            </div>
+                        </div>        </div>
+                </div>
+                <div id="ticket-item-container7" data-ticketidx="7" data-totaltickets="12" class="ticket">
+                    <div id="ticketContainer" class="ticketContainer">
+                        <div class="ticketContainer__ticketBody">
+                            <!-- Package Name -->
+                            <div class="ticket__packageName h4">
+                                Early Drop-Off Week 12
+                            </div>
+                                <!-- Barcode, Add to Apple/Google Wallet -->
+                                <div class="flex column ticket__barcodeContainer">
+                                        <img alt="barcode" id="barcode7"  src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==">
+                                        <div class="ticket__barcodeText">ID  %RC90000001</div>
+                                    <!-- Next Up Section - Display when there's a next upcoming booking and not all bookings are used -->
+                                </div>
+                                <hr class="ticket__divider" />
+                            <!-- CT Name -->
+                            <div class="gap-font--body-1 margin-bottom-8 flex row">
+                                <span>Participant</span>
+                                <span>
+                                    
+                                    
+                                </span>
+                            </div>
+                                <!-- Customer Name / Additional Guest Names -->
+                                <div id="ticket-customer-container7" class="ticket__customerName margin-bottom-8">
+                                    <!-- Customer Name -->
+                                    <div>GUEST GUEST</div>
+                                        <!-- Additional Guest Names -->
+                                        <div>
+                                        </div>
+                                </div>
+                            <div id="ticket-package-container" class="flex column">
+                                    <!-- Package Date / Time / Addl Info -->
+                                    <div class="flex row ticket__generalPackageInfo">
+                                            <!-- Date -->
+                                            <div class="ticket__date">
+                                                <div class="gap-font--overline uppercase">Date</div>
+                                                <div class="gap-font--body-2">08/17/2026</div>
+                                            </div>
+            
+                                    </div>
+            
+                            </div>
+            
+            
+                            <div>
+                                    <!-- See Instructions Button -->
+                                    <span id="flip-ticket-details7" class="ticket__link --underline --normal" onclick="toggleHideClass('flip-ticket-info-container7');">See ticket details</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+                <div id="flip-ticket-info-container7" class="flipTicket hide">
+                    <div class="flipTicket__inner">
+                        <div class="flipTicket__header">
+                            <div class="h5">Instructions:</div>
+                            <div class="flipTicket__toggle" onclick="toggleHideClass('flip-ticket-info-container7');">
+                                <svg class="ticket__flipIcon" width="20" height="20" viewBox="0 0 24 24" fill="noxzc ne" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="flipTicket__content">
+                            <div class="h4">Early Drop-Off Week 12</div>
+                        
+                            <!-- Guest Number-->
+                            <div>
+                                <div class="gap-font--overline uppercase">Guest Number:</div>
+                                <div class="gap-font--body-2">400000000002</div>
+                            </div>
+                        
+                            <!-- Client Order ID -->
+                            <div>
+                                <div class="gap-font--overline uppercase">Web Sales ID::</div>
+                                <div class="gap-font--body-2">290000000001</div>
+                            </div>
+                        
+                        
+                        
+                        
+                        
+                            <div>
+                            	<div class="flipTicket__content-heading gap-font--overline">Instructions:</div>
+                            	<div class="flipTicket__content gap-font--body-1"><br>The online <a href="https://center.whitewater.org/things-to-do/outdoor-school/camps/summer-camp-forms/" target="_blank">Camper Information Form</a>  must be completed seven days prior to their camp start date. Failure to do so will result in a late processing fee of $50. Please download the <a href="https://center.whitewater.org/things-to-do/outdoor-school/camps/summer-camp-forms/" target="_blank">Parent Information Packet</a>  for more information. <br> Please contact Outdoor School at campstaff@whitewater.org or call (704)-391-3900 ext. 287 for more information. <br>Tax ID: 56-2247955</div>
+                            </div>
+                        
+                        
+                            <div>
+                            	<div class="flipTicket__content-heading gap-font--overline">Terms and Conditions:</div>
+                            	<div class="flipTicket__content gap-font--body-1"><br>All activities at the Whitewater Center expose the participants to hazards of risk. Each participant must sign the Assumption of Risk, Waiver and Release Agreement prior to participating in any activity at the Whitewater Center. This agreement can be found on the Whitewater Center website should a guest choose to sign the waiver prior to their visit. A parent or legal guardian will be required to sign for any participant under the age of 18. Whitewater Center activities will operate in the rain. Activities will go on standby during the threat of lightning or in the event of severe weather. Activities will re-open as soon as the weather permits. Please check the weather conditions before visiting the Whitewater Center. Passes, reservations, camps, instruction courses, and event registrations are non-refundable and non-transferable. This pass has no cash value and cannot be combined with any other offer. This pass may not be sold, copied, or redistributed in any way.</div>
+                            </div>
+                        </div>        </div>
+                </div>
+                <div id="ticket-item-container8" data-ticketidx="8" data-totaltickets="12" class="ticket">
+                    <div id="ticketContainer" class="ticketContainer">
+                        <div class="ticketContainer__ticketBody">
+                            <!-- Package Name -->
+                            <div class="ticket__packageName h4">
+                                Early Drop-Off Week 12
+                            </div>
+                                <!-- Barcode, Add to Apple/Google Wallet -->
+                                <div class="flex column ticket__barcodeContainer">
+                                        <img alt="barcode" id="barcode8"  src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==">
+                                        <div class="ticket__barcodeText">ID  %RC90000001</div>
+                                    <!-- Next Up Section - Display when there's a next upcoming booking and not all bookings are used -->
+                                </div>
+                                <hr class="ticket__divider" />
+                            <!-- CT Name -->
+                            <div class="gap-font--body-1 margin-bottom-8 flex row">
+                                <span>Participant</span>
+                                <span>
+                                    
+                                    
+                                </span>
+                            </div>
+                                <!-- Customer Name / Additional Guest Names -->
+                                <div id="ticket-customer-container8" class="ticket__customerName margin-bottom-8">
+                                    <!-- Customer Name -->
+                                    <div>GUEST GUEST</div>
+                                        <!-- Additional Guest Names -->
+                                        <div>
+                                        </div>
+                                </div>
+                            <div id="ticket-package-container" class="flex column">
+                                    <!-- Package Date / Time / Addl Info -->
+                                    <div class="flex row ticket__generalPackageInfo">
+                                            <!-- Date -->
+                                            <div class="ticket__date">
+                                                <div class="gap-font--overline uppercase">Date</div>
+                                                <div class="gap-font--body-2">08/17/2026</div>
+                                            </div>
+            
+                                    </div>
+            
+                            </div>
+            
+            
+                            <div>
+                                    <!-- See Instructions Button -->
+                                    <span id="flip-ticket-details8" class="ticket__link --underline --normal" onclick="toggleHideClass('flip-ticket-info-container8');">See ticket details</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+                <div id="flip-ticket-info-container8" class="flipTicket hide">
+                    <div class="flipTicket__inner">
+                        <div class="flipTicket__header">
+                            <div class="h5">Instructions:</div>
+                            <div class="flipTicket__toggle" onclick="toggleHideClass('flip-ticket-info-container8');">
+                                <svg class="ticket__flipIcon" width="20" height="20" viewBox="0 0 24 24" fill="noxzc ne" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="flipTicket__content">
+                            <div class="h4">Early Drop-Off Week 12</div>
+                        
+                            <!-- Guest Number-->
+                            <div>
+                                <div class="gap-font--overline uppercase">Guest Number:</div>
+                                <div class="gap-font--body-2">400000000002</div>
+                            </div>
+                        
+                            <!-- Client Order ID -->
+                            <div>
+                                <div class="gap-font--overline uppercase">Web Sales ID::</div>
+                                <div class="gap-font--body-2">290000000001</div>
+                            </div>
+                        
+                        
+                        
+                        
+                        
+                            <div>
+                            	<div class="flipTicket__content-heading gap-font--overline">Instructions:</div>
+                            	<div class="flipTicket__content gap-font--body-1"><br>The online <a href="https://center.whitewater.org/things-to-do/outdoor-school/camps/summer-camp-forms/" target="_blank">Camper Information Form</a>  must be completed seven days prior to their camp start date. Failure to do so will result in a late processing fee of $50. Please download the <a href="https://center.whitewater.org/things-to-do/outdoor-school/camps/summer-camp-forms/" target="_blank">Parent Information Packet</a>  for more information. <br> Please contact Outdoor School at campstaff@whitewater.org or call (704)-391-3900 ext. 287 for more information. <br>Tax ID: 56-2247955</div>
+                            </div>
+                        
+                        
+                            <div>
+                            	<div class="flipTicket__content-heading gap-font--overline">Terms and Conditions:</div>
+                            	<div class="flipTicket__content gap-font--body-1"><br>All activities at the Whitewater Center expose the participants to hazards of risk. Each participant must sign the Assumption of Risk, Waiver and Release Agreement prior to participating in any activity at the Whitewater Center. This agreement can be found on the Whitewater Center website should a guest choose to sign the waiver prior to their visit. A parent or legal guardian will be required to sign for any participant under the age of 18. Whitewater Center activities will operate in the rain. Activities will go on standby during the threat of lightning or in the event of severe weather. Activities will re-open as soon as the weather permits. Please check the weather conditions before visiting the Whitewater Center. Passes, reservations, camps, instruction courses, and event registrations are non-refundable and non-transferable. This pass has no cash value and cannot be combined with any other offer. This pass may not be sold, copied, or redistributed in any way.</div>
+                            </div>
+                        </div>        </div>
+                </div>
+                <div id="ticket-item-container9" data-ticketidx="9" data-totaltickets="12" class="ticket">
+                    <div id="ticketContainer" class="ticketContainer">
+                        <div class="ticketContainer__ticketBody">
+                            <!-- Package Name -->
+                            <div class="ticket__packageName h4">
+                                Early Drop-Off Week 12
+                            </div>
+                                <!-- Barcode, Add to Apple/Google Wallet -->
+                                <div class="flex column ticket__barcodeContainer">
+                                        <img alt="barcode" id="barcode9"  src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==">
+                                        <div class="ticket__barcodeText">ID  %RC90000001</div>
+                                    <!-- Next Up Section - Display when there's a next upcoming booking and not all bookings are used -->
+                                </div>
+                                <hr class="ticket__divider" />
+                            <!-- CT Name -->
+                            <div class="gap-font--body-1 margin-bottom-8 flex row">
+                                <span>Participant</span>
+                                <span>
+                                    
+                                    
+                                </span>
+                            </div>
+                                <!-- Customer Name / Additional Guest Names -->
+                                <div id="ticket-customer-container9" class="ticket__customerName margin-bottom-8">
+                                    <!-- Customer Name -->
+                                    <div>GUEST GUEST</div>
+                                        <!-- Additional Guest Names -->
+                                        <div>
+                                        </div>
+                                </div>
+                            <div id="ticket-package-container" class="flex column">
+                                    <!-- Package Date / Time / Addl Info -->
+                                    <div class="flex row ticket__generalPackageInfo">
+                                            <!-- Date -->
+                                            <div class="ticket__date">
+                                                <div class="gap-font--overline uppercase">Date</div>
+                                                <div class="gap-font--body-2">08/17/2026</div>
+                                            </div>
+            
+                                    </div>
+            
+                            </div>
+            
+            
+                            <div>
+                                    <!-- See Instructions Button -->
+                                    <span id="flip-ticket-details9" class="ticket__link --underline --normal" onclick="toggleHideClass('flip-ticket-info-container9');">See ticket details</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+                <div id="flip-ticket-info-container9" class="flipTicket hide">
+                    <div class="flipTicket__inner">
+                        <div class="flipTicket__header">
+                            <div class="h5">Instructions:</div>
+                            <div class="flipTicket__toggle" onclick="toggleHideClass('flip-ticket-info-container9');">
+                                <svg class="ticket__flipIcon" width="20" height="20" viewBox="0 0 24 24" fill="noxzc ne" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="flipTicket__content">
+                            <div class="h4">Early Drop-Off Week 12</div>
+                        
+                            <!-- Guest Number-->
+                            <div>
+                                <div class="gap-font--overline uppercase">Guest Number:</div>
+                                <div class="gap-font--body-2">400000000002</div>
+                            </div>
+                        
+                            <!-- Client Order ID -->
+                            <div>
+                                <div class="gap-font--overline uppercase">Web Sales ID::</div>
+                                <div class="gap-font--body-2">290000000001</div>
+                            </div>
+                        
+                        
+                        
+                        
+                        
+                            <div>
+                            	<div class="flipTicket__content-heading gap-font--overline">Instructions:</div>
+                            	<div class="flipTicket__content gap-font--body-1"><br>The online <a href="https://center.whitewater.org/things-to-do/outdoor-school/camps/summer-camp-forms/" target="_blank">Camper Information Form</a>  must be completed seven days prior to their camp start date. Failure to do so will result in a late processing fee of $50. Please download the <a href="https://center.whitewater.org/things-to-do/outdoor-school/camps/summer-camp-forms/" target="_blank">Parent Information Packet</a>  for more information. <br> Please contact Outdoor School at campstaff@whitewater.org or call (704)-391-3900 ext. 287 for more information. <br>Tax ID: 56-2247955</div>
+                            </div>
+                        
+                        
+                            <div>
+                            	<div class="flipTicket__content-heading gap-font--overline">Terms and Conditions:</div>
+                            	<div class="flipTicket__content gap-font--body-1"><br>All activities at the Whitewater Center expose the participants to hazards of risk. Each participant must sign the Assumption of Risk, Waiver and Release Agreement prior to participating in any activity at the Whitewater Center. This agreement can be found on the Whitewater Center website should a guest choose to sign the waiver prior to their visit. A parent or legal guardian will be required to sign for any participant under the age of 18. Whitewater Center activities will operate in the rain. Activities will go on standby during the threat of lightning or in the event of severe weather. Activities will re-open as soon as the weather permits. Please check the weather conditions before visiting the Whitewater Center. Passes, reservations, camps, instruction courses, and event registrations are non-refundable and non-transferable. This pass has no cash value and cannot be combined with any other offer. This pass may not be sold, copied, or redistributed in any way.</div>
+                            </div>
+                        </div>        </div>
+                </div>
+                <div id="ticket-item-container10" data-ticketidx="10" data-totaltickets="12" class="ticket">
+                    <div id="ticketContainer" class="ticketContainer">
+                        <div class="ticketContainer__ticketBody">
+                            <!-- Package Name -->
+                            <div class="ticket__packageName h4">
+                                Whitewater Kayak Camp I: Intro (Ages 10-17)
+                            </div>
+                                <!-- Barcode, Add to Apple/Google Wallet -->
+                                <div class="flex column ticket__barcodeContainer">
+                                        <img alt="barcode" id="barcode10"  src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==">
+                                        <div class="ticket__barcodeText">ID  %RC90000001</div>
+                                    <!-- Next Up Section - Display when there's a next upcoming booking and not all bookings are used -->
+                                </div>
+                                <hr class="ticket__divider" />
+                            <!-- CT Name -->
+                            <div class="gap-font--body-1 margin-bottom-8 flex row">
+                                <span>Participant</span>
+                                <span>
+                                    
+                                    
+                                </span>
+                            </div>
+                                <!-- Customer Name / Additional Guest Names -->
+                                <div id="ticket-customer-container10" class="ticket__customerName margin-bottom-8">
+                                    <!-- Customer Name -->
+                                    <div>GUEST GUEST</div>
+                                        <!-- Additional Guest Names -->
+                                        <div>
+                                        </div>
+                                </div>
+                            <div id="ticket-package-container" class="flex column">
+                                    <!-- Package Date / Time / Addl Info -->
+                                    <div class="flex row ticket__generalPackageInfo">
+                                            <!-- Date -->
+                                            <div class="ticket__date">
+                                                <div class="gap-font--overline uppercase">Date</div>
+                                                <div class="gap-font--body-2">08/17/2026</div>
+                                            </div>
+            
+                                        <div class="ticket__time">
+                                            <div class="gap-font--overline uppercase">Time</div>
+                                            <div class="gap-font--body-2">
+                                                    9:00 AM
+                                            </div>
+                                        </div>
+                                    </div>
+            
+                            </div>
+            
+            
+                            <div>
+                                    <!-- See Instructions Button -->
+                                    <span id="flip-ticket-details10" class="ticket__link --underline --normal" onclick="toggleHideClass('flip-ticket-info-container10');">See ticket details</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+                <div id="flip-ticket-info-container10" class="flipTicket hide">
+                    <div class="flipTicket__inner">
+                        <div class="flipTicket__header">
+                            <div class="h5">Instructions:</div>
+                            <div class="flipTicket__toggle" onclick="toggleHideClass('flip-ticket-info-container10');">
+                                <svg class="ticket__flipIcon" width="20" height="20" viewBox="0 0 24 24" fill="noxzc ne" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="flipTicket__content">
+                            <div class="h4">Whitewater Kayak Camp I: Intro (Ages 10-17)</div>
+                        
+                            <!-- Guest Number-->
+                            <div>
+                                <div class="gap-font--overline uppercase">Guest Number:</div>
+                                <div class="gap-font--body-2">461131000000</div>
+                            </div>
+                        
+                            <!-- Client Order ID -->
+                            <div>
+                                <div class="gap-font--overline uppercase">Web Sales ID::</div>
+                                <div class="gap-font--body-2">290000000001</div>
+                            </div>
+                        
+                        
+                        
+                        
+                        
+                            <div>
+                            	<div class="flipTicket__content-heading gap-font--overline">Instructions:</div>
+                            	<div class="flipTicket__content gap-font--body-1">Please download the <a href="https://whitewater.org/wp-content/uploads/2026/01/Parent-Information-Packet-2026.pdf"target="_blank">Parent Information Packet</a>  for more information. <br> Please contact us at info@whitewater.org or (704) 391-3900 for more information. <br>Tax ID: 56-2248040</div>
+                            </div>
+                        
+                        
+                            <div>
+                            	<div class="flipTicket__content-heading gap-font--overline">Terms and Conditions:</div>
+                            	<div class="flipTicket__content gap-font--body-1"><br>All activities at the Whitewater Center expose the participants to hazards of risk. Each participant must sign the Assumption of Risk, Waiver and Release Agreement prior to participating in any activity at the Whitewater Center. This agreement can be found on the Whitewater Center website should a guest choose to sign the waiver prior to their visit. A parent or legal guardian will be required to sign for any participant under the age of 18. Whitewater Center activities will operate in the rain. Activities will go on standby during the threat of lightning or in the event of severe weather. Activities will re-open as soon as the weather permits. Please check the weather conditions before visiting the Whitewater Center. Passes, reservations, camps, instruction courses, and event registrations are non-refundable and non-transferable. This pass has no cash value and cannot be combined with any other offer. This pass may not be sold, copied, or redistributed in any way.</div>
+                            </div>
+                        </div>        </div>
+                </div>
+                <div id="ticket-item-container11" data-ticketidx="11" data-totaltickets="12" class="ticket">
+                    <div id="ticketContainer" class="ticketContainer">
+                        <div class="ticketContainer__ticketBody">
+                            <!-- Package Name -->
+                            <div class="ticket__packageName h4">
+                                Whitewater Kayak Camp I: Intro (Ages 10-17)
+                            </div>
+                                <!-- Barcode, Add to Apple/Google Wallet -->
+                                <div class="flex column ticket__barcodeContainer">
+                                        <img alt="barcode" id="barcode11"  src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==">
+                                        <div class="ticket__barcodeText">ID  %RC90000001</div>
+                                    <!-- Next Up Section - Display when there's a next upcoming booking and not all bookings are used -->
+                                </div>
+                                <hr class="ticket__divider" />
+                            <!-- CT Name -->
+                            <div class="gap-font--body-1 margin-bottom-8 flex row">
+                                <span>Participant</span>
+                                <span>
+                                    
+                                    
+                                </span>
+                            </div>
+                                <!-- Customer Name / Additional Guest Names -->
+                                <div id="ticket-customer-container11" class="ticket__customerName margin-bottom-8">
+                                    <!-- Customer Name -->
+                                    <div>GUEST GUEST</div>
+                                        <!-- Additional Guest Names -->
+                                        <div>
+                                        </div>
+                                </div>
+                            <div id="ticket-package-container" class="flex column">
+                                    <!-- Package Date / Time / Addl Info -->
+                                    <div class="flex row ticket__generalPackageInfo">
+                                            <!-- Date -->
+                                            <div class="ticket__date">
+                                                <div class="gap-font--overline uppercase">Date</div>
+                                                <div class="gap-font--body-2">08/17/2026</div>
+                                            </div>
+            
+                                        <div class="ticket__time">
+                                            <div class="gap-font--overline uppercase">Time</div>
+                                            <div class="gap-font--body-2">
+                                                    9:00 AM
+                                            </div>
+                                        </div>
+                                    </div>
+            
+                            </div>
+            
+            
+                            <div>
+                                    <!-- See Instructions Button -->
+                                    <span id="flip-ticket-details11" class="ticket__link --underline --normal" onclick="toggleHideClass('flip-ticket-info-container11');">See ticket details</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+                <div id="flip-ticket-info-container11" class="flipTicket hide">
+                    <div class="flipTicket__inner">
+                        <div class="flipTicket__header">
+                            <div class="h5">Instructions:</div>
+                            <div class="flipTicket__toggle" onclick="toggleHideClass('flip-ticket-info-container11');">
+                                <svg class="ticket__flipIcon" width="20" height="20" viewBox="0 0 24 24" fill="noxzc ne" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="flipTicket__content">
+                            <div class="h4">Whitewater Kayak Camp I: Intro (Ages 10-17)</div>
+                        
+                            <!-- Guest Number-->
+                            <div>
+                                <div class="gap-font--overline uppercase">Guest Number:</div>
+                                <div class="gap-font--body-2">461133000000</div>
+                            </div>
+                        
+                            <!-- Client Order ID -->
+                            <div>
+                                <div class="gap-font--overline uppercase">Web Sales ID::</div>
+                                <div class="gap-font--body-2">290000000001</div>
+                            </div>
+                        
+                        
+                        
+                        
+                        
+                            <div>
+                            	<div class="flipTicket__content-heading gap-font--overline">Instructions:</div>
+                            	<div class="flipTicket__content gap-font--body-1">Please download the <a href="https://whitewater.org/wp-content/uploads/2026/01/Parent-Information-Packet-2026.pdf"target="_blank">Parent Information Packet</a>  for more information. <br> Please contact us at info@whitewater.org or (704) 391-3900 for more information. <br>Tax ID: 56-2248040</div>
+                            </div>
+                        
+                        
+                            <div>
+                            	<div class="flipTicket__content-heading gap-font--overline">Terms and Conditions:</div>
+                            	<div class="flipTicket__content gap-font--body-1"><br>All activities at the Whitewater Center expose the participants to hazards of risk. Each participant must sign the Assumption of Risk, Waiver and Release Agreement prior to participating in any activity at the Whitewater Center. This agreement can be found on the Whitewater Center website should a guest choose to sign the waiver prior to their visit. A parent or legal guardian will be required to sign for any participant under the age of 18. Whitewater Center activities will operate in the rain. Activities will go on standby during the threat of lightning or in the event of severe weather. Activities will re-open as soon as the weather permits. Please check the weather conditions before visiting the Whitewater Center. Passes, reservations, camps, instruction courses, and event registrations are non-refundable and non-transferable. This pass has no cash value and cannot be combined with any other offer. This pass may not be sold, copied, or redistributed in any way.</div>
+                            </div>
+                        </div>        </div>
+                </div>
+            </div>
+            
+            <!-- Desktop Tickets -->
+            <div id="desktop-ticket-section" class="desktopTicketGrouping">
+                    <div id="ticketCard0" class="desktopTicket">
+                      <div class="desktopTicket__topContainer">
+                        <div id="packageName0" class="desktopTicket__topContainer__itemContent">
+                          <div class="h4 margin-bottom-8">
+                            Tiny Trekkers Full-Day (Ages 4-7)
+                          </div>
+                          <div class="desktopTicket__topContainer__itemContent__itemAddlInfoContainer">
+                            <div class="desktopTicket__topContainer__itemContent__itemAddlInfoContainer__nameCTSection gap-font--body-2">
+                              <div class="margin-bottom-4">
+                                Participant
+                              </div>
+                              <div>
+                                <span>ALEX RIVERA</span>
+                                <div>
+                                </div>
+                              </div>
+                            </div>
+                                <!-- Start Date -->
+                                <div class="desktopTicket__topContainer__itemContent__itemAddlInfoContainer__startDateSection">
+                                  <div class="gap-font--overline uppercase">
+                                    Date
+                                  </div>
+                                  <div class="gap-font--body-2">
+                                    08/17/2026
+                                  </div>
+                                </div>
+                                <!-- Ticket Start Time (for tickets without bookings) -->
+                                <div id="desktopStartTimeContainer"
+                                  class="desktopTicket__topContainer__itemContent__itemAddlInfoContainer__startDateSection">
+                                  <div class="gap-font--overline uppercase">
+                                    Time
+                                  </div>
+                                  <div class="gap-font--body-2">
+                                      9:00 AM
+                                  </div>
+                                </div>
+                          </div>
+                            <div id="desktopGuestClientIdContainer" class="flex row gap-16 margin-bottom-8">
+                                <div class="flex-33">
+                                  <div class="gap-font--overline uppercase">Order ID</div>
+                                  <div class="gap-font--body-2">90000001</div>
+                                </div>
+                                <!-- Guest Number-->
+                                <div class="flex-33">
+                                  <div class="gap-font--overline uppercase">Guest Number
+                                  </div>
+                                  <div class="gap-font--body-2">400000000001</div>
+                                </div>
+                                <!-- Client Order ID -->
+                                <div class="flex-33">
+                                  <div class="gap-font--overline uppercase">Web Sales ID:
+                                  </div>
+                                  <div class="gap-font--body-2">290000000001</div>
+                                </div>
+                            </div>
+                        </div>        <div class="desktopTicket__topContainer__barcodeImageContainer">
+                              <img alt="barcode" id="barcode0" class="desktopTicket__topContainer__barcodeImageContainer__barcodeImg"  src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==">
+                              <div class="desktopTicket__topContainer__barcodeImageContainer__barcodeTxt text-align-center">
+                                 %RC90000001
+                              </div>
+                            </div>
+                      </div>
+                          <div class="desktopTicket__divider"></div>
+                      <div class="desktopTicket__midContainer flex column gap-16">
+                        <!-- Ticket Addons -->
+                          <!-- Ticket Instructions -->
+                          <div>
+                            <div class="gap-font--overline uppercase margin-bottom-4">Description:</div>
+                            <div class="gap-font--caption">
+                              Secures placement into one (1) week of camp.
+                            </div>
+                          </div>
+                        <!-- Ticket Instructions -->
+                        <div>
+                        	<div class="gap-font--overline uppercase margin-bottom-4">Instructions:</div>
+                        	<div class="gap-font--caption">
+                        		Please download the <a href="https://whitewater.org/wp-content/uploads/2026/01/Parent-Information-Packet-2026.pdf"target="_blank">Parent Information Packet</a>  for more information. <br> Please contact us at info@whitewater.org or (704) 391-3900 for more information. <br>Tax ID: 56-2248184
+                        	</div>
+                        </div>
+                        <!-- Ticket Terms of Use -->
+                        <div>
+                        	<div class="gap-font--overline uppercase margin-bottom-4">Terms and Conditions:</div>
+                        	<div class="gap-font--caption">
+                        		<br>All activities at the Whitewater Center expose the participants to hazards of risk. Each participant must sign the Assumption of Risk, Waiver and Release Agreement prior to participating in any activity at the Whitewater Center. This agreement can be found on the Whitewater Center website should a guest choose to sign the waiver prior to their visit. A parent or legal guardian will be required to sign for any participant under the age of 18. Whitewater Center activities will operate in the rain. Activities will go on standby during the threat of lightning or in the event of severe weather. Activities will re-open as soon as the weather permits. Please check the weather conditions before visiting the Whitewater Center. Passes, reservations, camps, instruction courses, and event registrations are non-refundable and non-transferable. This pass has no cash value and cannot be combined with any other offer. This pass may not be sold, copied, or redistributed in any way.
+                        	</div>
+                        </div>
+                      </div>
+                    </div>        <div id="ticketCard1" class="desktopTicket">
+                      <div class="desktopTicket__topContainer">
+                        <div id="packageName1" class="desktopTicket__topContainer__itemContent">
+                          <div class="h4 margin-bottom-8">
+                            Lunch Week 12
+                          </div>
+                          <div class="desktopTicket__topContainer__itemContent__itemAddlInfoContainer">
+                            <div class="desktopTicket__topContainer__itemContent__itemAddlInfoContainer__nameCTSection gap-font--body-2">
+                              <div class="margin-bottom-4">
+                                Participant
+                              </div>
+                              <div>
+                                <span>ALEX RIVERA</span>
+                                <div>
+                                </div>
+                              </div>
+                            </div>
+                                <!-- Start Date -->
+                                <div class="desktopTicket__topContainer__itemContent__itemAddlInfoContainer__startDateSection">
+                                  <div class="gap-font--overline uppercase">
+                                    Date
+                                  </div>
+                                  <div class="gap-font--body-2">
+                                    08/17/2026
+                                  </div>
+                                </div>
+                          </div>
+                            <div id="desktopGuestClientIdContainer" class="flex row gap-16 margin-bottom-8">
+                                <div class="flex-33">
+                                  <div class="gap-font--overline uppercase">Order ID</div>
+                                  <div class="gap-font--body-2">90000001</div>
+                                </div>
+                                <!-- Guest Number-->
+                                <div class="flex-33">
+                                  <div class="gap-font--overline uppercase">Guest Number
+                                  </div>
+                                  <div class="gap-font--body-2">400000000002</div>
+                                </div>
+                                <!-- Client Order ID -->
+                                <div class="flex-33">
+                                  <div class="gap-font--overline uppercase">Web Sales ID:
+                                  </div>
+                                  <div class="gap-font--body-2">290000000001</div>
+                                </div>
+                            </div>
+                        </div>        <div class="desktopTicket__topContainer__barcodeImageContainer">
+                              <img alt="barcode" id="barcode1" class="desktopTicket__topContainer__barcodeImageContainer__barcodeImg"  src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==">
+                              <div class="desktopTicket__topContainer__barcodeImageContainer__barcodeTxt text-align-center">
+                                 %RC90000001
+                              </div>
+                            </div>
+                      </div>
+                          <div class="desktopTicket__divider"></div>
+                      <div class="desktopTicket__midContainer flex column gap-16">
+                        <!-- Ticket Addons -->
+                          <!-- Ticket Instructions -->
+                          <div>
+                            <div class="gap-font--overline uppercase margin-bottom-4">Description:</div>
+                            <div class="gap-font--caption">
+                              Meals include a sandwich, fruit, chips, and a cookie.<br><br>Monday- Turkey Sandwich<br>Tuesday- Ham Sandwich<br>Wednesday- Chicken Caesar Wrap<br>Thursday- PB&J Sandwich<br>Friday- Turkey Sandwich<br><br>We can only accommodate peanut-free & gluten free dietary restrictions at this time.
+                            </div>
+                          </div>
+                        <!-- Ticket Instructions -->
+                        <div>
+                        	<div class="gap-font--overline uppercase margin-bottom-4">Instructions:</div>
+                        	<div class="gap-font--caption">
+                        		<br> Please contact Outdoor School at campstaff@whitewater.org or call (704)-391-3900 ext. 287 for more information. <br>Tax ID: 56-2247955
+                        	</div>
+                        </div>
+                        <!-- Ticket Terms of Use -->
+                        <div>
+                        	<div class="gap-font--overline uppercase margin-bottom-4">Terms and Conditions:</div>
+                        	<div class="gap-font--caption">
+                        		<br>All activities at the Whitewater Center expose the participants to hazards of risk. Each participant must sign the Assumption of Risk, Waiver and Release Agreement prior to participating in any activity at the Whitewater Center. This agreement can be found on the Whitewater Center website should a guest choose to sign the waiver prior to their visit. A parent or legal guardian will be required to sign for any participant under the age of 18. Whitewater Center activities will operate in the rain. Activities will go on standby during the threat of lightning or in the event of severe weather. Activities will re-open as soon as the weather permits. Please check the weather conditions before visiting the Whitewater Center. Passes, reservations, camps, instruction courses, and event registrations are non-refundable and non-transferable. This pass has no cash value and cannot be combined with any other offer. This pass may not be sold, copied, or redistributed in any way.
+                        	</div>
+                        </div>
+                      </div>
+                    </div>        <div id="ticketCard2" class="desktopTicket">
+                      <div class="desktopTicket__topContainer">
+                        <div id="packageName2" class="desktopTicket__topContainer__itemContent">
+                          <div class="h4 margin-bottom-8">
+                            Lunch Week 12
+                          </div>
+                          <div class="desktopTicket__topContainer__itemContent__itemAddlInfoContainer">
+                            <div class="desktopTicket__topContainer__itemContent__itemAddlInfoContainer__nameCTSection gap-font--body-2">
+                              <div class="margin-bottom-4">
+                                Participant
+                              </div>
+                              <div>
+                                <span>JORDAN RIVERA</span>
+                                <div>
+                                </div>
+                              </div>
+                            </div>
+                                <!-- Start Date -->
+                                <div class="desktopTicket__topContainer__itemContent__itemAddlInfoContainer__startDateSection">
+                                  <div class="gap-font--overline uppercase">
+                                    Date
+                                  </div>
+                                  <div class="gap-font--body-2">
+                                    08/17/2026
+                                  </div>
+                                </div>
+                          </div>
+                            <div id="desktopGuestClientIdContainer" class="flex row gap-16 margin-bottom-8">
+                                <div class="flex-33">
+                                  <div class="gap-font--overline uppercase">Order ID</div>
+                                  <div class="gap-font--body-2">90000001</div>
+                                </div>
+                                <!-- Guest Number-->
+                                <div class="flex-33">
+                                  <div class="gap-font--overline uppercase">Guest Number
+                                  </div>
+                                  <div class="gap-font--body-2">400000000002</div>
+                                </div>
+                                <!-- Client Order ID -->
+                                <div class="flex-33">
+                                  <div class="gap-font--overline uppercase">Web Sales ID:
+                                  </div>
+                                  <div class="gap-font--body-2">290000000001</div>
+                                </div>
+                            </div>
+                        </div>        <div class="desktopTicket__topContainer__barcodeImageContainer">
+                              <img alt="barcode" id="barcode2" class="desktopTicket__topContainer__barcodeImageContainer__barcodeImg"  src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==">
+                              <div class="desktopTicket__topContainer__barcodeImageContainer__barcodeTxt text-align-center">
+                                 %RC90000001
+                              </div>
+                            </div>
+                      </div>
+                          <div class="desktopTicket__divider"></div>
+                      <div class="desktopTicket__midContainer flex column gap-16">
+                        <!-- Ticket Addons -->
+                          <!-- Ticket Instructions -->
+                          <div>
+                            <div class="gap-font--overline uppercase margin-bottom-4">Description:</div>
+                            <div class="gap-font--caption">
+                              Meals include a sandwich, fruit, chips, and a cookie.<br><br>Monday- Turkey Sandwich<br>Tuesday- Ham Sandwich<br>Wednesday- Chicken Caesar Wrap<br>Thursday- PB&J Sandwich<br>Friday- Turkey Sandwich<br><br>We can only accommodate peanut-free & gluten free dietary restrictions at this time.
+                            </div>
+                          </div>
+                        <!-- Ticket Instructions -->
+                        <div>
+                        	<div class="gap-font--overline uppercase margin-bottom-4">Instructions:</div>
+                        	<div class="gap-font--caption">
+                        		<br> Please contact Outdoor School at campstaff@whitewater.org or call (704)-391-3900 ext. 287 for more information. <br>Tax ID: 56-2247955
+                        	</div>
+                        </div>
+                        <!-- Ticket Terms of Use -->
+                        <div>
+                        	<div class="gap-font--overline uppercase margin-bottom-4">Terms and Conditions:</div>
+                        	<div class="gap-font--caption">
+                        		<br>All activities at the Whitewater Center expose the participants to hazards of risk. Each participant must sign the Assumption of Risk, Waiver and Release Agreement prior to participating in any activity at the Whitewater Center. This agreement can be found on the Whitewater Center website should a guest choose to sign the waiver prior to their visit. A parent or legal guardian will be required to sign for any participant under the age of 18. Whitewater Center activities will operate in the rain. Activities will go on standby during the threat of lightning or in the event of severe weather. Activities will re-open as soon as the weather permits. Please check the weather conditions before visiting the Whitewater Center. Passes, reservations, camps, instruction courses, and event registrations are non-refundable and non-transferable. This pass has no cash value and cannot be combined with any other offer. This pass may not be sold, copied, or redistributed in any way.
+                        	</div>
+                        </div>
+                      </div>
+                    </div>        <div id="ticketCard3" class="desktopTicket">
+                      <div class="desktopTicket__topContainer">
+                        <div id="packageName3" class="desktopTicket__topContainer__itemContent">
+                          <div class="h4 margin-bottom-8">
+                            Lunch Week 12
+                          </div>
+                          <div class="desktopTicket__topContainer__itemContent__itemAddlInfoContainer">
+                            <div class="desktopTicket__topContainer__itemContent__itemAddlInfoContainer__nameCTSection gap-font--body-2">
+                              <div class="margin-bottom-4">
+                                Participant
+                              </div>
+                              <div>
+                                <span>SAM RIVERA</span>
+                                <div>
+                                </div>
+                              </div>
+                            </div>
+                                <!-- Start Date -->
+                                <div class="desktopTicket__topContainer__itemContent__itemAddlInfoContainer__startDateSection">
+                                  <div class="gap-font--overline uppercase">
+                                    Date
+                                  </div>
+                                  <div class="gap-font--body-2">
+                                    08/17/2026
+                                  </div>
+                                </div>
+                          </div>
+                            <div id="desktopGuestClientIdContainer" class="flex row gap-16 margin-bottom-8">
+                                <div class="flex-33">
+                                  <div class="gap-font--overline uppercase">Order ID</div>
+                                  <div class="gap-font--body-2">90000001</div>
+                                </div>
+                                <!-- Guest Number-->
+                                <div class="flex-33">
+                                  <div class="gap-font--overline uppercase">Guest Number
+                                  </div>
+                                  <div class="gap-font--body-2">400000000002</div>
+                                </div>
+                                <!-- Client Order ID -->
+                                <div class="flex-33">
+                                  <div class="gap-font--overline uppercase">Web Sales ID:
+                                  </div>
+                                  <div class="gap-font--body-2">290000000001</div>
+                                </div>
+                            </div>
+                        </div>        <div class="desktopTicket__topContainer__barcodeImageContainer">
+                              <img alt="barcode" id="barcode3" class="desktopTicket__topContainer__barcodeImageContainer__barcodeImg"  src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==">
+                              <div class="desktopTicket__topContainer__barcodeImageContainer__barcodeTxt text-align-center">
+                                 %RC90000001
+                              </div>
+                            </div>
+                      </div>
+                          <div class="desktopTicket__divider"></div>
+                      <div class="desktopTicket__midContainer flex column gap-16">
+                        <!-- Ticket Addons -->
+                          <!-- Ticket Instructions -->
+                          <div>
+                            <div class="gap-font--overline uppercase margin-bottom-4">Description:</div>
+                            <div class="gap-font--caption">
+                              Meals include a sandwich, fruit, chips, and a cookie.<br><br>Monday- Turkey Sandwich<br>Tuesday- Ham Sandwich<br>Wednesday- Chicken Caesar Wrap<br>Thursday- PB&J Sandwich<br>Friday- Turkey Sandwich<br><br>We can only accommodate peanut-free & gluten free dietary restrictions at this time.
+                            </div>
+                          </div>
+                        <!-- Ticket Instructions -->
+                        <div>
+                        	<div class="gap-font--overline uppercase margin-bottom-4">Instructions:</div>
+                        	<div class="gap-font--caption">
+                        		<br> Please contact Outdoor School at campstaff@whitewater.org or call (704)-391-3900 ext. 287 for more information. <br>Tax ID: 56-2247955
+                        	</div>
+                        </div>
+                        <!-- Ticket Terms of Use -->
+                        <div>
+                        	<div class="gap-font--overline uppercase margin-bottom-4">Terms and Conditions:</div>
+                        	<div class="gap-font--caption">
+                        		<br>All activities at the Whitewater Center expose the participants to hazards of risk. Each participant must sign the Assumption of Risk, Waiver and Release Agreement prior to participating in any activity at the Whitewater Center. This agreement can be found on the Whitewater Center website should a guest choose to sign the waiver prior to their visit. A parent or legal guardian will be required to sign for any participant under the age of 18. Whitewater Center activities will operate in the rain. Activities will go on standby during the threat of lightning or in the event of severe weather. Activities will re-open as soon as the weather permits. Please check the weather conditions before visiting the Whitewater Center. Passes, reservations, camps, instruction courses, and event registrations are non-refundable and non-transferable. This pass has no cash value and cannot be combined with any other offer. This pass may not be sold, copied, or redistributed in any way.
+                        	</div>
+                        </div>
+                      </div>
+                    </div>        <div id="ticketCard4" class="desktopTicket">
+                      <div class="desktopTicket__topContainer">
+                        <div id="packageName4" class="desktopTicket__topContainer__itemContent">
+                          <div class="h4 margin-bottom-8">
+                            Snack Week 12
+                          </div>
+                          <div class="desktopTicket__topContainer__itemContent__itemAddlInfoContainer">
+                            <div class="desktopTicket__topContainer__itemContent__itemAddlInfoContainer__nameCTSection gap-font--body-2">
+                              <div class="margin-bottom-4">
+                                Participant
+                              </div>
+                              <div>
+                                <span>ALEX RIVERA</span>
+                                <div>
+                                </div>
+                              </div>
+                            </div>
+                                <!-- Start Date -->
+                                <div class="desktopTicket__topContainer__itemContent__itemAddlInfoContainer__startDateSection">
+                                  <div class="gap-font--overline uppercase">
+                                    Date
+                                  </div>
+                                  <div class="gap-font--body-2">
+                                    08/17/2026
+                                  </div>
+                                </div>
+                          </div>
+                            <div id="desktopGuestClientIdContainer" class="flex row gap-16 margin-bottom-8">
+                                <div class="flex-33">
+                                  <div class="gap-font--overline uppercase">Order ID</div>
+                                  <div class="gap-font--body-2">90000001</div>
+                                </div>
+                                <!-- Guest Number-->
+                                <div class="flex-33">
+                                  <div class="gap-font--overline uppercase">Guest Number
+                                  </div>
+                                  <div class="gap-font--body-2">400000000002</div>
+                                </div>
+                                <!-- Client Order ID -->
+                                <div class="flex-33">
+                                  <div class="gap-font--overline uppercase">Web Sales ID:
+                                  </div>
+                                  <div class="gap-font--body-2">290000000001</div>
+                                </div>
+                            </div>
+                        </div>        <div class="desktopTicket__topContainer__barcodeImageContainer">
+                              <img alt="barcode" id="barcode4" class="desktopTicket__topContainer__barcodeImageContainer__barcodeImg"  src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==">
+                              <div class="desktopTicket__topContainer__barcodeImageContainer__barcodeTxt text-align-center">
+                                 %RC90000001
+                              </div>
+                            </div>
+                      </div>
+                          <div class="desktopTicket__divider"></div>
+                      <div class="desktopTicket__midContainer flex column gap-16">
+                        <!-- Ticket Addons -->
+                          <!-- Ticket Instructions -->
+                          <div>
+                            <div class="gap-font--overline uppercase margin-bottom-4">Description:</div>
+                            <div class="gap-font--caption">
+                              Campers will be provided with 2 snacks a day. Snacks vary each day, but will usually consist of granola bars, pretzels, yogurt, and more.
+                            </div>
+                          </div>
+                        <!-- Ticket Instructions -->
+                        <div>
+                        	<div class="gap-font--overline uppercase margin-bottom-4">Instructions:</div>
+                        	<div class="gap-font--caption">
+                        		<br> Please contact Outdoor School at campstaff@whitewater.org or call (704)-391-3900 ext. 287 for more information. <br>Tax ID: 56-2247955
+                        	</div>
+                        </div>
+                        <!-- Ticket Terms of Use -->
+                        <div>
+                        	<div class="gap-font--overline uppercase margin-bottom-4">Terms and Conditions:</div>
+                        	<div class="gap-font--caption">
+                        		<br>All activities at the Whitewater Center expose the participants to hazards of risk. Each participant must sign the Assumption of Risk, Waiver and Release Agreement prior to participating in any activity at the Whitewater Center. This agreement can be found on the Whitewater Center website should a guest choose to sign the waiver prior to their visit. A parent or legal guardian will be required to sign for any participant under the age of 18. Whitewater Center activities will operate in the rain. Activities will go on standby during the threat of lightning or in the event of severe weather. Activities will re-open as soon as the weather permits. Please check the weather conditions before visiting the Whitewater Center. Passes, reservations, camps, instruction courses, and event registrations are non-refundable and non-transferable. This pass has no cash value and cannot be combined with any other offer. This pass may not be sold, copied, or redistributed in any way.
+                        	</div>
+                        </div>
+                      </div>
+                    </div>        <div id="ticketCard5" class="desktopTicket">
+                      <div class="desktopTicket__topContainer">
+                        <div id="packageName5" class="desktopTicket__topContainer__itemContent">
+                          <div class="h4 margin-bottom-8">
+                            Snack Week 12
+                          </div>
+                          <div class="desktopTicket__topContainer__itemContent__itemAddlInfoContainer">
+                            <div class="desktopTicket__topContainer__itemContent__itemAddlInfoContainer__nameCTSection gap-font--body-2">
+                              <div class="margin-bottom-4">
+                                Participant
+                              </div>
+                              <div>
+                                <span>JORDAN RIVERA</span>
+                                <div>
+                                </div>
+                              </div>
+                            </div>
+                                <!-- Start Date -->
+                                <div class="desktopTicket__topContainer__itemContent__itemAddlInfoContainer__startDateSection">
+                                  <div class="gap-font--overline uppercase">
+                                    Date
+                                  </div>
+                                  <div class="gap-font--body-2">
+                                    08/17/2026
+                                  </div>
+                                </div>
+                          </div>
+                            <div id="desktopGuestClientIdContainer" class="flex row gap-16 margin-bottom-8">
+                                <div class="flex-33">
+                                  <div class="gap-font--overline uppercase">Order ID</div>
+                                  <div class="gap-font--body-2">90000001</div>
+                                </div>
+                                <!-- Guest Number-->
+                                <div class="flex-33">
+                                  <div class="gap-font--overline uppercase">Guest Number
+                                  </div>
+                                  <div class="gap-font--body-2">400000000002</div>
+                                </div>
+                                <!-- Client Order ID -->
+                                <div class="flex-33">
+                                  <div class="gap-font--overline uppercase">Web Sales ID:
+                                  </div>
+                                  <div class="gap-font--body-2">290000000001</div>
+                                </div>
+                            </div>
+                        </div>        <div class="desktopTicket__topContainer__barcodeImageContainer">
+                              <img alt="barcode" id="barcode5" class="desktopTicket__topContainer__barcodeImageContainer__barcodeImg"  src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==">
+                              <div class="desktopTicket__topContainer__barcodeImageContainer__barcodeTxt text-align-center">
+                                 %RC90000001
+                              </div>
+                            </div>
+                      </div>
+                          <div class="desktopTicket__divider"></div>
+                      <div class="desktopTicket__midContainer flex column gap-16">
+                        <!-- Ticket Addons -->
+                          <!-- Ticket Instructions -->
+                          <div>
+                            <div class="gap-font--overline uppercase margin-bottom-4">Description:</div>
+                            <div class="gap-font--caption">
+                              Campers will be provided with 2 snacks a day. Snacks vary each day, but will usually consist of granola bars, pretzels, yogurt, and more.
+                            </div>
+                          </div>
+                        <!-- Ticket Instructions -->
+                        <div>
+                        	<div class="gap-font--overline uppercase margin-bottom-4">Instructions:</div>
+                        	<div class="gap-font--caption">
+                        		<br> Please contact Outdoor School at campstaff@whitewater.org or call (704)-391-3900 ext. 287 for more information. <br>Tax ID: 56-2247955
+                        	</div>
+                        </div>
+                        <!-- Ticket Terms of Use -->
+                        <div>
+                        	<div class="gap-font--overline uppercase margin-bottom-4">Terms and Conditions:</div>
+                        	<div class="gap-font--caption">
+                        		<br>All activities at the Whitewater Center expose the participants to hazards of risk. Each participant must sign the Assumption of Risk, Waiver and Release Agreement prior to participating in any activity at the Whitewater Center. This agreement can be found on the Whitewater Center website should a guest choose to sign the waiver prior to their visit. A parent or legal guardian will be required to sign for any participant under the age of 18. Whitewater Center activities will operate in the rain. Activities will go on standby during the threat of lightning or in the event of severe weather. Activities will re-open as soon as the weather permits. Please check the weather conditions before visiting the Whitewater Center. Passes, reservations, camps, instruction courses, and event registrations are non-refundable and non-transferable. This pass has no cash value and cannot be combined with any other offer. This pass may not be sold, copied, or redistributed in any way.
+                        	</div>
+                        </div>
+                      </div>
+                    </div>        <div id="ticketCard6" class="desktopTicket">
+                      <div class="desktopTicket__topContainer">
+                        <div id="packageName6" class="desktopTicket__topContainer__itemContent">
+                          <div class="h4 margin-bottom-8">
+                            Snack Week 12
+                          </div>
+                          <div class="desktopTicket__topContainer__itemContent__itemAddlInfoContainer">
+                            <div class="desktopTicket__topContainer__itemContent__itemAddlInfoContainer__nameCTSection gap-font--body-2">
+                              <div class="margin-bottom-4">
+                                Participant
+                              </div>
+                              <div>
+                                <span>SAM RIVERA</span>
+                                <div>
+                                </div>
+                              </div>
+                            </div>
+                                <!-- Start Date -->
+                                <div class="desktopTicket__topContainer__itemContent__itemAddlInfoContainer__startDateSection">
+                                  <div class="gap-font--overline uppercase">
+                                    Date
+                                  </div>
+                                  <div class="gap-font--body-2">
+                                    08/17/2026
+                                  </div>
+                                </div>
+                          </div>
+                            <div id="desktopGuestClientIdContainer" class="flex row gap-16 margin-bottom-8">
+                                <div class="flex-33">
+                                  <div class="gap-font--overline uppercase">Order ID</div>
+                                  <div class="gap-font--body-2">90000001</div>
+                                </div>
+                                <!-- Guest Number-->
+                                <div class="flex-33">
+                                  <div class="gap-font--overline uppercase">Guest Number
+                                  </div>
+                                  <div class="gap-font--body-2">400000000002</div>
+                                </div>
+                                <!-- Client Order ID -->
+                                <div class="flex-33">
+                                  <div class="gap-font--overline uppercase">Web Sales ID:
+                                  </div>
+                                  <div class="gap-font--body-2">290000000001</div>
+                                </div>
+                            </div>
+                        </div>        <div class="desktopTicket__topContainer__barcodeImageContainer">
+                              <img alt="barcode" id="barcode6" class="desktopTicket__topContainer__barcodeImageContainer__barcodeImg"  src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==">
+                              <div class="desktopTicket__topContainer__barcodeImageContainer__barcodeTxt text-align-center">
+                                 %RC90000001
+                              </div>
+                            </div>
+                      </div>
+                          <div class="desktopTicket__divider"></div>
+                      <div class="desktopTicket__midContainer flex column gap-16">
+                        <!-- Ticket Addons -->
+                          <!-- Ticket Instructions -->
+                          <div>
+                            <div class="gap-font--overline uppercase margin-bottom-4">Description:</div>
+                            <div class="gap-font--caption">
+                              Campers will be provided with 2 snacks a day. Snacks vary each day, but will usually consist of granola bars, pretzels, yogurt, and more.
+                            </div>
+                          </div>
+                        <!-- Ticket Instructions -->
+                        <div>
+                        	<div class="gap-font--overline uppercase margin-bottom-4">Instructions:</div>
+                        	<div class="gap-font--caption">
+                        		<br> Please contact Outdoor School at campstaff@whitewater.org or call (704)-391-3900 ext. 287 for more information. <br>Tax ID: 56-2247955
+                        	</div>
+                        </div>
+                        <!-- Ticket Terms of Use -->
+                        <div>
+                        	<div class="gap-font--overline uppercase margin-bottom-4">Terms and Conditions:</div>
+                        	<div class="gap-font--caption">
+                        		<br>All activities at the Whitewater Center expose the participants to hazards of risk. Each participant must sign the Assumption of Risk, Waiver and Release Agreement prior to participating in any activity at the Whitewater Center. This agreement can be found on the Whitewater Center website should a guest choose to sign the waiver prior to their visit. A parent or legal guardian will be required to sign for any participant under the age of 18. Whitewater Center activities will operate in the rain. Activities will go on standby during the threat of lightning or in the event of severe weather. Activities will re-open as soon as the weather permits. Please check the weather conditions before visiting the Whitewater Center. Passes, reservations, camps, instruction courses, and event registrations are non-refundable and non-transferable. This pass has no cash value and cannot be combined with any other offer. This pass may not be sold, copied, or redistributed in any way.
+                        	</div>
+                        </div>
+                      </div>
+                    </div>        <div id="ticketCard7" class="desktopTicket">
+                      <div class="desktopTicket__topContainer">
+                        <div id="packageName7" class="desktopTicket__topContainer__itemContent">
+                          <div class="h4 margin-bottom-8">
+                            Early Drop-Off Week 12
+                          </div>
+                          <div class="desktopTicket__topContainer__itemContent__itemAddlInfoContainer">
+                            <div class="desktopTicket__topContainer__itemContent__itemAddlInfoContainer__nameCTSection gap-font--body-2">
+                              <div class="margin-bottom-4">
+                                Participant
+                              </div>
+                              <div>
+                                <span>GUEST GUEST</span>
+                                <div>
+                                </div>
+                              </div>
+                            </div>
+                                <!-- Start Date -->
+                                <div class="desktopTicket__topContainer__itemContent__itemAddlInfoContainer__startDateSection">
+                                  <div class="gap-font--overline uppercase">
+                                    Date
+                                  </div>
+                                  <div class="gap-font--body-2">
+                                    08/17/2026
+                                  </div>
+                                </div>
+                          </div>
+                            <div id="desktopGuestClientIdContainer" class="flex row gap-16 margin-bottom-8">
+                                <div class="flex-33">
+                                  <div class="gap-font--overline uppercase">Order ID</div>
+                                  <div class="gap-font--body-2">90000001</div>
+                                </div>
+                                <!-- Guest Number-->
+                                <div class="flex-33">
+                                  <div class="gap-font--overline uppercase">Guest Number
+                                  </div>
+                                  <div class="gap-font--body-2">400000000002</div>
+                                </div>
+                                <!-- Client Order ID -->
+                                <div class="flex-33">
+                                  <div class="gap-font--overline uppercase">Web Sales ID:
+                                  </div>
+                                  <div class="gap-font--body-2">290000000001</div>
+                                </div>
+                            </div>
+                        </div>        <div class="desktopTicket__topContainer__barcodeImageContainer">
+                              <img alt="barcode" id="barcode7" class="desktopTicket__topContainer__barcodeImageContainer__barcodeImg"  src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==">
+                              <div class="desktopTicket__topContainer__barcodeImageContainer__barcodeTxt text-align-center">
+                                 %RC90000001
+                              </div>
+                            </div>
+                      </div>
+                          <div class="desktopTicket__divider"></div>
+                      <div class="desktopTicket__midContainer flex column gap-16">
+                        <!-- Ticket Addons -->
+                          <!-- Ticket Instructions -->
+                          <div>
+                            <div class="gap-font--overline uppercase margin-bottom-4">Description:</div>
+                            <div class="gap-font--caption">
+                              Drop off as early as 7:30 am <br><br><a href="https://link.whitewater.org/scmap" target="_blank">Drop-Off Map</a>
+                            </div>
+                          </div>
+                        <!-- Ticket Instructions -->
+                        <div>
+                        	<div class="gap-font--overline uppercase margin-bottom-4">Instructions:</div>
+                        	<div class="gap-font--caption">
+                        		<br>The online <a href="https://center.whitewater.org/things-to-do/outdoor-school/camps/summer-camp-forms/" target="_blank">Camper Information Form</a>  must be completed seven days prior to their camp start date. Failure to do so will result in a late processing fee of $50. Please download the <a href="https://center.whitewater.org/things-to-do/outdoor-school/camps/summer-camp-forms/" target="_blank">Parent Information Packet</a>  for more information. <br> Please contact Outdoor School at campstaff@whitewater.org or call (704)-391-3900 ext. 287 for more information. <br>Tax ID: 56-2247955
+                        	</div>
+                        </div>
+                        <!-- Ticket Terms of Use -->
+                        <div>
+                        	<div class="gap-font--overline uppercase margin-bottom-4">Terms and Conditions:</div>
+                        	<div class="gap-font--caption">
+                        		<br>All activities at the Whitewater Center expose the participants to hazards of risk. Each participant must sign the Assumption of Risk, Waiver and Release Agreement prior to participating in any activity at the Whitewater Center. This agreement can be found on the Whitewater Center website should a guest choose to sign the waiver prior to their visit. A parent or legal guardian will be required to sign for any participant under the age of 18. Whitewater Center activities will operate in the rain. Activities will go on standby during the threat of lightning or in the event of severe weather. Activities will re-open as soon as the weather permits. Please check the weather conditions before visiting the Whitewater Center. Passes, reservations, camps, instruction courses, and event registrations are non-refundable and non-transferable. This pass has no cash value and cannot be combined with any other offer. This pass may not be sold, copied, or redistributed in any way.
+                        	</div>
+                        </div>
+                      </div>
+                    </div>        <div id="ticketCard8" class="desktopTicket">
+                      <div class="desktopTicket__topContainer">
+                        <div id="packageName8" class="desktopTicket__topContainer__itemContent">
+                          <div class="h4 margin-bottom-8">
+                            Early Drop-Off Week 12
+                          </div>
+                          <div class="desktopTicket__topContainer__itemContent__itemAddlInfoContainer">
+                            <div class="desktopTicket__topContainer__itemContent__itemAddlInfoContainer__nameCTSection gap-font--body-2">
+                              <div class="margin-bottom-4">
+                                Participant
+                              </div>
+                              <div>
+                                <span>GUEST GUEST</span>
+                                <div>
+                                </div>
+                              </div>
+                            </div>
+                                <!-- Start Date -->
+                                <div class="desktopTicket__topContainer__itemContent__itemAddlInfoContainer__startDateSection">
+                                  <div class="gap-font--overline uppercase">
+                                    Date
+                                  </div>
+                                  <div class="gap-font--body-2">
+                                    08/17/2026
+                                  </div>
+                                </div>
+                          </div>
+                            <div id="desktopGuestClientIdContainer" class="flex row gap-16 margin-bottom-8">
+                                <div class="flex-33">
+                                  <div class="gap-font--overline uppercase">Order ID</div>
+                                  <div class="gap-font--body-2">90000001</div>
+                                </div>
+                                <!-- Guest Number-->
+                                <div class="flex-33">
+                                  <div class="gap-font--overline uppercase">Guest Number
+                                  </div>
+                                  <div class="gap-font--body-2">400000000002</div>
+                                </div>
+                                <!-- Client Order ID -->
+                                <div class="flex-33">
+                                  <div class="gap-font--overline uppercase">Web Sales ID:
+                                  </div>
+                                  <div class="gap-font--body-2">290000000001</div>
+                                </div>
+                            </div>
+                        </div>        <div class="desktopTicket__topContainer__barcodeImageContainer">
+                              <img alt="barcode" id="barcode8" class="desktopTicket__topContainer__barcodeImageContainer__barcodeImg"  src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==">
+                              <div class="desktopTicket__topContainer__barcodeImageContainer__barcodeTxt text-align-center">
+                                 %RC90000001
+                              </div>
+                            </div>
+                      </div>
+                          <div class="desktopTicket__divider"></div>
+                      <div class="desktopTicket__midContainer flex column gap-16">
+                        <!-- Ticket Addons -->
+                          <!-- Ticket Instructions -->
+                          <div>
+                            <div class="gap-font--overline uppercase margin-bottom-4">Description:</div>
+                            <div class="gap-font--caption">
+                              Drop off as early as 7:30 am <br><br><a href="https://link.whitewater.org/scmap" target="_blank">Drop-Off Map</a>
+                            </div>
+                          </div>
+                        <!-- Ticket Instructions -->
+                        <div>
+                        	<div class="gap-font--overline uppercase margin-bottom-4">Instructions:</div>
+                        	<div class="gap-font--caption">
+                        		<br>The online <a href="https://center.whitewater.org/things-to-do/outdoor-school/camps/summer-camp-forms/" target="_blank">Camper Information Form</a>  must be completed seven days prior to their camp start date. Failure to do so will result in a late processing fee of $50. Please download the <a href="https://center.whitewater.org/things-to-do/outdoor-school/camps/summer-camp-forms/" target="_blank">Parent Information Packet</a>  for more information. <br> Please contact Outdoor School at campstaff@whitewater.org or call (704)-391-3900 ext. 287 for more information. <br>Tax ID: 56-2247955
+                        	</div>
+                        </div>
+                        <!-- Ticket Terms of Use -->
+                        <div>
+                        	<div class="gap-font--overline uppercase margin-bottom-4">Terms and Conditions:</div>
+                        	<div class="gap-font--caption">
+                        		<br>All activities at the Whitewater Center expose the participants to hazards of risk. Each participant must sign the Assumption of Risk, Waiver and Release Agreement prior to participating in any activity at the Whitewater Center. This agreement can be found on the Whitewater Center website should a guest choose to sign the waiver prior to their visit. A parent or legal guardian will be required to sign for any participant under the age of 18. Whitewater Center activities will operate in the rain. Activities will go on standby during the threat of lightning or in the event of severe weather. Activities will re-open as soon as the weather permits. Please check the weather conditions before visiting the Whitewater Center. Passes, reservations, camps, instruction courses, and event registrations are non-refundable and non-transferable. This pass has no cash value and cannot be combined with any other offer. This pass may not be sold, copied, or redistributed in any way.
+                        	</div>
+                        </div>
+                      </div>
+                    </div>        <div id="ticketCard9" class="desktopTicket">
+                      <div class="desktopTicket__topContainer">
+                        <div id="packageName9" class="desktopTicket__topContainer__itemContent">
+                          <div class="h4 margin-bottom-8">
+                            Early Drop-Off Week 12
+                          </div>
+                          <div class="desktopTicket__topContainer__itemContent__itemAddlInfoContainer">
+                            <div class="desktopTicket__topContainer__itemContent__itemAddlInfoContainer__nameCTSection gap-font--body-2">
+                              <div class="margin-bottom-4">
+                                Participant
+                              </div>
+                              <div>
+                                <span>GUEST GUEST</span>
+                                <div>
+                                </div>
+                              </div>
+                            </div>
+                                <!-- Start Date -->
+                                <div class="desktopTicket__topContainer__itemContent__itemAddlInfoContainer__startDateSection">
+                                  <div class="gap-font--overline uppercase">
+                                    Date
+                                  </div>
+                                  <div class="gap-font--body-2">
+                                    08/17/2026
+                                  </div>
+                                </div>
+                          </div>
+                            <div id="desktopGuestClientIdContainer" class="flex row gap-16 margin-bottom-8">
+                                <div class="flex-33">
+                                  <div class="gap-font--overline uppercase">Order ID</div>
+                                  <div class="gap-font--body-2">90000001</div>
+                                </div>
+                                <!-- Guest Number-->
+                                <div class="flex-33">
+                                  <div class="gap-font--overline uppercase">Guest Number
+                                  </div>
+                                  <div class="gap-font--body-2">400000000002</div>
+                                </div>
+                                <!-- Client Order ID -->
+                                <div class="flex-33">
+                                  <div class="gap-font--overline uppercase">Web Sales ID:
+                                  </div>
+                                  <div class="gap-font--body-2">290000000001</div>
+                                </div>
+                            </div>
+                        </div>        <div class="desktopTicket__topContainer__barcodeImageContainer">
+                              <img alt="barcode" id="barcode9" class="desktopTicket__topContainer__barcodeImageContainer__barcodeImg"  src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==">
+                              <div class="desktopTicket__topContainer__barcodeImageContainer__barcodeTxt text-align-center">
+                                 %RC90000001
+                              </div>
+                            </div>
+                      </div>
+                          <div class="desktopTicket__divider"></div>
+                      <div class="desktopTicket__midContainer flex column gap-16">
+                        <!-- Ticket Addons -->
+                          <!-- Ticket Instructions -->
+                          <div>
+                            <div class="gap-font--overline uppercase margin-bottom-4">Description:</div>
+                            <div class="gap-font--caption">
+                              Drop off as early as 7:30 am <br><br><a href="https://link.whitewater.org/scmap" target="_blank">Drop-Off Map</a>
+                            </div>
+                          </div>
+                        <!-- Ticket Instructions -->
+                        <div>
+                        	<div class="gap-font--overline uppercase margin-bottom-4">Instructions:</div>
+                        	<div class="gap-font--caption">
+                        		<br>The online <a href="https://center.whitewater.org/things-to-do/outdoor-school/camps/summer-camp-forms/" target="_blank">Camper Information Form</a>  must be completed seven days prior to their camp start date. Failure to do so will result in a late processing fee of $50. Please download the <a href="https://center.whitewater.org/things-to-do/outdoor-school/camps/summer-camp-forms/" target="_blank">Parent Information Packet</a>  for more information. <br> Please contact Outdoor School at campstaff@whitewater.org or call (704)-391-3900 ext. 287 for more information. <br>Tax ID: 56-2247955
+                        	</div>
+                        </div>
+                        <!-- Ticket Terms of Use -->
+                        <div>
+                        	<div class="gap-font--overline uppercase margin-bottom-4">Terms and Conditions:</div>
+                        	<div class="gap-font--caption">
+                        		<br>All activities at the Whitewater Center expose the participants to hazards of risk. Each participant must sign the Assumption of Risk, Waiver and Release Agreement prior to participating in any activity at the Whitewater Center. This agreement can be found on the Whitewater Center website should a guest choose to sign the waiver prior to their visit. A parent or legal guardian will be required to sign for any participant under the age of 18. Whitewater Center activities will operate in the rain. Activities will go on standby during the threat of lightning or in the event of severe weather. Activities will re-open as soon as the weather permits. Please check the weather conditions before visiting the Whitewater Center. Passes, reservations, camps, instruction courses, and event registrations are non-refundable and non-transferable. This pass has no cash value and cannot be combined with any other offer. This pass may not be sold, copied, or redistributed in any way.
+                        	</div>
+                        </div>
+                      </div>
+                    </div>        <div id="ticketCard10" class="desktopTicket">
+                      <div class="desktopTicket__topContainer">
+                        <div id="packageName10" class="desktopTicket__topContainer__itemContent">
+                          <div class="h4 margin-bottom-8">
+                            Whitewater Kayak Camp I: Intro (Ages 10-17)
+                          </div>
+                          <div class="desktopTicket__topContainer__itemContent__itemAddlInfoContainer">
+                            <div class="desktopTicket__topContainer__itemContent__itemAddlInfoContainer__nameCTSection gap-font--body-2">
+                              <div class="margin-bottom-4">
+                                Participant
+                              </div>
+                              <div>
+                                <span>GUEST GUEST</span>
+                                <div>
+                                </div>
+                              </div>
+                            </div>
+                                <!-- Start Date -->
+                                <div class="desktopTicket__topContainer__itemContent__itemAddlInfoContainer__startDateSection">
+                                  <div class="gap-font--overline uppercase">
+                                    Date
+                                  </div>
+                                  <div class="gap-font--body-2">
+                                    08/17/2026
+                                  </div>
+                                </div>
+                                <!-- Ticket Start Time (for tickets without bookings) -->
+                                <div id="desktopStartTimeContainer"
+                                  class="desktopTicket__topContainer__itemContent__itemAddlInfoContainer__startDateSection">
+                                  <div class="gap-font--overline uppercase">
+                                    Time
+                                  </div>
+                                  <div class="gap-font--body-2">
+                                      9:00 AM
+                                  </div>
+                                </div>
+                          </div>
+                            <div id="desktopGuestClientIdContainer" class="flex row gap-16 margin-bottom-8">
+                                <div class="flex-33">
+                                  <div class="gap-font--overline uppercase">Order ID</div>
+                                  <div class="gap-font--body-2">90000001</div>
+                                </div>
+                                <!-- Guest Number-->
+                                <div class="flex-33">
+                                  <div class="gap-font--overline uppercase">Guest Number
+                                  </div>
+                                  <div class="gap-font--body-2">461131000000</div>
+                                </div>
+                                <!-- Client Order ID -->
+                                <div class="flex-33">
+                                  <div class="gap-font--overline uppercase">Web Sales ID:
+                                  </div>
+                                  <div class="gap-font--body-2">290000000001</div>
+                                </div>
+                            </div>
+                        </div>        <div class="desktopTicket__topContainer__barcodeImageContainer">
+                              <img alt="barcode" id="barcode10" class="desktopTicket__topContainer__barcodeImageContainer__barcodeImg"  src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==">
+                              <div class="desktopTicket__topContainer__barcodeImageContainer__barcodeTxt text-align-center">
+                                 %RC90000001
+                              </div>
+                            </div>
+                      </div>
+                          <div class="desktopTicket__divider"></div>
+                      <div class="desktopTicket__midContainer flex column gap-16">
+                        <!-- Ticket Addons -->
+                          <!-- Ticket Instructions -->
+                          <div>
+                            <div class="gap-font--overline uppercase margin-bottom-4">Description:</div>
+                            <div class="gap-font--caption">
+                              Secures placement in one (1) week of our Whitewater Kayak Camp I: Intro.
+                            </div>
+                          </div>
+                        <!-- Ticket Instructions -->
+                        <div>
+                        	<div class="gap-font--overline uppercase margin-bottom-4">Instructions:</div>
+                        	<div class="gap-font--caption">
+                        		Please download the <a href="https://whitewater.org/wp-content/uploads/2026/01/Parent-Information-Packet-2026.pdf"target="_blank">Parent Information Packet</a>  for more information. <br> Please contact us at info@whitewater.org or (704) 391-3900 for more information. <br>Tax ID: 56-2248040
+                        	</div>
+                        </div>
+                        <!-- Ticket Terms of Use -->
+                        <div>
+                        	<div class="gap-font--overline uppercase margin-bottom-4">Terms and Conditions:</div>
+                        	<div class="gap-font--caption">
+                        		<br>All activities at the Whitewater Center expose the participants to hazards of risk. Each participant must sign the Assumption of Risk, Waiver and Release Agreement prior to participating in any activity at the Whitewater Center. This agreement can be found on the Whitewater Center website should a guest choose to sign the waiver prior to their visit. A parent or legal guardian will be required to sign for any participant under the age of 18. Whitewater Center activities will operate in the rain. Activities will go on standby during the threat of lightning or in the event of severe weather. Activities will re-open as soon as the weather permits. Please check the weather conditions before visiting the Whitewater Center. Passes, reservations, camps, instruction courses, and event registrations are non-refundable and non-transferable. This pass has no cash value and cannot be combined with any other offer. This pass may not be sold, copied, or redistributed in any way.
+                        	</div>
+                        </div>
+                      </div>
+                    </div>        <div id="ticketCard11" class="desktopTicket">
+                      <div class="desktopTicket__topContainer">
+                        <div id="packageName11" class="desktopTicket__topContainer__itemContent">
+                          <div class="h4 margin-bottom-8">
+                            Whitewater Kayak Camp I: Intro (Ages 10-17)
+                          </div>
+                          <div class="desktopTicket__topContainer__itemContent__itemAddlInfoContainer">
+                            <div class="desktopTicket__topContainer__itemContent__itemAddlInfoContainer__nameCTSection gap-font--body-2">
+                              <div class="margin-bottom-4">
+                                Participant
+                              </div>
+                              <div>
+                                <span>GUEST GUEST</span>
+                                <div>
+                                </div>
+                              </div>
+                            </div>
+                                <!-- Start Date -->
+                                <div class="desktopTicket__topContainer__itemContent__itemAddlInfoContainer__startDateSection">
+                                  <div class="gap-font--overline uppercase">
+                                    Date
+                                  </div>
+                                  <div class="gap-font--body-2">
+                                    08/17/2026
+                                  </div>
+                                </div>
+                                <!-- Ticket Start Time (for tickets without bookings) -->
+                                <div id="desktopStartTimeContainer"
+                                  class="desktopTicket__topContainer__itemContent__itemAddlInfoContainer__startDateSection">
+                                  <div class="gap-font--overline uppercase">
+                                    Time
+                                  </div>
+                                  <div class="gap-font--body-2">
+                                      9:00 AM
+                                  </div>
+                                </div>
+                          </div>
+                            <div id="desktopGuestClientIdContainer" class="flex row gap-16 margin-bottom-8">
+                                <div class="flex-33">
+                                  <div class="gap-font--overline uppercase">Order ID</div>
+                                  <div class="gap-font--body-2">90000001</div>
+                                </div>
+                                <!-- Guest Number-->
+                                <div class="flex-33">
+                                  <div class="gap-font--overline uppercase">Guest Number
+                                  </div>
+                                  <div class="gap-font--body-2">461133000000</div>
+                                </div>
+                                <!-- Client Order ID -->
+                                <div class="flex-33">
+                                  <div class="gap-font--overline uppercase">Web Sales ID:
+                                  </div>
+                                  <div class="gap-font--body-2">290000000001</div>
+                                </div>
+                            </div>
+                        </div>        <div class="desktopTicket__topContainer__barcodeImageContainer">
+                              <img alt="barcode" id="barcode11" class="desktopTicket__topContainer__barcodeImageContainer__barcodeImg"  src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==">
+                              <div class="desktopTicket__topContainer__barcodeImageContainer__barcodeTxt text-align-center">
+                                 %RC90000001
+                              </div>
+                            </div>
+                      </div>
+                          <div class="desktopTicket__divider"></div>
+                      <div class="desktopTicket__midContainer flex column gap-16">
+                        <!-- Ticket Addons -->
+                          <!-- Ticket Instructions -->
+                          <div>
+                            <div class="gap-font--overline uppercase margin-bottom-4">Description:</div>
+                            <div class="gap-font--caption">
+                              Secures placement in one (1) week of our Whitewater Kayak Camp I: Intro.
+                            </div>
+                          </div>
+                        <!-- Ticket Instructions -->
+                        <div>
+                        	<div class="gap-font--overline uppercase margin-bottom-4">Instructions:</div>
+                        	<div class="gap-font--caption">
+                        		Please download the <a href="https://whitewater.org/wp-content/uploads/2026/01/Parent-Information-Packet-2026.pdf"target="_blank">Parent Information Packet</a>  for more information. <br> Please contact us at info@whitewater.org or (704) 391-3900 for more information. <br>Tax ID: 56-2248040
+                        	</div>
+                        </div>
+                        <!-- Ticket Terms of Use -->
+                        <div>
+                        	<div class="gap-font--overline uppercase margin-bottom-4">Terms and Conditions:</div>
+                        	<div class="gap-font--caption">
+                        		<br>All activities at the Whitewater Center expose the participants to hazards of risk. Each participant must sign the Assumption of Risk, Waiver and Release Agreement prior to participating in any activity at the Whitewater Center. This agreement can be found on the Whitewater Center website should a guest choose to sign the waiver prior to their visit. A parent or legal guardian will be required to sign for any participant under the age of 18. Whitewater Center activities will operate in the rain. Activities will go on standby during the threat of lightning or in the event of severe weather. Activities will re-open as soon as the weather permits. Please check the weather conditions before visiting the Whitewater Center. Passes, reservations, camps, instruction courses, and event registrations are non-refundable and non-transferable. This pass has no cash value and cannot be combined with any other offer. This pass may not be sold, copied, or redistributed in any way.
+                        	</div>
+                        </div>
+                      </div>
+                    </div></div>
+            
+            <!-- Register Ticket Name Modals -->
+                <div id="registerModal0" class="modal hide --register-name-modal">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <div class="h5">Register Ticket</div>
+                      <span class="close" onclick="toggleHideClass('registerModal0');">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                          <path d="M15.2929 7.29289C15.6834 6.90237 16.3166 6.90237 16.7071 7.29289C17.0976 7.68342 17.0976 8.31658 16.7071 8.70711L13.4142 12L16.7071 15.2929C17.0976 15.6834 17.0976 16.3166 16.7071 16.7071C16.3166 17.0976 15.6834 17.0976 15.2929 16.7071L12 13.4142L8.70711 16.7071C8.31658 17.0976 7.68342 17.0976 7.29289 16.7071C6.90237 16.3166 6.90237 15.6834 7.29289 15.2929L10.5858 12L7.29289 8.70711C6.90237 8.31658 6.90237 7.68342 7.29289 7.29289C7.68342 6.90237 8.31658 6.90237 8.70711 7.29289L12 10.5858L15.2929 7.29289Z" fill="#474747"/>
+                        </svg>
+                      </span>
+                    </div>
+                    <div class="modal-body">
+                      <div class="gap-font--body-1 margin-bottom-16">Enter a name below</div>
+                      <div><form id="registrationForm" method="post" class="flex column">
+                    <div class="group modal-input--margin-bottom50">
+                        <input type="text" aria-required="true" required="required" id="ticketCustomerName"
+                            name="ticketCustomerName" placeholder="Full Name">
+                    </div>
+                    <input type="submit" class="ticket__flatButton" id="registerButton" value="Register this ticket">
+                    <input type="hidden" id="ticketId" name="ticketId" value="900001">
+                    <input type="hidden" id="oToken" name="oToken" value="A1:FIXTURETOKEN0000000000000000000000000000">
+                    <input type="hidden" id="merchantId" name="merchantId" value="100">
+                </form></div>
+                    </div>
+                  </div>
+                </div>    <div id="registerModal1" class="modal hide --register-name-modal">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <div class="h5">Register Ticket</div>
+                      <span class="close" onclick="toggleHideClass('registerModal1');">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                          <path d="M15.2929 7.29289C15.6834 6.90237 16.3166 6.90237 16.7071 7.29289C17.0976 7.68342 17.0976 8.31658 16.7071 8.70711L13.4142 12L16.7071 15.2929C17.0976 15.6834 17.0976 16.3166 16.7071 16.7071C16.3166 17.0976 15.6834 17.0976 15.2929 16.7071L12 13.4142L8.70711 16.7071C8.31658 17.0976 7.68342 17.0976 7.29289 16.7071C6.90237 16.3166 6.90237 15.6834 7.29289 15.2929L10.5858 12L7.29289 8.70711C6.90237 8.31658 6.90237 7.68342 7.29289 7.29289C7.68342 6.90237 8.31658 6.90237 8.70711 7.29289L12 10.5858L15.2929 7.29289Z" fill="#474747"/>
+                        </svg>
+                      </span>
+                    </div>
+                    <div class="modal-body">
+                      <div class="gap-font--body-1 margin-bottom-16">Enter a name below</div>
+                      <div><form id="registrationForm" method="post" class="flex column">
+                    <div class="group modal-input--margin-bottom50">
+                        <input type="text" aria-required="true" required="required" id="ticketCustomerName"
+                            name="ticketCustomerName" placeholder="Full Name">
+                    </div>
+                    <input type="submit" class="ticket__flatButton" id="registerButton" value="Register this ticket">
+                    <input type="hidden" id="ticketId" name="ticketId" value="900002">
+                    <input type="hidden" id="oToken" name="oToken" value="A1:FIXTURETOKEN0000000000000000000000000000">
+                    <input type="hidden" id="merchantId" name="merchantId" value="100">
+                </form></div>
+                    </div>
+                  </div>
+                </div>    <div id="registerModal2" class="modal hide --register-name-modal">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <div class="h5">Register Ticket</div>
+                      <span class="close" onclick="toggleHideClass('registerModal2');">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                          <path d="M15.2929 7.29289C15.6834 6.90237 16.3166 6.90237 16.7071 7.29289C17.0976 7.68342 17.0976 8.31658 16.7071 8.70711L13.4142 12L16.7071 15.2929C17.0976 15.6834 17.0976 16.3166 16.7071 16.7071C16.3166 17.0976 15.6834 17.0976 15.2929 16.7071L12 13.4142L8.70711 16.7071C8.31658 17.0976 7.68342 17.0976 7.29289 16.7071C6.90237 16.3166 6.90237 15.6834 7.29289 15.2929L10.5858 12L7.29289 8.70711C6.90237 8.31658 6.90237 7.68342 7.29289 7.29289C7.68342 6.90237 8.31658 6.90237 8.70711 7.29289L12 10.5858L15.2929 7.29289Z" fill="#474747"/>
+                        </svg>
+                      </span>
+                    </div>
+                    <div class="modal-body">
+                      <div class="gap-font--body-1 margin-bottom-16">Enter a name below</div>
+                      <div><form id="registrationForm" method="post" class="flex column">
+                    <div class="group modal-input--margin-bottom50">
+                        <input type="text" aria-required="true" required="required" id="ticketCustomerName"
+                            name="ticketCustomerName" placeholder="Full Name">
+                    </div>
+                    <input type="submit" class="ticket__flatButton" id="registerButton" value="Register this ticket">
+                    <input type="hidden" id="ticketId" name="ticketId" value="900003">
+                    <input type="hidden" id="oToken" name="oToken" value="A1:FIXTURETOKEN0000000000000000000000000000">
+                    <input type="hidden" id="merchantId" name="merchantId" value="100">
+                </form></div>
+                    </div>
+                  </div>
+                </div>    <div id="registerModal3" class="modal hide --register-name-modal">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <div class="h5">Register Ticket</div>
+                      <span class="close" onclick="toggleHideClass('registerModal3');">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                          <path d="M15.2929 7.29289C15.6834 6.90237 16.3166 6.90237 16.7071 7.29289C17.0976 7.68342 17.0976 8.31658 16.7071 8.70711L13.4142 12L16.7071 15.2929C17.0976 15.6834 17.0976 16.3166 16.7071 16.7071C16.3166 17.0976 15.6834 17.0976 15.2929 16.7071L12 13.4142L8.70711 16.7071C8.31658 17.0976 7.68342 17.0976 7.29289 16.7071C6.90237 16.3166 6.90237 15.6834 7.29289 15.2929L10.5858 12L7.29289 8.70711C6.90237 8.31658 6.90237 7.68342 7.29289 7.29289C7.68342 6.90237 8.31658 6.90237 8.70711 7.29289L12 10.5858L15.2929 7.29289Z" fill="#474747"/>
+                        </svg>
+                      </span>
+                    </div>
+                    <div class="modal-body">
+                      <div class="gap-font--body-1 margin-bottom-16">Enter a name below</div>
+                      <div><form id="registrationForm" method="post" class="flex column">
+                    <div class="group modal-input--margin-bottom50">
+                        <input type="text" aria-required="true" required="required" id="ticketCustomerName"
+                            name="ticketCustomerName" placeholder="Full Name">
+                    </div>
+                    <input type="submit" class="ticket__flatButton" id="registerButton" value="Register this ticket">
+                    <input type="hidden" id="ticketId" name="ticketId" value="900004">
+                    <input type="hidden" id="oToken" name="oToken" value="A1:FIXTURETOKEN0000000000000000000000000000">
+                    <input type="hidden" id="merchantId" name="merchantId" value="100">
+                </form></div>
+                    </div>
+                  </div>
+                </div>    <div id="registerModal4" class="modal hide --register-name-modal">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <div class="h5">Register Ticket</div>
+                      <span class="close" onclick="toggleHideClass('registerModal4');">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                          <path d="M15.2929 7.29289C15.6834 6.90237 16.3166 6.90237 16.7071 7.29289C17.0976 7.68342 17.0976 8.31658 16.7071 8.70711L13.4142 12L16.7071 15.2929C17.0976 15.6834 17.0976 16.3166 16.7071 16.7071C16.3166 17.0976 15.6834 17.0976 15.2929 16.7071L12 13.4142L8.70711 16.7071C8.31658 17.0976 7.68342 17.0976 7.29289 16.7071C6.90237 16.3166 6.90237 15.6834 7.29289 15.2929L10.5858 12L7.29289 8.70711C6.90237 8.31658 6.90237 7.68342 7.29289 7.29289C7.68342 6.90237 8.31658 6.90237 8.70711 7.29289L12 10.5858L15.2929 7.29289Z" fill="#474747"/>
+                        </svg>
+                      </span>
+                    </div>
+                    <div class="modal-body">
+                      <div class="gap-font--body-1 margin-bottom-16">Enter a name below</div>
+                      <div><form id="registrationForm" method="post" class="flex column">
+                    <div class="group modal-input--margin-bottom50">
+                        <input type="text" aria-required="true" required="required" id="ticketCustomerName"
+                            name="ticketCustomerName" placeholder="Full Name">
+                    </div>
+                    <input type="submit" class="ticket__flatButton" id="registerButton" value="Register this ticket">
+                    <input type="hidden" id="ticketId" name="ticketId" value="900005">
+                    <input type="hidden" id="oToken" name="oToken" value="A1:FIXTURETOKEN0000000000000000000000000000">
+                    <input type="hidden" id="merchantId" name="merchantId" value="100">
+                </form></div>
+                    </div>
+                  </div>
+                </div>    <div id="registerModal5" class="modal hide --register-name-modal">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <div class="h5">Register Ticket</div>
+                      <span class="close" onclick="toggleHideClass('registerModal5');">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                          <path d="M15.2929 7.29289C15.6834 6.90237 16.3166 6.90237 16.7071 7.29289C17.0976 7.68342 17.0976 8.31658 16.7071 8.70711L13.4142 12L16.7071 15.2929C17.0976 15.6834 17.0976 16.3166 16.7071 16.7071C16.3166 17.0976 15.6834 17.0976 15.2929 16.7071L12 13.4142L8.70711 16.7071C8.31658 17.0976 7.68342 17.0976 7.29289 16.7071C6.90237 16.3166 6.90237 15.6834 7.29289 15.2929L10.5858 12L7.29289 8.70711C6.90237 8.31658 6.90237 7.68342 7.29289 7.29289C7.68342 6.90237 8.31658 6.90237 8.70711 7.29289L12 10.5858L15.2929 7.29289Z" fill="#474747"/>
+                        </svg>
+                      </span>
+                    </div>
+                    <div class="modal-body">
+                      <div class="gap-font--body-1 margin-bottom-16">Enter a name below</div>
+                      <div><form id="registrationForm" method="post" class="flex column">
+                    <div class="group modal-input--margin-bottom50">
+                        <input type="text" aria-required="true" required="required" id="ticketCustomerName"
+                            name="ticketCustomerName" placeholder="Full Name">
+                    </div>
+                    <input type="submit" class="ticket__flatButton" id="registerButton" value="Register this ticket">
+                    <input type="hidden" id="ticketId" name="ticketId" value="900006">
+                    <input type="hidden" id="oToken" name="oToken" value="A1:FIXTURETOKEN0000000000000000000000000000">
+                    <input type="hidden" id="merchantId" name="merchantId" value="100">
+                </form></div>
+                    </div>
+                  </div>
+                </div>    <div id="registerModal6" class="modal hide --register-name-modal">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <div class="h5">Register Ticket</div>
+                      <span class="close" onclick="toggleHideClass('registerModal6');">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                          <path d="M15.2929 7.29289C15.6834 6.90237 16.3166 6.90237 16.7071 7.29289C17.0976 7.68342 17.0976 8.31658 16.7071 8.70711L13.4142 12L16.7071 15.2929C17.0976 15.6834 17.0976 16.3166 16.7071 16.7071C16.3166 17.0976 15.6834 17.0976 15.2929 16.7071L12 13.4142L8.70711 16.7071C8.31658 17.0976 7.68342 17.0976 7.29289 16.7071C6.90237 16.3166 6.90237 15.6834 7.29289 15.2929L10.5858 12L7.29289 8.70711C6.90237 8.31658 6.90237 7.68342 7.29289 7.29289C7.68342 6.90237 8.31658 6.90237 8.70711 7.29289L12 10.5858L15.2929 7.29289Z" fill="#474747"/>
+                        </svg>
+                      </span>
+                    </div>
+                    <div class="modal-body">
+                      <div class="gap-font--body-1 margin-bottom-16">Enter a name below</div>
+                      <div><form id="registrationForm" method="post" class="flex column">
+                    <div class="group modal-input--margin-bottom50">
+                        <input type="text" aria-required="true" required="required" id="ticketCustomerName"
+                            name="ticketCustomerName" placeholder="Full Name">
+                    </div>
+                    <input type="submit" class="ticket__flatButton" id="registerButton" value="Register this ticket">
+                    <input type="hidden" id="ticketId" name="ticketId" value="900007">
+                    <input type="hidden" id="oToken" name="oToken" value="A1:FIXTURETOKEN0000000000000000000000000000">
+                    <input type="hidden" id="merchantId" name="merchantId" value="100">
+                </form></div>
+                    </div>
+                  </div>
+                </div>    <div id="registerModal7" class="modal hide --register-name-modal">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <div class="h5">Register Ticket</div>
+                      <span class="close" onclick="toggleHideClass('registerModal7');">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                          <path d="M15.2929 7.29289C15.6834 6.90237 16.3166 6.90237 16.7071 7.29289C17.0976 7.68342 17.0976 8.31658 16.7071 8.70711L13.4142 12L16.7071 15.2929C17.0976 15.6834 17.0976 16.3166 16.7071 16.7071C16.3166 17.0976 15.6834 17.0976 15.2929 16.7071L12 13.4142L8.70711 16.7071C8.31658 17.0976 7.68342 17.0976 7.29289 16.7071C6.90237 16.3166 6.90237 15.6834 7.29289 15.2929L10.5858 12L7.29289 8.70711C6.90237 8.31658 6.90237 7.68342 7.29289 7.29289C7.68342 6.90237 8.31658 6.90237 8.70711 7.29289L12 10.5858L15.2929 7.29289Z" fill="#474747"/>
+                        </svg>
+                      </span>
+                    </div>
+                    <div class="modal-body">
+                      <div class="gap-font--body-1 margin-bottom-16">Enter a name below</div>
+                      <div><form id="registrationForm" method="post" class="flex column">
+                    <div class="group modal-input--margin-bottom50">
+                        <input type="text" aria-required="true" required="required" id="ticketCustomerName"
+                            name="ticketCustomerName" placeholder="Full Name">
+                    </div>
+                    <input type="submit" class="ticket__flatButton" id="registerButton" value="Register this ticket">
+                    <input type="hidden" id="ticketId" name="ticketId" value="900008">
+                    <input type="hidden" id="oToken" name="oToken" value="A1:FIXTURETOKEN0000000000000000000000000000">
+                    <input type="hidden" id="merchantId" name="merchantId" value="100">
+                </form></div>
+                    </div>
+                  </div>
+                </div>    <div id="registerModal8" class="modal hide --register-name-modal">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <div class="h5">Register Ticket</div>
+                      <span class="close" onclick="toggleHideClass('registerModal8');">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                          <path d="M15.2929 7.29289C15.6834 6.90237 16.3166 6.90237 16.7071 7.29289C17.0976 7.68342 17.0976 8.31658 16.7071 8.70711L13.4142 12L16.7071 15.2929C17.0976 15.6834 17.0976 16.3166 16.7071 16.7071C16.3166 17.0976 15.6834 17.0976 15.2929 16.7071L12 13.4142L8.70711 16.7071C8.31658 17.0976 7.68342 17.0976 7.29289 16.7071C6.90237 16.3166 6.90237 15.6834 7.29289 15.2929L10.5858 12L7.29289 8.70711C6.90237 8.31658 6.90237 7.68342 7.29289 7.29289C7.68342 6.90237 8.31658 6.90237 8.70711 7.29289L12 10.5858L15.2929 7.29289Z" fill="#474747"/>
+                        </svg>
+                      </span>
+                    </div>
+                    <div class="modal-body">
+                      <div class="gap-font--body-1 margin-bottom-16">Enter a name below</div>
+                      <div><form id="registrationForm" method="post" class="flex column">
+                    <div class="group modal-input--margin-bottom50">
+                        <input type="text" aria-required="true" required="required" id="ticketCustomerName"
+                            name="ticketCustomerName" placeholder="Full Name">
+                    </div>
+                    <input type="submit" class="ticket__flatButton" id="registerButton" value="Register this ticket">
+                    <input type="hidden" id="ticketId" name="ticketId" value="900009">
+                    <input type="hidden" id="oToken" name="oToken" value="A1:FIXTURETOKEN0000000000000000000000000000">
+                    <input type="hidden" id="merchantId" name="merchantId" value="100">
+                </form></div>
+                    </div>
+                  </div>
+                </div>    <div id="registerModal9" class="modal hide --register-name-modal">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <div class="h5">Register Ticket</div>
+                      <span class="close" onclick="toggleHideClass('registerModal9');">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                          <path d="M15.2929 7.29289C15.6834 6.90237 16.3166 6.90237 16.7071 7.29289C17.0976 7.68342 17.0976 8.31658 16.7071 8.70711L13.4142 12L16.7071 15.2929C17.0976 15.6834 17.0976 16.3166 16.7071 16.7071C16.3166 17.0976 15.6834 17.0976 15.2929 16.7071L12 13.4142L8.70711 16.7071C8.31658 17.0976 7.68342 17.0976 7.29289 16.7071C6.90237 16.3166 6.90237 15.6834 7.29289 15.2929L10.5858 12L7.29289 8.70711C6.90237 8.31658 6.90237 7.68342 7.29289 7.29289C7.68342 6.90237 8.31658 6.90237 8.70711 7.29289L12 10.5858L15.2929 7.29289Z" fill="#474747"/>
+                        </svg>
+                      </span>
+                    </div>
+                    <div class="modal-body">
+                      <div class="gap-font--body-1 margin-bottom-16">Enter a name below</div>
+                      <div><form id="registrationForm" method="post" class="flex column">
+                    <div class="group modal-input--margin-bottom50">
+                        <input type="text" aria-required="true" required="required" id="ticketCustomerName"
+                            name="ticketCustomerName" placeholder="Full Name">
+                    </div>
+                    <input type="submit" class="ticket__flatButton" id="registerButton" value="Register this ticket">
+                    <input type="hidden" id="ticketId" name="ticketId" value="900010">
+                    <input type="hidden" id="oToken" name="oToken" value="A1:FIXTURETOKEN0000000000000000000000000000">
+                    <input type="hidden" id="merchantId" name="merchantId" value="100">
+                </form></div>
+                    </div>
+                  </div>
+                </div>    <div id="registerModal10" class="modal hide --register-name-modal">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <div class="h5">Register Ticket</div>
+                      <span class="close" onclick="toggleHideClass('registerModal10');">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                          <path d="M15.2929 7.29289C15.6834 6.90237 16.3166 6.90237 16.7071 7.29289C17.0976 7.68342 17.0976 8.31658 16.7071 8.70711L13.4142 12L16.7071 15.2929C17.0976 15.6834 17.0976 16.3166 16.7071 16.7071C16.3166 17.0976 15.6834 17.0976 15.2929 16.7071L12 13.4142L8.70711 16.7071C8.31658 17.0976 7.68342 17.0976 7.29289 16.7071C6.90237 16.3166 6.90237 15.6834 7.29289 15.2929L10.5858 12L7.29289 8.70711C6.90237 8.31658 6.90237 7.68342 7.29289 7.29289C7.68342 6.90237 8.31658 6.90237 8.70711 7.29289L12 10.5858L15.2929 7.29289Z" fill="#474747"/>
+                        </svg>
+                      </span>
+                    </div>
+                    <div class="modal-body">
+                      <div class="gap-font--body-1 margin-bottom-16">Enter a name below</div>
+                      <div><form id="registrationForm" method="post" class="flex column">
+                    <div class="group modal-input--margin-bottom50">
+                        <input type="text" aria-required="true" required="required" id="ticketCustomerName"
+                            name="ticketCustomerName" placeholder="Full Name">
+                    </div>
+                    <input type="submit" class="ticket__flatButton" id="registerButton" value="Register this ticket">
+                    <input type="hidden" id="ticketId" name="ticketId" value="900011">
+                    <input type="hidden" id="oToken" name="oToken" value="A1:FIXTURETOKEN0000000000000000000000000000">
+                    <input type="hidden" id="merchantId" name="merchantId" value="100">
+                </form></div>
+                    </div>
+                  </div>
+                </div>    <div id="registerModal11" class="modal hide --register-name-modal">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <div class="h5">Register Ticket</div>
+                      <span class="close" onclick="toggleHideClass('registerModal11');">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                          <path d="M15.2929 7.29289C15.6834 6.90237 16.3166 6.90237 16.7071 7.29289C17.0976 7.68342 17.0976 8.31658 16.7071 8.70711L13.4142 12L16.7071 15.2929C17.0976 15.6834 17.0976 16.3166 16.7071 16.7071C16.3166 17.0976 15.6834 17.0976 15.2929 16.7071L12 13.4142L8.70711 16.7071C8.31658 17.0976 7.68342 17.0976 7.29289 16.7071C6.90237 16.3166 6.90237 15.6834 7.29289 15.2929L10.5858 12L7.29289 8.70711C6.90237 8.31658 6.90237 7.68342 7.29289 7.29289C7.68342 6.90237 8.31658 6.90237 8.70711 7.29289L12 10.5858L15.2929 7.29289Z" fill="#474747"/>
+                        </svg>
+                      </span>
+                    </div>
+                    <div class="modal-body">
+                      <div class="gap-font--body-1 margin-bottom-16">Enter a name below</div>
+                      <div><form id="registrationForm" method="post" class="flex column">
+                    <div class="group modal-input--margin-bottom50">
+                        <input type="text" aria-required="true" required="required" id="ticketCustomerName"
+                            name="ticketCustomerName" placeholder="Full Name">
+                    </div>
+                    <input type="submit" class="ticket__flatButton" id="registerButton" value="Register this ticket">
+                    <input type="hidden" id="ticketId" name="ticketId" value="900012">
+                    <input type="hidden" id="oToken" name="oToken" value="A1:FIXTURETOKEN0000000000000000000000000000">
+                    <input type="hidden" id="merchantId" name="merchantId" value="100">
+                </form></div>
+                    </div>
+                  </div>
+                </div>    </body>
+</html>
