@@ -79,10 +79,17 @@ describe('accesso_get_order', () => {
     await h.close();
   });
 
+  // Guards the hint surfacing mcp-utils 0.15 does centrally (createMcpServer,
+  // mirrored by createTestHarness). The message is only "No accesso ticket link
+  // available." — everything actionable is in `hint`, so if hints stopped
+  // reaching the caller this is what fails. Asserting the `Hint:` prefix as
+  // well as the text makes that the point of the test rather than a
+  // coincidence of where the string happens to live.
   it('surfaces the hint when no link is configured', async () => {
     const h = await harness();
     const res = await h.callTool('accesso_get_order', {});
     expect(res.isError).toBe(true);
+    expect(text(res)).toMatch(/\n\nHint: /);
     expect(text(res)).toMatch(/ACCESSO_TICKET_URL/);
     await h.close();
   });

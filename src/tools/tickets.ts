@@ -5,7 +5,6 @@ import type { AccessoClient } from '../client.js';
 import { redactUrl } from '../client.js';
 import type { FileIO } from '../io.js';
 import { presentOrder, presentTicket, selectTickets } from '../present.js';
-import { withHints } from './_errors.js';
 
 export interface ToolDeps {
   client: AccessoClient;
@@ -54,7 +53,7 @@ export function registerTicketTools(server: McpServer, deps: ToolDeps): void {
           .describe('Include each ticket\'s terms and conditions (long, and identical per venue).'),
       },
     },
-    withHints(async ({ url, compact, include_terms }) => {
+    (async ({ url, compact, include_terms }) => {
       const target = client.resolveTicketUrl(url);
       const order = await client.getOrder(target, { includeTerms: include_terms === true });
       return textResult(presentOrder(order, compact === true));
@@ -73,7 +72,7 @@ export function registerTicketTools(server: McpServer, deps: ToolDeps): void {
         include_terms: z.boolean().optional().describe('Include the terms and conditions.'),
       },
     },
-    withHints(async ({ index, url, include_terms }) => {
+    (async ({ index, url, include_terms }) => {
       const target = client.resolveTicketUrl(url);
       const order = await client.getOrder(target, { includeTerms: include_terms === true });
       const ticket = order.tickets.find((t) => t.index === index);
@@ -101,7 +100,7 @@ export function registerTicketTools(server: McpServer, deps: ToolDeps): void {
           .describe('Return the images in the response instead of writing files.'),
       },
     },
-    withHints(async ({ url, indexes, inline }) => {
+    (async ({ url, indexes, inline }) => {
       const target = client.resolveTicketUrl(url);
       const order = await client.getOrder(target);
       const { selected, missing } = selectTickets(order.tickets, indexes);
@@ -168,7 +167,7 @@ export function registerTicketTools(server: McpServer, deps: ToolDeps): void {
       annotations: { readOnlyHint: true, openWorldHint: true },
       inputSchema: { url: urlArg, indexes: indexesArg },
     },
-    withHints(async ({ url, indexes }) => {
+    (async ({ url, indexes }) => {
       const target = client.resolveTicketUrl(url);
       const order = await client.getOrder(target);
       const { selected, missing } = selectTickets(order.tickets, indexes);
@@ -213,7 +212,7 @@ export function registerTicketTools(server: McpServer, deps: ToolDeps): void {
         url: z.string().url().describe('The tracking link from the email.'),
       },
     },
-    withHints(async ({ url }) => {
+    (async ({ url }) => {
       const { url: resolved, hops } = await client.resolveLink(url);
       return textResult({
         url: resolved,
@@ -231,7 +230,7 @@ export function registerTicketTools(server: McpServer, deps: ToolDeps): void {
       annotations: { readOnlyHint: true, openWorldHint: true },
       inputSchema: { url: urlArg },
     },
-    withHints(async ({ url }) => {
+    (async ({ url }) => {
       if (!client.hasDefaultUrl && url === undefined) {
         return textResult({
           ok: false,

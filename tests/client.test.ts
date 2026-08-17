@@ -49,7 +49,7 @@ describe('resolveTicketUrl', () => {
   it('reports a missing link as configuration, not a crash', () => {
     const c = new AccessoClient();
     expect(c.hasDefaultUrl).toBe(false);
-    // The actionable half lives in `hint`, which is what withHints surfaces.
+    // The actionable half lives in `hint`, which createMcpServer surfaces.
     try {
       c.resolveTicketUrl();
       expect.unreachable('should have thrown');
