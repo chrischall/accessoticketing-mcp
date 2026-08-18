@@ -14,8 +14,9 @@ process.stdout.on('error', (e) => {
   throw e;
 });
 
-import { writeFileSync, readFileSync, mkdirSync } from 'node:fs';
+import { writeFileSync, readFileSync, mkdirSync, realpathSync } from 'node:fs';
 import { join } from 'node:path';
+import { pathToFileURL } from 'node:url';
 
 const ENTITIES = {
   amp: '&', lt: '<', gt: '>', quot: '"', apos: "'", nbsp: ' ',
@@ -248,7 +249,22 @@ async function readSource(src) {
   return { html: readFileSync(src, 'utf8'), url: null };
 }
 
-const isMain = process.argv[1] && import.meta.url === `file://${process.argv[1]}`;
+// `import.meta.url` is the *resolved* path — Node follows symlinks — while
+// `process.argv[1]` is the path as typed. Installing this skill by
+// symlinking it into ~/.claude/skills (which is how it is developed) made
+// those two disagree, the CLI block never ran, and the tool exited 0 with
+// no output and nothing on stderr. Compare realpaths, and build the URL
+// with pathToFileURL so a path containing spaces or non-ASCII doesn't miss
+// for the same silent reason.
+const isMain = (() => {
+  const entry = process.argv[1];
+  if (!entry) return false;
+  try {
+    return import.meta.url === pathToFileURL(realpathSync(entry)).href;
+  } catch {
+    return false;
+  }
+})();
 if (isMain) {
   const argv = process.argv.slice(2);
   const flag = (name) => {
