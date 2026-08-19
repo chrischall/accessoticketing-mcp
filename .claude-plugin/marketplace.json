@@ -6,14 +6,14 @@
   },
   "metadata": {
     "description": "accesso ticketing tools for Claude — read emailed mobile ticket links.",
-    "version": "0.1.0"
+    "version": "0.1.1"
   },
   "plugins": [
     {
       "name": "accessoticketing",
       "source": "./",
       "description": "Reads accesso Passport mobile-ticket links (the URL a venue emails after a purchase) and returns the order, its admissions, the barcode images and Google Wallet save links. The emailed link is the only credential; no account sign-in is involved.",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "author": {
         "name": "Claude Code (AI)",
         "url": "https://www.anthropic.com/claude"

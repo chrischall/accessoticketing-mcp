@@ -1,6 +1,6 @@
 {
   "name": "accessoticketing",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Read accesso-powered mobile ticket links: orders, admissions, barcodes and Google Wallet passes.",
   "author": {
     "name": "Claude Code (AI)",

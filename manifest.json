@@ -2,7 +2,7 @@
   "manifest_version": "0.2",
   "name": "accessoticketing-mcp",
   "display_name": "accesso Ticketing",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Read accesso-powered mobile ticket links: orders, admissions, barcodes and Google Wallet passes.",
   "long_description": "Reads the mobile-ticket links accesso Passport venues email after a purchase (theme parks, camps, festivals). Returns the order and every admission on it — product, participant, date, start time and merchant instructions — plus the scannable barcodes and Google Wallet save links. No login: the emailed link is the credential.",
   "author": {
