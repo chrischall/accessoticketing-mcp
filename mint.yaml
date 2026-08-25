@@ -1,0 +1,26 @@
+version: 1
+name: accesso Ticketing
+slug: accessoticketing
+summary: >-
+  Read accesso-powered mobile ticket links: orders, admissions, barcodes and
+  Google Wallet passes.
+env:
+  - name: ACCESSO_TICKET_URL
+    secret: true
+    required: false
+    help: >-
+      Optional default accesso ticket link from an order-confirmation email.
+  - name: ACCESSO_OUTPUT_DIR
+    required: false
+    help: >-
+      Optional directory for saved barcode images.
+egress:
+  allow:
+    # The accesso media-engine host the ticket link points at. Enforced in code
+    # too: client.ts validates the URL's hostname against this apex before
+    # fetching, so nothing else is ever requested.
+    #
+    # pay.google.com is deliberately NOT here: the Google Wallet URL is BUILT
+    # and returned to the user (`return https://pay.google.com/gp/v/save/...`),
+    # never fetched by this server.
+    - accessoticketing.com
