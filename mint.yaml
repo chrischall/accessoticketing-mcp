@@ -16,6 +16,11 @@ env:
       Optional directory for saved barcode images.
 egress:
   allow:
-    # Only hosts the SERVER process actually fetches.
+    # The accesso media-engine host the ticket link points at. Enforced in code
+    # too: client.ts validates the URL's hostname against this apex before
+    # fetching, so nothing else is ever requested.
+    #
+    # pay.google.com is deliberately NOT here: the Google Wallet URL is BUILT
+    # and returned to the user (`return https://pay.google.com/gp/v/save/...`),
+    # never fetched by this server.
     - accessoticketing.com
-    - pay.google.com
