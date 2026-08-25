@@ -1,0 +1,21 @@
+version: 1
+name: accesso Ticketing
+slug: accessoticketing
+summary: >-
+  Read accesso-powered mobile ticket links: orders, admissions, barcodes and
+  Google Wallet passes.
+env:
+  - name: ACCESSO_TICKET_URL
+    secret: true
+    required: false
+    help: >-
+      Optional default accesso ticket link from an order-confirmation email.
+  - name: ACCESSO_OUTPUT_DIR
+    required: false
+    help: >-
+      Optional directory for saved barcode images.
+egress:
+  allow:
+    # Only hosts the SERVER process actually fetches.
+    - accessoticketing.com
+    - pay.google.com
