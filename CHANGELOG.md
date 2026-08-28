@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.2](https://github.com/chrischall/accessoticketing-mcp/compare/v0.1.1...v0.1.2) (2026-08-28)
+
+
+### Bug Fixes
+
+* **egress:** declare every host the server dials in mint.yaml ([#13](https://github.com/chrischall/accessoticketing-mcp/issues/13)) ([f0b7435](https://github.com/chrischall/accessoticketing-mcp/commit/f0b74357c813c66f3e5ae36dc62fca245309c84e))
+
 ## [0.1.1](https://github.com/chrischall/accessoticketing-mcp/compare/v0.1.0...v0.1.1) (2026-08-18)
 
 
