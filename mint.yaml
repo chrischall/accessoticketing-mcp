@@ -16,11 +16,24 @@ env:
       Optional directory for saved barcode images.
 egress:
   allow:
-    # The accesso media-engine host the ticket link points at. Enforced in code
-    # too: client.ts validates the URL's hostname against this apex before
-    # fetching, so nothing else is ever requested.
+    # Only hosts the SERVER process actually fetches. Hosts that appear
+    # solely in a URL this server BUILDS and returns are excluded.
+    #
+    # Ticket pages live on REGIONAL media-engine hosts under the accesso apex
+    # (e.g. media-engine.na3.accessoticketing.com); the region label varies per
+    # merchant, which is why the wildcard is needed. Matching is exact, so the
+    # apex does not cover its subdomains and the wildcard does not cover the
+    # apex — client.ts admits both, so both are listed. Enforced in code too:
+    # client.ts validates every fetched URL's hostname against this apex.
+    - accessoticketing.com
+    - '*.accessoticketing.com'
     #
     # pay.google.com is deliberately NOT here: the Google Wallet URL is BUILT
     # and returned to the user (`return https://pay.google.com/gp/v/save/...`),
     # never fetched by this server.
-    - accessoticketing.com
+    #
+    # NOTE — accesso_resolve_link follows an EMAIL CLICK-TRACKER (a per-sender
+    # host such as a marketing ESP's link domain) hop by hop until it reaches
+    # accesso. Those hosts are determined at RUNTIME and cannot appear as
+    # literals here, so under the fence that tool fails and the user must paste
+    # the resolved accessoticketing.com link instead.
