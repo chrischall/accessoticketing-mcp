@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.0](https://github.com/chrischall/accessoticketing-mcp/compare/v0.1.2...v0.2.0) (2026-09-04)
+
+
+### Features
+
+* **tools:** compact by default, on the projection this repo already had ([#26](https://github.com/chrischall/accessoticketing-mcp/issues/26)) ([593b10d](https://github.com/chrischall/accessoticketing-mcp/commit/593b10df205a141d9ac11ebce53cfe5fc371f156))
+
 ## [0.1.2](https://github.com/chrischall/accessoticketing-mcp/compare/v0.1.1...v0.1.2) (2026-08-28)
 
 
