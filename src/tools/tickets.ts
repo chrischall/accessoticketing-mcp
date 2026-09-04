@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { isCompact, viewArg, viewResponse } from '../view.js';
+import { isCompact, viewArg } from '../view.js';
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { McpToolError, imageResult, minifiedResult } from '@chrischall/mcp-utils';
 import type { AccessoClient } from '../client.js';
