@@ -1,6 +1,7 @@
 import { z } from 'zod';
+import { isCompact, viewArg } from '../view.js';
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
-import { textResult, imageResult, McpToolError } from '@chrischall/mcp-utils';
+import { McpToolError, imageResult, minifiedResult } from '@chrischall/mcp-utils';
 import type { AccessoClient } from '../client.js';
 import { redactUrl } from '../client.js';
 import type { FileIO } from '../io.js';
@@ -43,20 +44,17 @@ export function registerTicketTools(server: McpServer, deps: ToolDeps): void {
       annotations: { readOnlyHint: true, openWorldHint: true },
       inputSchema: {
         url: urlArg,
-        compact: z
-          .boolean()
-          .optional()
-          .describe('Return only index, product, participant, date and time (default false).'),
+        view: viewArg(),
         include_terms: z
           .boolean()
           .optional()
           .describe('Include each ticket\'s terms and conditions (long, and identical per venue).'),
       },
     },
-    (async ({ url, compact, include_terms }) => {
+    (async ({ url, view, include_terms }) => {
       const target = client.resolveTicketUrl(url);
       const order = await client.getOrder(target, { includeTerms: include_terms === true });
-      return textResult(presentOrder(order, compact === true));
+      return minifiedResult(presentOrder(order, isCompact(view)));
     }),
   );
 
@@ -81,7 +79,7 @@ export function registerTicketTools(server: McpServer, deps: ToolDeps): void {
           hint: `This order has indexes 0–${order.tickets.length - 1}.`,
         });
       }
-      return textResult(presentTicket(ticket));
+      return minifiedResult(presentTicket(ticket));
     }),
   );
 
@@ -141,7 +139,7 @@ export function registerTicketTools(server: McpServer, deps: ToolDeps): void {
           })),
         };
         return {
-          content: [...images.flatMap((r) => r.content), ...textResult(note).content],
+          content: [...images.flatMap((r) => r.content), ...minifiedResult(note).content],
         };
       }
 
@@ -155,7 +153,7 @@ export function registerTicketTools(server: McpServer, deps: ToolDeps): void {
           path: await io.write(name, t.barcodePng!),
         });
       }
-      return textResult({ outputDir: io.outputDir, saved: written });
+      return minifiedResult({ outputDir: io.outputDir, saved: written });
     }),
   );
 
@@ -194,7 +192,7 @@ export function registerTicketTools(server: McpServer, deps: ToolDeps): void {
           saveUrl: await client.getWalletSaveUrl(t.googleWalletUrl!),
         });
       }
-      return textResult({
+      return minifiedResult({
         order: order.orderNumber,
         note: 'These links contain the order token — treat them as private.',
         passes,
@@ -214,7 +212,7 @@ export function registerTicketTools(server: McpServer, deps: ToolDeps): void {
     },
     (async ({ url }) => {
       const { url: resolved, hops } = await client.resolveLink(url);
-      return textResult({
+      return minifiedResult({
         url: resolved,
         hops,
         note: 'This URL is a credential — it grants the order\'s tickets to anyone holding it.',
@@ -232,7 +230,7 @@ export function registerTicketTools(server: McpServer, deps: ToolDeps): void {
     },
     (async ({ url }) => {
       if (!client.hasDefaultUrl && url === undefined) {
-        return textResult({
+        return minifiedResult({
           ok: false,
           defaultTicketUrl: false,
           filesPersist: io.persistsFiles,
@@ -241,7 +239,7 @@ export function registerTicketTools(server: McpServer, deps: ToolDeps): void {
       }
       const target = client.resolveTicketUrl(url);
       const order = await client.getOrder(target);
-      return textResult({
+      return minifiedResult({
         ok: true,
         defaultTicketUrl: client.hasDefaultUrl,
         filesPersist: io.persistsFiles,

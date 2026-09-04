@@ -55,7 +55,7 @@ server starts fine without it and reports the missing link on first use.
 
 | Tool | Does |
 |---|---|
-| `accesso_get_order` | The order and every admission: product, participant, date, start time, instructions. `compact` for a slim list. |
+| `accesso_get_order` | The order and every admission: product, participant, date, start time, instructions. Returns the slim per-ticket list by default; `view: "full"` for every parsed field. |
 | `accesso_get_ticket` | One admission in full, by `index`. |
 | `accesso_save_barcodes` | Writes barcode PNGs and returns paths, or returns the images inline. |
 | `accesso_get_wallet_passes` | Google Wallet save links for the tickets. |

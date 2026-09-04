@@ -61,12 +61,31 @@ describe('accesso_get_order', () => {
     await h.close();
   });
 
-  it('honours compact', async () => {
+  // The slim rung is what an unqualified call now gets. This is the assertion
+  // that would fail if the default ever silently flipped back to the full
+  // record — the failure mode the rollout exists to prevent, since a caller who
+  // has to ask for the efficiency is the one least able to know it exists.
+  it('projects compact when no view is given', async () => {
     const h = await harness();
     const out = parseToolResult<{ tickets: Record<string, unknown>[] }>(
-      await h.callTool('accesso_get_order', { url: TICKET_URL, compact: true }),
+      await h.callTool('accesso_get_order', { url: TICKET_URL }),
     );
     expect(out.tickets[0]).not.toHaveProperty('instructions');
+    expect(out.tickets[0]).toHaveProperty('participant');
+    await h.close();
+  });
+
+  // The other rung, asserted through the `view` parameter itself. The old test
+  // passed a `compact: true` field that no longer exists in the schema: it was
+  // dropped silently and the response was the default rung either way, so the
+  // test passed while exercising nothing. `view: 'full'` is the only spelling
+  // that can actually move the projection now.
+  it('returns the whole record on view: full', async () => {
+    const h = await harness();
+    const out = parseToolResult<{ tickets: Record<string, unknown>[] }>(
+      await h.callTool('accesso_get_order', { url: TICKET_URL, view: 'full' }),
+    );
+    expect(out.tickets[0]).toHaveProperty('instructions');
     await h.close();
   });
 

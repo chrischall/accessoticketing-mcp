@@ -4,7 +4,7 @@ import type { AccessoOrder, AccessoTicket } from './types.js';
  * A ticket as it should appear in a tool result.
  *
  * `barcodePng` is dropped unconditionally: it is raw image bytes, and letting
- * it reach `textResult` would serialise a Buffer as a JSON object of hundreds
+ * it reach `minifiedResult` would serialise a Buffer as a JSON object of hundreds
  * of numeric keys per ticket. The barcode is offered through
  * `accesso_save_barcodes` instead.
  */
@@ -22,6 +22,12 @@ export function compactTicket(ticket: AccessoTicket): Record<string, unknown> {
     date: ticket.date,
     time: ticket.time,
     ...(ticket.additionalGuests.length > 0 ? { additionalGuests: ticket.additionalGuests } : {}),
+    // Terms survive the projection WHEN PRESENT, which is only when the caller
+    // passed `include_terms: true`. A projection must never drop a field the
+    // caller explicitly asked for — it was opt-in reading material before the
+    // compact rung became the default, and silently swallowing it would make
+    // `include_terms` a no-op on the rung nearly every call now uses.
+    ...(ticket.termsAndConditions !== undefined ? { termsAndConditions: ticket.termsAndConditions } : {}),
   };
 }
 
