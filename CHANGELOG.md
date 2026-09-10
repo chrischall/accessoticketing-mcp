@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.2.1](https://github.com/chrischall/accessoticketing-mcp/compare/v0.2.0...v0.2.1) (2026-09-10)
+
+
+### Bug Fixes
+
+* **deps:** @chrischall/mcp-utils 0.26.1 ([#37](https://github.com/chrischall/accessoticketing-mcp/issues/37)) ([7eb546c](https://github.com/chrischall/accessoticketing-mcp/commit/7eb546c748f1a8690be7059062d94a2c9ecae8ed))
+* **deps:** declare the peer floors mcp-utils 0.26.1 requires ([#39](https://github.com/chrischall/accessoticketing-mcp/issues/39)) ([6323c6c](https://github.com/chrischall/accessoticketing-mcp/commit/6323c6c409509a4f313a1eadbfe737453ed4491d))
+
 ## [0.2.0](https://github.com/chrischall/accessoticketing-mcp/compare/v0.1.2...v0.2.0) (2026-09-04)
 
 
