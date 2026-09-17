@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 import { createTestHarness, parseToolResult } from '@chrischall/mcp-utils/test';
-import type { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
+import type { CallToolResult } from '@modelcontextprotocol/server';
 import { AccessoClient } from '../src/client.js';
 import { NoFileIO, DiskFileIO } from '../src/io.js';
 import { registerTicketTools } from '../src/tools/tickets.js';
