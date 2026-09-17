@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.3.0](https://github.com/chrischall/accessoticketing-mcp/compare/v0.2.1...v0.3.0) (2026-09-17)
+
+
+### ⚠ BREAKING CHANGES
+
+* **mcp:** migrate server to SDK v2 ([#43](https://github.com/chrischall/accessoticketing-mcp/issues/43))
+
+### Features
+
+* **mcp:** migrate server to SDK v2 ([#43](https://github.com/chrischall/accessoticketing-mcp/issues/43)) ([345b5a0](https://github.com/chrischall/accessoticketing-mcp/commit/345b5a09e7c17fec8bdf4141b7b4b45fb59077c1))
+
+
+### Bug Fixes
+
+* **build:** preserve Zod initialization in standalone bundle ([#46](https://github.com/chrischall/accessoticketing-mcp/issues/46)) ([e3b1b75](https://github.com/chrischall/accessoticketing-mcp/commit/e3b1b7507b9eb51d13ee9a871ac7666b8f85ae36))
+* **mcp:** verify SDK v2 tool schema ([#47](https://github.com/chrischall/accessoticketing-mcp/issues/47)) ([b54d24a](https://github.com/chrischall/accessoticketing-mcp/commit/b54d24a1f43ed0c59314661765da0ebb702e6e21)), closes [#44](https://github.com/chrischall/accessoticketing-mcp/issues/44)
+
 ## [0.2.1](https://github.com/chrischall/accessoticketing-mcp/compare/v0.2.0...v0.2.1) (2026-09-10)
 
 
