@@ -37,7 +37,8 @@ const text = (r: CallToolResult) => r.content.map((c) => (c.type === 'text' ? c.
 describe('tool surface', () => {
   it('registers the documented tools', async () => {
     const h = await harness();
-    const names = (await h.listTools()).map((t) => t.name).sort();
+    const { tools } = await h.client.listTools();
+    const names = tools.map((t) => t.name).sort();
     expect(names).toEqual([
       'accesso_get_order',
       'accesso_get_ticket',
@@ -46,6 +47,15 @@ describe('tool surface', () => {
       'accesso_resolve_link',
       'accesso_save_barcodes',
     ]);
+
+    const getTicket = tools.find((tool) => tool.name === 'accesso_get_ticket');
+    expect(getTicket?.inputSchema).toMatchObject({
+      type: 'object',
+      properties: {
+        index: { type: 'integer', description: 'Ticket index, from accesso_get_order.' },
+      },
+      required: ['index'],
+    });
     await h.close();
   });
 });
