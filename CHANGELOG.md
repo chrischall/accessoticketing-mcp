@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.0.0](https://github.com/chrischall/accessoticketing-mcp/compare/v0.3.0...v1.0.0) (2026-09-20)
+
+
+### Features
+
+* **deps:** take mcp-utils 1.0.0, fixing server/discover ([#48](https://github.com/chrischall/accessoticketing-mcp/issues/48)) ([99d4fe9](https://github.com/chrischall/accessoticketing-mcp/commit/99d4fe98e4a72e2a5f61dceea392bed4c56f3cf6))
+
+
+### Bug Fixes
+
+* **release:** restate the Release-As footer the squash dropped ([#51](https://github.com/chrischall/accessoticketing-mcp/issues/51)) ([6c43bdf](https://github.com/chrischall/accessoticketing-mcp/commit/6c43bdf6d0f1a014eb41adacc5d152f9b3f246ec))
+* **release:** stop downgrading breaking changes to a minor ([#50](https://github.com/chrischall/accessoticketing-mcp/issues/50)) ([7aa688b](https://github.com/chrischall/accessoticketing-mcp/commit/7aa688beec03e6f07f2c1f44b42de473463fb62f))
+
 ## [0.3.0](https://github.com/chrischall/accessoticketing-mcp/compare/v0.2.1...v0.3.0) (2026-09-17)
 
 
