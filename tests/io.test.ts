@@ -26,6 +26,35 @@ describe('DiskFileIO', () => {
     expect(readFileSync(join(dir, 'a.png'))).toEqual(bytes);
   });
 
+  it('reports the path it actually wrote when the name was already taken', async () => {
+    // Regression (fleet-audit#24): the collision fallback wrote the new bytes
+    // to a timestamped file but returned the OLD path, so a re-saved (reissued)
+    // barcode was reported as the stale image.
+    const dir = mkdtempSync(join(tmpdir(), 'accesso-io-'));
+    const io = new DiskFileIO(dir);
+    const first = await io.write('a.png', bytes);
+    const fresh = Buffer.from([9]);
+    const second = await io.write('a.png', fresh);
+    expect(second).not.toBe(first);
+    expect(readFileSync(second)).toEqual(fresh);
+    expect(readFileSync(first)).toEqual(bytes);
+  });
+
+  it('never clobbers a fallback name either, even within the same millisecond', async () => {
+    const dir = mkdtempSync(join(tmpdir(), 'accesso-io-'));
+    const io = new DiskFileIO(dir);
+    vi.spyOn(Date, 'now').mockReturnValue(1234);
+    try {
+      const paths = [];
+      for (let i = 0; i < 4; i++) paths.push(await io.write('a.png', Buffer.from([i])));
+      expect(new Set(paths).size).toBe(4);
+      paths.forEach((p, i) => expect(readFileSync(p)).toEqual(Buffer.from([i])));
+      expect(readdirSync(dir)).toHaveLength(4);
+    } finally {
+      vi.restoreAllMocks();
+    }
+  });
+
   it('reads ACCESSO_OUTPUT_DIR when no directory is passed', () => {
     const dir = mkdtempSync(join(tmpdir(), 'accesso-io-'));
     vi.stubEnv('ACCESSO_OUTPUT_DIR', dir);

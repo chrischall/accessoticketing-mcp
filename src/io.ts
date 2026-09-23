@@ -21,6 +21,9 @@ export interface FileIO {
   write(name: string, bytes: Buffer): Promise<string>;
 }
 
+/** Upper bound on collision-fallback names tried before giving up. */
+const MAX_NAME_ATTEMPTS = 100;
+
 export class DiskFileIO implements FileIO {
   readonly persistsFiles = true;
   readonly outputDir: string;
@@ -32,13 +35,21 @@ export class DiskFileIO implements FileIO {
 
   async write(name: string, bytes: Buffer): Promise<string> {
     await mkdir(this.outputDir, { recursive: true });
-    const path = join(this.outputDir, name);
-    // Never clobber: barcodes are the thing the user shows at the gate.
-    await writeFile(path, bytes, { flag: 'wx' }).catch(async (err: NodeJS.ErrnoException) => {
-      if (err.code !== 'EEXIST') throw err;
-      await writeFile(join(this.outputDir, `${Date.now()}-${name}`), bytes);
-    });
-    return path;
+    // Never clobber: barcodes are the thing the user shows at the gate. On a
+    // collision, write under a fresh name and return THAT path — the caller
+    // reports it, and pointing at the old file would show a stale barcode.
+    const stamp = Date.now();
+    for (let attempt = 0; ; attempt++) {
+      const candidate =
+        attempt === 0 ? name : `${stamp}${attempt > 1 ? `-${attempt - 1}` : ''}-${name}`;
+      const path = join(this.outputDir, candidate);
+      try {
+        await writeFile(path, bytes, { flag: 'wx' });
+        return path;
+      } catch (err) {
+        if ((err as NodeJS.ErrnoException).code !== 'EEXIST' || attempt >= MAX_NAME_ATTEMPTS) throw err;
+      }
+    }
   }
 }
 
