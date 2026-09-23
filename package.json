@@ -1,6 +1,6 @@
 {
   "name": "@chrischall/accessoticketing-mcp",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "license": "MIT",
   "mcpName": "io.github.chrischall/accessoticketing-mcp",
   "description": "accesso ticketing MCP server for Claude — developed and maintained by AI (Claude Code)",

@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.2](https://github.com/chrischall/accessoticketing-mcp/compare/v1.0.1...v1.0.2) (2026-09-23)
+
+
+### Bug Fixes
+
+* correct saved/inlined barcode labelling and block SSRF in accesso_resolve_link ([#57](https://github.com/chrischall/accessoticketing-mcp/issues/57)) ([84004fa](https://github.com/chrischall/accessoticketing-mcp/commit/84004fada699e2c13aacb9d6fe680a5596530ad3))
+
 ## [1.0.1](https://github.com/chrischall/accessoticketing-mcp/compare/v1.0.0...v1.0.1) (2026-09-23)
 
 
