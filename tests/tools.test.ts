@@ -192,6 +192,31 @@ describe('accesso_save_barcodes', () => {
     await h.close();
   });
 
+  it('labels each inlined image with its own ticket when an earlier one was dropped for size', async () => {
+    // Regression (fleet-audit#25): a large barcode skipped by the cap, followed
+    // by smaller ones that fit, left the metadata as a prefix of the selection,
+    // so ticket 1's image went out labelled as ticket 0.
+    const m = /data:image\/png;base64,([^"]*)"/.exec(ORDER_HTML)!;
+    const big = Buffer.concat([Buffer.from(m[1]!, 'base64'), Buffer.alloc(4096)]).toString('base64');
+    const html = ORDER_HTML.replace(m[1]!, big);
+    const h = await harness({
+      io: new NoFileIO(),
+      maxInlineBytes: 1024,
+      fetch: fakeFetch({ [HOST]: { body: html } }),
+    });
+    const res = await h.callTool('accesso_save_barcodes', { url: TICKET_URL, indexes: [0, 1] });
+    const images = res.content.filter((c) => c.type === 'image');
+    const note = JSON.parse(
+      res.content.filter((c) => c.type === 'text').map((c) => c.text).join(''),
+    ) as { returned: number; omittedForSize: number; omittedIndexes: number[]; tickets: { index: number }[] };
+    expect(images).toHaveLength(1);
+    expect(note.returned).toBe(1);
+    expect(note.omittedForSize).toBe(1);
+    expect(note.omittedIndexes).toEqual([0]);
+    expect(note.tickets.map((t) => t.index)).toEqual([1]);
+    await h.close();
+  });
+
   it('rejects an unknown index rather than silently saving nothing', async () => {
     const h = await harness();
     const res = await h.callTool('accesso_save_barcodes', { url: TICKET_URL, indexes: [99] });
