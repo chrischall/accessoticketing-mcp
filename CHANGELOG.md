@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.0.1](https://github.com/chrischall/accessoticketing-mcp/compare/v1.0.0...v1.0.1) (2026-09-23)
+
+
+### Bug Fixes
+
+* **deps:** require zod ^4.6.5 to match @chrischall/mcp-utils 2.4.0 ([#56](https://github.com/chrischall/accessoticketing-mcp/issues/56)) ([263b309](https://github.com/chrischall/accessoticketing-mcp/commit/263b309fe05cbdc9f7639c813471cc2579d7091c))
+* **deps:** upgrade @chrischall/mcp-utils to 2.4.0 and @fetchproxy/* to 3.2.0 ([#54](https://github.com/chrischall/accessoticketing-mcp/issues/54)) ([79c28be](https://github.com/chrischall/accessoticketing-mcp/commit/79c28beb75076920e049d7a30eaa2f3e15f1ce42))
+
 ## [1.0.0](https://github.com/chrischall/accessoticketing-mcp/compare/v0.3.0...v1.0.0) (2026-09-20)
 
 
