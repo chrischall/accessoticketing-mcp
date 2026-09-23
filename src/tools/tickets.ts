@@ -116,22 +116,28 @@ export function registerTicketTools(server: McpServer, deps: ToolDeps): void {
       // Inline whenever asked, and always when a written path would be a lie.
       if (inline === true || !io.persistsFiles) {
         const images = [];
+        // Tracked in the same loop as `images`: a skipped large barcode can be
+        // followed by smaller ones that fit, so the included tickets are not a
+        // prefix of the selection, and labelling by position would mismatch.
+        const included = [];
+        const dropped: number[] = [];
         let bytes = 0;
-        let dropped = 0;
         for (const t of withBarcodes) {
           const png = t.barcodePng!;
           if (bytes + png.length > maxInlineBytes) {
-            dropped++;
+            dropped.push(t.index);
             continue;
           }
           bytes += png.length;
           images.push(imageResult(png.toString('base64'), 'image/png'));
+          included.push(t);
         }
         const note = {
           order: order.orderNumber,
           returned: images.length,
-          ...(dropped > 0 ? { omittedForSize: dropped } : {}),
-          tickets: withBarcodes.slice(0, images.length).map((t) => ({
+          ...(dropped.length > 0 ? { omittedForSize: dropped.length, omittedIndexes: dropped } : {}),
+          // Same order as the images above: tickets[i] describes image i.
+          tickets: included.map((t) => ({
             index: t.index,
             participant: t.participant,
             packageName: t.packageName,

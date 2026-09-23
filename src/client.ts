@@ -1,6 +1,7 @@
 import { readEnvVar, McpToolError } from '@chrischall/mcp-utils';
 import { parseTicketPage, isExpiredOrderPage } from './parse.js';
 import type { AccessoOrder, ParseOptions } from './types.js';
+import { assertPublicHost, systemLookup, type Lookup } from './netguard.js';
 
 /**
  * accesso serves ticket pages from regional media-engine hosts under this
@@ -53,10 +54,13 @@ export function redactUrl(value: string): string {
 
 export interface FetchDeps {
   fetch?: typeof globalThis.fetch;
+  /** DNS resolver for the click-tracker SSRF guard; defaults to the OS resolver. */
+  lookup?: Lookup;
 }
 
 export class AccessoClient {
   readonly #fetch: typeof globalThis.fetch;
+  readonly #lookup: Lookup;
   /**
    * Deferred config: a missing default URL is not an error at construction, so
    * the server still boots and answers the host's install-time tools/list probe.
@@ -66,6 +70,7 @@ export class AccessoClient {
 
   constructor(deps: FetchDeps = {}) {
     this.#fetch = deps.fetch ?? globalThis.fetch.bind(globalThis);
+    this.#lookup = deps.lookup ?? systemLookup;
     this.#defaultUrl = readEnvVar('ACCESSO_TICKET_URL') ?? null;
   }
 
@@ -133,13 +138,17 @@ export class AccessoClient {
   /**
    * Follow an email click-tracker to the accesso link it wraps.
    *
-   * Redirects are followed manually so the chain can be capped and the final
-   * host checked; the body is never read.
+   * Redirects are followed manually so the chain can be capped and every hop
+   * checked. This is the one place the server fetches a non-accesso URL, so
+   * each hop must pass the SSRF guard (public name, public addresses) before it
+   * is requested; the body is never read, and is cancelled so the connection
+   * is released.
    */
   async resolveLink(url: string): Promise<{ url: string; hops: number }> {
     let current = url;
     for (let hops = 0; hops <= MAX_REDIRECTS; hops++) {
       if (isAccessoUrl(current)) return { url: current, hops };
+      await assertPublicHost(new URL(current), this.#lookup);
 
       let res: Response;
       try {
@@ -150,12 +159,14 @@ export class AccessoClient {
           cause,
         });
       }
+      await res.body?.cancel();
       const next = res.headers.get('location');
       if (!next) {
-        throw new McpToolError(
-          `Link did not lead to an accesso ticket page (stopped at HTTP ${res.status}).`,
-          { hint: 'Check you copied the whole link from the email.' },
-        );
+        // The upstream status is deliberately not echoed: it would let the
+        // tool be used to probe which hosts and ports answer.
+        throw new McpToolError('Link did not lead to an accesso ticket page.', {
+          hint: 'Check you copied the whole link from the email.',
+        });
       }
       const resolved = new URL(next, current).toString();
       if (!/^https?:/.test(resolved)) {

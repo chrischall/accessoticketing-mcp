@@ -7,6 +7,8 @@ before changing anything that touches the wire.
 
 - `src/parse.ts` — HTML → `AccessoOrder`. All the hard-won knowledge lives here.
 - `src/client.ts` — fetch, redirect resolution, the accesso-host allowlist, error mapping.
+- `src/netguard.ts` — SSRF guard for `resolveLink`, the one path that fetches non-accesso hosts:
+  every hop must be a public DNS name resolving only to public addresses.
 - `src/present.ts` — projections for tool output (and the reason barcodes never reach `textResult`).
 - `src/io.ts` — the file-output boundary, so hosted deployments don't report paths nobody can open.
 - `src/tools/tickets.ts` — the six read-only tools.

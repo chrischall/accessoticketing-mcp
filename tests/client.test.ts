@@ -4,6 +4,7 @@ import { AccessoClient, isAccessoUrl, redactUrl } from '../src/client.js';
 import { ORDER_HTML, EXPIRED_HTML, HOST, TICKET_URL, fakeFetch } from './helpers.js';
 
 const orderRoutes = { [HOST]: { body: ORDER_HTML } };
+const publicLookup = async () => ['93.184.215.14'];
 
 describe('isAccessoUrl', () => {
   it.each([
@@ -128,13 +129,14 @@ describe('getOrder', () => {
 describe('resolveLink', () => {
   it('returns an accesso URL unchanged, without a request', async () => {
     const fetchSpy = vi.fn();
-    const c = new AccessoClient({ fetch: fetchSpy as unknown as typeof globalThis.fetch });
+    const c = new AccessoClient({ lookup: publicLookup, fetch: fetchSpy as unknown as typeof globalThis.fetch });
     expect(await c.resolveLink(TICKET_URL)).toEqual({ url: TICKET_URL, hops: 0 });
     expect(fetchSpy).not.toHaveBeenCalled();
   });
 
   it('follows a tracker to the accesso link it wraps', async () => {
     const c = new AccessoClient({
+      lookup: publicLookup,
       fetch: fakeFetch({
         'https://track.example.com': { status: 302, headers: { location: '/next' } },
         'https://track.example.com/next': { status: 302, headers: { location: TICKET_URL } },
@@ -144,12 +146,19 @@ describe('resolveLink', () => {
   });
 
   it('reports a chain that never reaches accesso', async () => {
-    const c = new AccessoClient({ fetch: fakeFetch({ 'https://track.example.com': { status: 200 } }) });
-    await expect(c.resolveLink('https://track.example.com/a')).rejects.toThrow(/did not lead/i);
+    const c = new AccessoClient({
+      lookup: publicLookup,
+      fetch: fakeFetch({ 'https://track.example.com': { status: 418 } }),
+    });
+    const err = await c.resolveLink('https://track.example.com/a').catch((e: Error) => e);
+    expect(String(err)).toMatch(/did not lead/i);
+    // The upstream status is not echoed: it would turn the tool into a port/host probe.
+    expect(String(err)).not.toMatch(/418/);
   });
 
   it('refuses to follow a redirect to a non-HTTP scheme', async () => {
     const c = new AccessoClient({
+      lookup: publicLookup,
       fetch: fakeFetch({ 'https://track.example.com': { status: 302, headers: { location: 'javascript:alert(1)' } } }),
     });
     await expect(c.resolveLink('https://track.example.com/a')).rejects.toThrow(/non-HTTP scheme/i);
@@ -157,13 +166,60 @@ describe('resolveLink', () => {
 
   it('gives up rather than looping forever', async () => {
     const c = new AccessoClient({
+      lookup: publicLookup,
       fetch: fakeFetch({ 'https://track.example.com': { status: 302, headers: { location: 'https://track.example.com/again' } } }),
     });
     await expect(c.resolveLink('https://track.example.com/a')).rejects.toThrow(/redirects/i);
   });
 
+  it('refuses to fetch a private or local first hop (SSRF guard)', async () => {
+    const fetchSpy = vi.fn();
+    const c = new AccessoClient({ lookup: publicLookup, fetch: fetchSpy as unknown as typeof globalThis.fetch });
+    for (const url of ['http://169.254.169.254/latest/meta-data/', 'http://localhost:8080/', 'http://10.0.0.1/']) {
+      await expect(c.resolveLink(url)).rejects.toThrow(/private, local or IP-address/i);
+    }
+    expect(fetchSpy).not.toHaveBeenCalled();
+  });
+
+  it('refuses a tracker that resolves to a private address', async () => {
+    const fetchSpy = vi.fn();
+    const c = new AccessoClient({
+      lookup: async () => ['127.0.0.1'],
+      fetch: fetchSpy as unknown as typeof globalThis.fetch,
+    });
+    await expect(c.resolveLink('https://track.example.com/a')).rejects.toThrow(/private, local or IP-address/i);
+    expect(fetchSpy).not.toHaveBeenCalled();
+  });
+
+  it('refuses a redirect into the internal network before fetching it', async () => {
+    const seen: string[] = [];
+    const inner = fakeFetch({
+      'https://track.example.com': { status: 302, headers: { location: 'http://169.254.169.254/latest/meta-data/' } },
+    });
+    const c = new AccessoClient({
+      lookup: publicLookup,
+      fetch: (async (u: RequestInfo | URL, init?: RequestInit) => {
+        seen.push(String(u));
+        return inner(u, init);
+      }) as typeof globalThis.fetch,
+    });
+    await expect(c.resolveLink('https://track.example.com/a')).rejects.toThrow(/private, local or IP-address/i);
+    expect(seen).toEqual(['https://track.example.com/a']);
+  });
+
+  it('cancels each hop\'s body instead of leaving it open', async () => {
+    const res = new Response('tracker page', { status: 302, headers: { location: TICKET_URL } });
+    const c = new AccessoClient({
+      lookup: publicLookup,
+      fetch: (async () => res) as unknown as typeof globalThis.fetch,
+    });
+    await c.resolveLink('https://track.example.com/a');
+    expect(res.bodyUsed).toBe(true);
+  });
+
   it('wraps a network failure while following', async () => {
     const c = new AccessoClient({
+      lookup: publicLookup,
       fetch: (async () => {
         throw new Error('dns');
       }) as unknown as typeof globalThis.fetch,
