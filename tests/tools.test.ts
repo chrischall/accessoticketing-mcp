@@ -15,6 +15,7 @@ function harness(
   opts: { fetch?: typeof globalThis.fetch; io?: DiskFileIO | NoFileIO; maxInlineBytes?: number } = {},
 ) {
   const client = new AccessoClient({
+    lookup: async () => ['93.184.215.14'],
     fetch:
       opts.fetch ??
       fakeFetch({
