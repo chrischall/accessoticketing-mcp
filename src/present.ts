@@ -7,10 +7,15 @@ import type { AccessoOrder, AccessoTicket } from './types.js';
  * it reach `minifiedResult` would serialise a Buffer as a JSON object of hundreds
  * of numeric keys per ticket. The barcode is offered through
  * `accesso_save_barcodes` instead.
+ *
+ * `googleWalletUrl` is dropped too, for a different reason: it embeds the
+ * order token (`oToken`), which alone grants the whole order. It is an internal
+ * endpoint that `accesso_get_wallet_passes` exchanges for the caller-facing
+ * save link, so a read result only needs to say whether a pass exists.
  */
 export function presentTicket(ticket: AccessoTicket): Record<string, unknown> {
-  const { barcodePng, ...rest } = ticket;
-  return { ...rest, hasBarcode: barcodePng !== null };
+  const { barcodePng, googleWalletUrl, ...rest } = ticket;
+  return { ...rest, hasBarcode: barcodePng !== null, hasWalletPass: googleWalletUrl !== null };
 }
 
 /** The slim projection for browsing an order — identity, when, and who. */
