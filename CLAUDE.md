@@ -17,7 +17,8 @@ before changing anything that touches the wire.
 
 - **The ticket URL is a credential.** `oToken` grants the order. Never log it, never
   put one in a fixture, never commit one. `redactUrl` exists for this; use it on any
-  path that renders a URL.
+  path that renders a URL. The internal `googleWalletUrl` embeds it too, so
+  `presentTicket` projects it to `hasWalletPass` — no read tool result may carry it.
 - **An expired link returns HTTP 200** with "no tickets available to print on this
   order". Status codes tell you nothing here — gate on the body (`isExpiredOrderPage`).
 - **Every ticket is rendered twice.** A mobile `#ticket-item-container<N>` grouping and
