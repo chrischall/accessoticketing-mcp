@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.0.3](https://github.com/chrischall/accessoticketing-mcp/compare/v1.0.2...v1.0.3) (2026-09-24)
+
+
+### Bug Fixes
+
+* **deps:** Bump dotenv from 17.4.2 to 18.0.2 in the production-majors group ([#61](https://github.com/chrischall/accessoticketing-mcp/issues/61)) ([8f9f3f4](https://github.com/chrischall/accessoticketing-mcp/commit/8f9f3f4219b6987b4999329f5c646007c61ec694))
+* **privacy:** keep the order token out of ticket read results ([#63](https://github.com/chrischall/accessoticketing-mcp/issues/63)) ([216cacd](https://github.com/chrischall/accessoticketing-mcp/commit/216cacdb142d5c8bd7977a1071a94453698fef3a))
+
 ## [1.0.2](https://github.com/chrischall/accessoticketing-mcp/compare/v1.0.1...v1.0.2) (2026-09-23)
 
 
