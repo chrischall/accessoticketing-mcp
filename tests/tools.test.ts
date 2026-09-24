@@ -320,3 +320,44 @@ describe('accesso_healthcheck', () => {
     await h.close();
   });
 });
+
+// The order token (oToken) grants the whole order. When the link comes from
+// ACCESSO_TICKET_URL the caller never held it, so no read tool may hand it back
+// — not in a wallet endpoint URL, not anywhere. accesso_get_wallet_passes is
+// the one deliberate exception (its save links are labelled private) and
+// accesso_resolve_link returns the link the caller already supplied.
+describe('order token never leaks into read results', () => {
+  // Token VALUES, not parameter names: a redacted `oToken=REDACTED` is fine.
+  const TOKENS = [/A1:/, /TOK/, /FIXTURETOKEN/, /google-wallet/];
+
+  function assertNoToken(res: CallToolResult) {
+    const body = text(res);
+    for (const t of TOKENS) expect(body).not.toMatch(t);
+  }
+
+  it.each([
+    ['accesso_get_order', {}],
+    ['accesso_get_order', { view: 'full' }],
+    ['accesso_get_order', { view: 'full', include_terms: true }],
+    ['accesso_get_ticket', { index: 0 }],
+    ['accesso_get_ticket', { index: 7, include_terms: true }],
+    ['accesso_healthcheck', {}],
+  ] as const)('%s %j built from ACCESSO_TICKET_URL', async (tool, args) => {
+    vi.stubEnv('ACCESSO_TICKET_URL', TICKET_URL);
+    const h = await harness();
+    const res = await h.callTool(tool, { ...args });
+    expect(res.isError).toBeFalsy();
+    assertNoToken(res);
+    await h.close();
+  });
+
+  it('still says whether a ticket has a wallet pass', async () => {
+    const h = await harness();
+    const out = parseToolResult<Record<string, unknown>>(
+      await h.callTool('accesso_get_ticket', { url: TICKET_URL, index: 0 }),
+    );
+    expect(out['googleWalletUrl']).toBeUndefined();
+    expect(out['hasWalletPass']).toBe(true);
+    await h.close();
+  });
+});

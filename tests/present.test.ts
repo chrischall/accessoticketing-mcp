@@ -71,3 +71,17 @@ describe('selectTickets', () => {
     expect(selectTickets(order.tickets, [0, 99]).missing).toEqual([99]);
   });
 });
+
+describe('presentTicket wallet link', () => {
+  it('replaces the token-bearing wallet endpoint with a boolean', () => {
+    const t = { ...order.tickets[0]!, googleWalletUrl: 'https://x.accessoticketing.com/google-wallet/v1/i/A1:SECRET/1' };
+    const shown = presentTicket(t);
+    expect(shown['googleWalletUrl']).toBeUndefined();
+    expect(shown['hasWalletPass']).toBe(true);
+    expect(JSON.stringify(shown)).not.toContain('A1:SECRET');
+  });
+
+  it('reports no wallet pass when the merchant offers none', () => {
+    expect(presentTicket({ ...order.tickets[0]!, googleWalletUrl: null })['hasWalletPass']).toBe(false);
+  });
+});
