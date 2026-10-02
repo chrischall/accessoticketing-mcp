@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
-import { mkdtempSync, readFileSync, readdirSync } from 'node:fs';
+import { chmodSync, existsSync, mkdtempSync, readFileSync, readdirSync, symlinkSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { dirname, join } from 'node:path';
 import { DiskFileIO, NoFileIO, defaultFileIO } from '../src/io.js';
 
 const bytes = Buffer.from([1, 2, 3]);
@@ -66,10 +66,50 @@ describe('DiskFileIO', () => {
   });
 
   it('propagates a write failure that is not a name collision', async () => {
-    // A name pointing into a directory that does not exist fails ENOENT, not
-    // EEXIST — the collision fallback must not swallow it.
-    const io = new DiskFileIO(mkdtempSync(join(tmpdir(), 'accesso-io-')));
-    await expect(io.write('missing-dir/a.png', bytes)).rejects.toMatchObject({ code: 'ENOENT' });
+    // EACCES, not EEXIST — the collision fallback must not swallow it.
+    const dir = mkdtempSync(join(tmpdir(), 'accesso-io-'));
+    chmodSync(dir, 0o500);
+    try {
+      await expect(new DiskFileIO(dir).write('a.png', bytes)).rejects.toMatchObject({ code: 'EACCES' });
+    } finally {
+      chmodSync(dir, 0o700);
+    }
+  });
+
+  it('keeps a name that smuggles path segments inside the output directory', async () => {
+    // The order number comes from the scraped page; a `/` or `..` in it must
+    // never steer the write out of outputDir.
+    const dir = mkdtempSync(join(tmpdir(), 'accesso-io-'));
+    const io = new DiskFileIO(dir);
+    const nested = await io.write('missing-dir/a.png', bytes);
+    const escaped = await io.write('../../escape.png', bytes);
+    for (const p of [nested, escaped]) {
+      expect(dirname(p)).toBe(dir);
+      expect(readFileSync(p)).toEqual(bytes);
+    }
+  });
+
+  it('never writes through a symlink planted at the destination name', async () => {
+    const dir = mkdtempSync(join(tmpdir(), 'accesso-io-'));
+    const outside = join(mkdtempSync(join(tmpdir(), 'accesso-out-')), 'target.png');
+    symlinkSync(outside, join(dir, 'a.png')); // dangling: looks "free" to existsSync
+    const path = await new DiskFileIO(dir).write('a.png', bytes);
+    expect(path).not.toBe(join(dir, 'a.png'));
+    expect(dirname(path)).toBe(dir);
+    expect(existsSync(outside)).toBe(false);
+  });
+
+  it('gives an extensionless name a .bin extension', async () => {
+    const dir = mkdtempSync(join(tmpdir(), 'accesso-io-'));
+    expect(await new DiskFileIO(dir).write('raw', bytes)).toBe(join(dir, 'raw.bin'));
+  });
+
+  it('gives up after a bounded number of taken names', async () => {
+    const dir = mkdtempSync(join(tmpdir(), 'accesso-io-'));
+    const io = new DiskFileIO(dir);
+    writeFileSync(join(dir, 'a.png'), bytes);
+    for (let n = 2; n <= 100; n++) writeFileSync(join(dir, `a-${n}.png`), bytes);
+    await expect(io.write('a.png', bytes)).rejects.toMatchObject({ reason: 'exists' });
   });
 });
 
