@@ -1,6 +1,5 @@
-import { mkdir, writeFile } from 'node:fs/promises';
-import { join, resolve } from 'node:path';
-import { readEnvVar, expandPath } from '@chrischall/mcp-utils';
+import { extname, resolve } from 'node:path';
+import { readEnvVar, expandPath, writeUniqueFile } from '@chrischall/mcp-utils';
 
 /**
  * Where generated files go.
@@ -29,27 +28,29 @@ export class DiskFileIO implements FileIO {
   readonly outputDir: string;
 
   constructor(outputDir?: string) {
+    // Resolved here but created lazily on first write (not mcp-utils'
+    // resolveOutputDir, which mkdirs eagerly): a bad ACCESSO_OUTPUT_DIR should
+    // fail the save tool, not server start-up.
     const configured = outputDir ?? readEnvVar('ACCESSO_OUTPUT_DIR');
     this.outputDir = configured ? resolve(expandPath(configured)) : resolve(process.cwd());
   }
 
   async write(name: string, bytes: Buffer): Promise<string> {
-    await mkdir(this.outputDir, { recursive: true });
     // Never clobber: barcodes are the thing the user shows at the gate. On a
-    // collision, write under a fresh name and return THAT path — the caller
-    // reports it, and pointing at the old file would show a stale barcode.
-    const stamp = Date.now();
-    for (let attempt = 0; ; attempt++) {
-      const candidate =
-        attempt === 0 ? name : `${stamp}${attempt > 1 ? `-${attempt - 1}` : ''}-${name}`;
-      const path = join(this.outputDir, candidate);
-      try {
-        await writeFile(path, bytes, { flag: 'wx' });
-        return path;
-      } catch (err) {
-        if ((err as NodeJS.ErrnoException).code !== 'EEXIST' || attempt >= MAX_NAME_ATTEMPTS) throw err;
-      }
-    }
+    // collision, write under a fresh name (`a-2.png`, …) and return THAT path —
+    // the caller reports it, and pointing at the old file would show a stale
+    // barcode. writeUniqueFile claims each name with an exclusive, no-follow
+    // create (race-free; a symlink planted at a name is skipped, never written
+    // through) and flattens the stem to one path component, so a `/` or `..`
+    // in the scraped order number can't steer the write out of outputDir.
+    const ext = extname(name);
+    return writeUniqueFile({
+      dir: this.outputDir,
+      baseName: ext ? name.slice(0, -ext.length) : name,
+      extension: ext ? ext.slice(1) : 'bin',
+      bytes,
+      maxAttempts: MAX_NAME_ATTEMPTS,
+    });
   }
 }
 
