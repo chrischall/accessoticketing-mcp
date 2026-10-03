@@ -1,5 +1,21 @@
 # Changelog
 
+## [1.0.4](https://github.com/chrischall/accessoticketing-mcp/compare/v1.0.3...v1.0.4) (2026-10-03)
+
+
+### Bug Fixes
+
+* **deps:** adopt @chrischall/mcp-utils 2.12.0 writeUniqueFile for barcode saves ([#70](https://github.com/chrischall/accessoticketing-mcp/issues/70)) ([50f8f56](https://github.com/chrischall/accessoticketing-mcp/commit/50f8f56c8dca4a8e1773b57e54972908d83aee8f))
+* **deps:** bump @chrischall/mcp-utils to 2.10.0 ([#69](https://github.com/chrischall/accessoticketing-mcp/issues/69)) ([20932a2](https://github.com/chrischall/accessoticketing-mcp/commit/20932a258224a4467bc323781207309f94d0fbe1))
+* **deps:** bump @chrischall/mcp-utils to 2.13.0 ([#71](https://github.com/chrischall/accessoticketing-mcp/issues/71)) ([5460617](https://github.com/chrischall/accessoticketing-mcp/commit/546061729b4b53101ad034f339fb6c90a3f51fdb))
+* **deps:** Bump the production-dependencies group with 3 updates ([#65](https://github.com/chrischall/accessoticketing-mcp/issues/65)) ([14a7f19](https://github.com/chrischall/accessoticketing-mcp/commit/14a7f19631031321c29234736d9c9cd3067bec4c))
+* report CDN/WAF blocks as edge_blocked, not a rejected credential (mcp-utils 2.9.0) ([#67](https://github.com/chrischall/accessoticketing-mcp/issues/67)) ([0390097](https://github.com/chrischall/accessoticketing-mcp/commit/0390097e3eb9413cd9d75ae6b271cd93850a3117))
+
+
+### Documentation
+
+* replace restated merge policy with the fleet-policy pointer ([#72](https://github.com/chrischall/accessoticketing-mcp/issues/72)) ([87321a1](https://github.com/chrischall/accessoticketing-mcp/commit/87321a1451939634211c559706ae345f52167b62))
+
 ## [1.0.3](https://github.com/chrischall/accessoticketing-mcp/compare/v1.0.2...v1.0.3) (2026-09-24)
 
 
