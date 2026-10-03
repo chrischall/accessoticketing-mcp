@@ -43,5 +43,16 @@ re-capture, sanitize the same way and re-run the leak scan before committing.
 ## Conventions
 
 TDD. 100% coverage thresholds, enforced in CI — cover defensive branches rather than
-adding `/* v8 ignore */`. Never hand-bump versions (release-please owns them). Don't
-merge PRs or add `ready-to-merge` yourself.
+adding `/* v8 ignore */`. Never hand-bump versions (release-please owns them).
+
+<!-- pr-workflow:v3 -->
+## Pull requests & release notes
+
+Fleet policy — Conventional-Commit PR titles, labels, the auto-review /
+auto-merge ladder, auto-review follow-up issues, PR timing, and release PRs —
+lives in `~/.claude/CLAUDE.md`. Don't restate it here; the copies drifted.
+
+Shared technical conventions (publishing, bundling, versioning guards,
+write-verification, transport archetypes, testing traps) live in
+[`chrischall/workflows`](https://github.com/chrischall/workflows):
+`docs/fleet-conventions.md`, plus `README.md` for the CI pipeline contract.
