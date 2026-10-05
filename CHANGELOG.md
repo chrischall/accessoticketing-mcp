@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.0.5](https://github.com/chrischall/accessoticketing-mcp/compare/v1.0.4...v1.0.5) (2026-10-05)
+
+
+### Bug Fixes
+
+* **deps:** Bump dotenv from 18.0.3 to 18.0.5 in the production-dependencies group ([#75](https://github.com/chrischall/accessoticketing-mcp/issues/75)) ([8a3bc7c](https://github.com/chrischall/accessoticketing-mcp/commit/8a3bc7c5ef168c07b5fc078e89534847570346b6))
+* **deps:** require @chrischall/mcp-utils 2.14.0 and MCP SDK 2.3.0 ([#77](https://github.com/chrischall/accessoticketing-mcp/issues/77)) ([3a766d3](https://github.com/chrischall/accessoticketing-mcp/commit/3a766d34d4da49763ca8f040940b217f449e274e))
+
 ## [1.0.4](https://github.com/chrischall/accessoticketing-mcp/compare/v1.0.3...v1.0.4) (2026-10-03)
 
 
