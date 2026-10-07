@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.6](https://github.com/chrischall/accessoticketing-mcp/compare/v1.0.5...v1.0.6) (2026-10-07)
+
+
+### Bug Fixes
+
+* **deps:** update @chrischall/mcp-utils to 2.15.0 for the shared server runtime ([#78](https://github.com/chrischall/accessoticketing-mcp/issues/78)) ([f680d5b](https://github.com/chrischall/accessoticketing-mcp/commit/f680d5b25b5675ba0e57f8d02dd17e19a23daf57))
+
 ## [1.0.5](https://github.com/chrischall/accessoticketing-mcp/compare/v1.0.4...v1.0.5) (2026-10-05)
 
 
