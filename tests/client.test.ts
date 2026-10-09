@@ -207,6 +207,12 @@ describe('getOrder', () => {
       await expect(new AccessoClient({ fetch }).getOrder(TICKET_URL)).rejects.toThrow(/redirects/i);
     });
 
+    it('makes at most 10 requests (MAX_REDIRECTS) before giving up', async () => {
+      const { seen, fetch } = recording({ [HOST]: { status: 302, headers: { location: TICKET_URL } } });
+      await expect(new AccessoClient({ fetch }).getOrder(TICKET_URL)).rejects.toThrow(/exceeded 10 redirects/i);
+      expect(seen).toHaveLength(10);
+    });
+
     it('cancels a redirect hop\'s body instead of leaving it open', async () => {
       const hop = new Response('moved', { status: 302, headers: { location: MOVED } });
       const fetch = (async (u: RequestInfo | URL) =>
@@ -301,6 +307,20 @@ describe('resolveLink', () => {
       fetch: fakeFetch({ 'https://track.example.com': { status: 302, headers: { location: 'https://track.example.com/again' } } }),
     });
     await expect(c.resolveLink('https://track.example.com/a')).rejects.toThrow(/redirects/i);
+  });
+
+  it('makes at most 10 non-accesso requests (MAX_REDIRECTS) before giving up', async () => {
+    const seen: string[] = [];
+    const inner = fakeFetch({ 'https://track.example.com': { status: 302, headers: { location: 'https://track.example.com/again' } } });
+    const c = new AccessoClient({
+      lookup: publicLookup,
+      fetch: (async (u: RequestInfo | URL, init?: RequestInit) => {
+        seen.push(String(u));
+        return inner(u, init);
+      }) as typeof globalThis.fetch,
+    });
+    await expect(c.resolveLink('https://track.example.com/a')).rejects.toThrow(/exceeded 10 redirects/i);
+    expect(seen).toHaveLength(10);
   });
 
   it('refuses to fetch a private or local first hop (SSRF guard)', async () => {
