@@ -29,6 +29,12 @@
           "description": "Optional directory for saved barcode images.",
           "isRequired": false,
           "isSecret": false
+        },
+        {
+          "name": "ACCESSO_NO_FILE_OUTPUT",
+          "description": "Set to 1 where the filesystem isn't the user's (a hosted deployment) so barcodes return inline.",
+          "isRequired": false,
+          "isSecret": false
         }
       ]
     }
