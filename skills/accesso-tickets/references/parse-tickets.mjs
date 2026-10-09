@@ -213,6 +213,22 @@ export function parseTickets(html, opts = {}) {
   };
 }
 
+// Never clobber: a barcode is what gets shown at the gate, so a re-run writes
+// `name-2.png`, `name-3.png`, … instead of replacing an earlier image. The
+// exclusive create ('wx') also refuses to write through a planted symlink.
+function writeNew(dir, stem, ext, bytes) {
+  for (let n = 1; n <= 1000; n++) {
+    const path = join(dir, `${stem}${n === 1 ? '' : `-${n}`}.${ext}`);
+    try {
+      writeFileSync(path, bytes, { flag: 'wx' });
+      return path;
+    } catch (e) {
+      if (e.code !== 'EEXIST') throw e;
+    }
+  }
+  throw new Error(`accesso: no free file name for ${stem}.${ext} in ${dir}`);
+}
+
 export function saveBarcodes(result, dir) {
   mkdirSync(dir, { recursive: true });
   const written = [];
@@ -223,9 +239,8 @@ export function saveBarcodes(result, dir) {
     const meta = src.slice(5, comma);
     if (!/;base64$/i.test(meta)) continue;
     const ext = (meta.split(';')[0].split('/')[1] || 'png').replace(/[^a-z0-9]/gi, '');
-    const name = `ticket-${String(t.index).padStart(2, '0')}-${t.ticketId ?? 'x'}.${ext}`;
-    const path = join(dir, name);
-    writeFileSync(path, Buffer.from(src.slice(comma + 1), 'base64'));
+    const stem = `ticket-${String(t.index).padStart(2, '0')}-${t.ticketId ?? 'x'}`;
+    const path = writeNew(dir, stem, ext, Buffer.from(src.slice(comma + 1), 'base64'));
     t.barcodeFile = path;
     written.push(path);
   }
