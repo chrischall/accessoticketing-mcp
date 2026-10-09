@@ -88,7 +88,10 @@ export function registerTicketTools(server: McpServer, deps: ToolDeps): void {
     {
       description:
         'Save the scannable barcode images from an accesso order. Writes PNGs and returns their paths; set inline to receive the images directly instead (which is the only useful mode when this server runs remotely, since its filesystem is not the user\'s).',
-      annotations: { readOnlyHint: true, openWorldHint: true },
+      // Not read-only: it creates files on disk. Never destructive (it never
+      // overwrites — a taken name gets a fresh one), and not idempotent (a
+      // repeat call writes another copy under a new name).
+      annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: false, openWorldHint: true },
       inputSchema: z.object({
         url: urlArg,
         indexes: indexesArg,

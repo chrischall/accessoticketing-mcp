@@ -62,7 +62,7 @@ server starts fine without it and reports the missing link on first use.
 | `accesso_resolve_link` | Unwraps an email click-tracking link to the accesso URL it hides. |
 | `accesso_healthcheck` | Confirms reachability and whether a default link is configured. |
 
-Every tool is read-only; nothing here mutates an order.
+Nothing here mutates an order. Every tool is read-only except `accesso_save_barcodes`, which writes PNG files to disk (never overwriting one) unless asked for inline images.
 
 ```
 > what do we have booked tomorrow?

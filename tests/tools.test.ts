@@ -59,6 +59,24 @@ describe('tool surface', () => {
     });
     await h.close();
   });
+
+  it('does not call accesso_save_barcodes read-only, because it writes files', async () => {
+    // readOnlyHint:true lets hosts run a tool unprompted; this one creates
+    // directories and PNGs on the user's disk.
+    const h = await harness();
+    const { tools } = await h.client.listTools();
+    const save = tools.find((tool) => tool.name === 'accesso_save_barcodes');
+    expect(save?.annotations).toMatchObject({
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: false,
+      openWorldHint: true,
+    });
+    for (const tool of tools.filter((t) => t.name !== 'accesso_save_barcodes')) {
+      expect(tool.annotations?.readOnlyHint, tool.name).toBe(true);
+    }
+    await h.close();
+  });
 });
 
 describe('accesso_get_order', () => {
