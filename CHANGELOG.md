@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.1.0](https://github.com/chrischall/accessoticketing-mcp/compare/v1.0.6...v1.1.0) (2026-10-09)
+
+
+### Features
+
+* **lib:** export toAccessoHttps for callers that accept http accesso links ([#83](https://github.com/chrischall/accessoticketing-mcp/issues/83)) ([f66f4e6](https://github.com/chrischall/accessoticketing-mcp/commit/f66f4e6f0c791b8ca780f42534485b01e1a335cf))
+
+
+### Bug Fixes
+
+* annotate tools truthfully and sync manifests with the served tools ([#87](https://github.com/chrischall/accessoticketing-mcp/issues/87)) ([174f3a6](https://github.com/chrischall/accessoticketing-mcp/commit/174f3a69b7f3781a5b6459c149cd3327af463cdf))
+* **client:** cap redirect chains at MAX_REDIRECTS requests, not one more ([#84](https://github.com/chrischall/accessoticketing-mcp/issues/84)) ([ae34e95](https://github.com/chrischall/accessoticketing-mcp/commit/ae34e95860509843d40a10d21bd2c6e4f7198feb))
+* **deps:** Bump source-map-js from 1.2.1 to 1.2.2 in the security group across 1 directory ([#86](https://github.com/chrischall/accessoticketing-mcp/issues/86)) ([694e52f](https://github.com/chrischall/accessoticketing-mcp/commit/694e52f20b535436917a9ba34e327c8e3dcb3d13))
+* **deps:** update @chrischall/mcp-utils to 3.0.0 ([#85](https://github.com/chrischall/accessoticketing-mcp/issues/85)) ([65a786e](https://github.com/chrischall/accessoticketing-mcp/commit/65a786e869328bb29cb686f49f116564432ce0c0))
+* resolve low-severity audit findings ([#80](https://github.com/chrischall/accessoticketing-mcp/issues/80)) ([503eb78](https://github.com/chrischall/accessoticketing-mcp/commit/503eb78e4257dce0053493e06101463771e69711))
+* **security:** pin click-tracker connections to vetted addresses ([#88](https://github.com/chrischall/accessoticketing-mcp/issues/88)) ([dfb5625](https://github.com/chrischall/accessoticketing-mcp/commit/dfb56252ce73dd9eaa6b6b37b8a304f792984766))
+
 ## [1.0.6](https://github.com/chrischall/accessoticketing-mcp/compare/v1.0.5...v1.0.6) (2026-10-07)
 
 
