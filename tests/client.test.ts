@@ -241,6 +241,18 @@ describe('getWalletSaveUrl', () => {
     await expect(c.getWalletSaveUrl(wallet)).rejects.toThrow(/did not return a Google Wallet pass/);
   });
 
+  it.each([
+    ['an HTML page', '<html><body>Something went wrong</body></html>'],
+    ['an empty body', ''],
+    ['JSON null', 'null'],
+    ['a JSON array', '["JWT123"]'],
+  ])('reports %s at HTTP 200 as no pass, not a raw parse error', async (_label, body) => {
+    const c = new AccessoClient({ fetch: fakeFetch({ [HOST]: { body } }) });
+    const err = await c.getWalletSaveUrl(wallet).catch((e: unknown) => e);
+    expect(err).toBeInstanceOf(McpToolError);
+    expect(String(err)).toMatch(/did not return a Google Wallet pass/);
+  });
+
   it('refuses a wallet URL off the accesso apex', async () => {
     const c = new AccessoClient({ fetch: fakeFetch({}) });
     await expect(c.getWalletSaveUrl('https://evil.com/jwt')).rejects.toThrow(/non-accesso/i);

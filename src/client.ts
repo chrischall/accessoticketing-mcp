@@ -52,6 +52,23 @@ export function redactUrl(value: string): string {
   }
 }
 
+/**
+ * The `jwt` from a Wallet endpoint's body, or null. accesso answers some error
+ * states with an HTML page at HTTP 200, so the body is not trusted to be JSON,
+ * or an object, at all.
+ */
+function readJwt(text: string): string | null {
+  let body: unknown;
+  try {
+    body = JSON.parse(text);
+  } catch {
+    return null;
+  }
+  if (typeof body !== 'object' || body === null) return null;
+  const { jwt } = body as { jwt?: unknown };
+  return typeof jwt === 'string' && jwt !== '' ? jwt : null;
+}
+
 export interface FetchDeps {
   fetch?: typeof globalThis.fetch;
   /** DNS resolver for the click-tracker SSRF guard; defaults to the OS resolver. */
@@ -181,13 +198,13 @@ export class AccessoClient {
   async getWalletSaveUrl(walletUrl: string): Promise<string> {
     requireAccessoUrl(walletUrl);
     const res = await this.#get(walletUrl, 'application/json');
-    const body = (await res.json()) as { jwt?: unknown };
-    if (typeof body.jwt !== 'string' || body.jwt === '') {
+    const jwt = readJwt(await res.text());
+    if (jwt === null) {
       throw new McpToolError('accesso did not return a Google Wallet pass for that ticket.', {
         hint: 'Not every merchant enables Wallet passes.',
       });
     }
-    return `https://pay.google.com/gp/v/save/${body.jwt}`;
+    return `https://pay.google.com/gp/v/save/${jwt}`;
   }
 }
 
