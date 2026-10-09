@@ -131,4 +131,12 @@ describe('defaultFileIO', () => {
     vi.stubEnv('ACCESSO_NO_FILE_OUTPUT', '1');
     expect(defaultFileIO().persistsFiles).toBe(false);
   });
+
+  it.each(['0', 'false', 'no', 'off'])(
+    'keeps writing files when ACCESSO_NO_FILE_OUTPUT=%s (an explicit "no")',
+    (value) => {
+      vi.stubEnv('ACCESSO_NO_FILE_OUTPUT', value);
+      expect(defaultFileIO().persistsFiles).toBe(true);
+    },
+  );
 });

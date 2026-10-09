@@ -1,5 +1,5 @@
 import { extname, resolve } from 'node:path';
-import { readEnvVar, expandPath, writeUniqueFile } from '@chrischall/mcp-utils';
+import { readEnvVar, parseBoolEnv, expandPath, writeUniqueFile } from '@chrischall/mcp-utils';
 
 /**
  * Where generated files go.
@@ -64,5 +64,7 @@ export class NoFileIO implements FileIO {
 }
 
 export function defaultFileIO(): FileIO {
-  return readEnvVar('ACCESSO_NO_FILE_OUTPUT') ? new NoFileIO() : new DiskFileIO();
+  // A real boolean, not "any value": ACCESSO_NO_FILE_OUTPUT=0/false/no/off
+  // means "do write files", and must not silently switch saves to inline.
+  return parseBoolEnv('ACCESSO_NO_FILE_OUTPUT') ? new NoFileIO() : new DiskFileIO();
 }
