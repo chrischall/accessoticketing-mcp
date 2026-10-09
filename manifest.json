@@ -46,7 +46,7 @@
     "output_dir": {
       "type": "string",
       "title": "Barcode output directory",
-      "description": "Optional. Where saved barcode images are written. Defaults to the working directory.",
+      "description": "Optional. Where saved barcode images are written. Defaults to the working directory, or ~/Downloads when that is the filesystem root (as under Claude Desktop).",
       "required": false
     }
   },

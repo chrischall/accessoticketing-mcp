@@ -1,4 +1,5 @@
-import { extname, resolve } from 'node:path';
+import { homedir } from 'node:os';
+import { extname, join, parse, resolve } from 'node:path';
 import { readEnvVar, parseBoolEnv, expandPath, writeUniqueFile } from '@chrischall/mcp-utils';
 
 /**
@@ -23,6 +24,16 @@ export interface FileIO {
 /** Upper bound on collision-fallback names tried before giving up. */
 const MAX_NAME_ATTEMPTS = 100;
 
+/**
+ * The working directory, unless it is the filesystem root. Claude Desktop
+ * launches .mcpb servers with cwd "/", where a write fails with EACCES, so
+ * there the user's Downloads folder (created on first write) is the default.
+ */
+function defaultOutputDir(): string {
+  const cwd = resolve(process.cwd());
+  return cwd === parse(cwd).root ? join(homedir(), 'Downloads') : cwd;
+}
+
 export class DiskFileIO implements FileIO {
   readonly persistsFiles = true;
   readonly outputDir: string;
@@ -32,7 +43,7 @@ export class DiskFileIO implements FileIO {
     // resolveOutputDir, which mkdirs eagerly): a bad ACCESSO_OUTPUT_DIR should
     // fail the save tool, not server start-up.
     const configured = outputDir ?? readEnvVar('ACCESSO_OUTPUT_DIR');
-    this.outputDir = configured ? resolve(expandPath(configured)) : resolve(process.cwd());
+    this.outputDir = configured ? resolve(expandPath(configured)) : defaultOutputDir();
   }
 
   async write(name: string, bytes: Buffer): Promise<string> {

@@ -48,7 +48,7 @@ server starts fine without it and reports the missing link on first use.
 | Variable | Required | Purpose |
 |---|---|---|
 | `ACCESSO_TICKET_URL` | no | Default ticket link, used when a tool is called without `url`. |
-| `ACCESSO_OUTPUT_DIR` | no | Where `accesso_save_barcodes` writes PNGs. Defaults to cwd. |
+| `ACCESSO_OUTPUT_DIR` | no | Where `accesso_save_barcodes` writes PNGs. Defaults to cwd, or `~/Downloads` when cwd is `/` (Claude Desktop). |
 | `ACCESSO_NO_FILE_OUTPUT` | no | Set to `1` where the filesystem isn't the user's (a hosted deployment) so barcodes return inline. |
 
 ## Tools
