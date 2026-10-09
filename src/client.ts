@@ -132,34 +132,52 @@ export class AccessoClient {
     return requireAccessoUrl(chosen);
   }
 
-  async #get(requested: string, accept: string): Promise<Response> {
-    const url = requireAccessoUrl(requested);
-    let res: Response;
-    try {
-      res = await this.#fetch(url, { redirect: 'follow', headers: { accept } });
-    } catch (cause) {
-      throw new McpToolError(`Could not reach accesso: ${redactUrl(url)}`, {
-        hint: 'Check network connectivity; accesso ticket pages need no login.',
-        cause,
-      });
+  /**
+   * GET an accesso URL, following redirects by hand so every hop is held to
+   * the accesso allowlist (and upgraded to https) before it is requested. With
+   * `redirect: 'follow'` only the first URL was checked, so a 3xx from any
+   * accesso host could steer the server anywhere. Returns the final URL too,
+   * since the page's links are resolved against it.
+   */
+  async #get(requested: string, accept: string): Promise<{ res: Response; url: string }> {
+    let url = requireAccessoUrl(requested);
+    for (let hops = 0; hops <= MAX_REDIRECTS; hops++) {
+      let res: Response;
+      try {
+        res = await this.#fetch(url, { redirect: 'manual', headers: { accept } });
+      } catch (cause) {
+        throw new McpToolError(`Could not reach accesso: ${redactUrl(url)}`, {
+          hint: 'Check network connectivity; accesso ticket pages need no login.',
+          cause,
+        });
+      }
+      const location = res.status >= 300 && res.status < 400 ? res.headers.get('location') : null;
+      if (location !== null) {
+        await res.body?.cancel();
+        url = requireAccessoUrl(new URL(location, url).toString());
+        continue;
+      }
+      if (!res.ok) {
+        throw new McpToolError(`accesso returned HTTP ${res.status} for ${redactUrl(url)}`, {
+          hint:
+            res.status === 404
+              ? 'The island/merchant path in the link looks wrong — re-copy it from the email.'
+              : 'Retry; if it persists the ticket link may have been revoked.',
+        });
+      }
+      return { res, url };
     }
-    if (!res.ok) {
-      throw new McpToolError(`accesso returned HTTP ${res.status} for ${redactUrl(url)}`, {
-        hint:
-          res.status === 404
-            ? 'The island/merchant path in the link looks wrong — re-copy it from the email.'
-            : 'Retry; if it persists the ticket link may have been revoked.',
-      });
-    }
-    return res;
+    throw new McpToolError(`accesso exceeded ${MAX_REDIRECTS} redirects for ${redactUrl(requested)}`, {
+      hint: 'Retry; if it persists the ticket link may have been revoked.',
+    });
   }
 
   /** Fetch and parse an order page. */
   async getOrder(url: string, opts: ParseOptions = {}): Promise<AccessoOrder> {
-    const res = await this.#get(url, 'text/html');
+    const { res, url: finalUrl } = await this.#get(url, 'text/html');
     const html = await res.text();
 
-    const order = parseTicketPage(html, { ...opts, sourceUrl: res.url || requireAccessoUrl(url) });
+    const order = parseTicketPage(html, { ...opts, sourceUrl: finalUrl });
     if (order.tickets.length === 0) {
       // Verified live: accesso answers a dead token with 200, not 4xx, so the
       // status code above cannot catch this.
@@ -223,7 +241,7 @@ export class AccessoClient {
   /** Exchange a Google Wallet pass endpoint for its save URL. */
   async getWalletSaveUrl(walletUrl: string): Promise<string> {
     requireAccessoUrl(walletUrl);
-    const res = await this.#get(walletUrl, 'application/json');
+    const { res } = await this.#get(walletUrl, 'application/json');
     const jwt = readJwt(await res.text());
     if (jwt === null) {
       throw new McpToolError('accesso did not return a Google Wallet pass for that ticket.', {

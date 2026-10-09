@@ -122,6 +122,72 @@ describe('getOrder', () => {
     expect(order.tickets[0]!.googleWalletUrl).toMatch(/^https:/);
   });
 
+  describe('redirects (each hop must stay on the accesso apex)', () => {
+    const OTHER = 'https://media-engine.eu1.accessoticketing.com';
+    const MOVED = `${OTHER}/tickets/v1/accesso155?oToken=A1:TOK&cToken=A1:CTOK`;
+
+    function recording(routes: Parameters<typeof fakeFetch>[0]) {
+      const seen: { url: string; redirect?: RequestRedirect }[] = [];
+      const inner = fakeFetch(routes);
+      const fetch = (async (u: RequestInfo | URL, init?: RequestInit) => {
+        seen.push({ url: String(u), redirect: init?.redirect });
+        return inner(u, init);
+      }) as typeof globalThis.fetch;
+      return { seen, fetch };
+    }
+
+    it('never lets fetch follow a redirect on its own', async () => {
+      const { seen, fetch } = recording(orderRoutes);
+      await new AccessoClient({ fetch }).getOrder(TICKET_URL);
+      expect(seen).toEqual([{ url: TICKET_URL, redirect: 'manual' }]);
+    });
+
+    it('follows a redirect that stays on accesso, and parses against the final URL', async () => {
+      const { seen, fetch } = recording({
+        [HOST]: { status: 302, headers: { location: MOVED } },
+        [OTHER]: { body: ORDER_HTML },
+      });
+      const order = await new AccessoClient({ fetch }).getOrder(TICKET_URL);
+      expect(seen.map((s) => s.url)).toEqual([TICKET_URL, MOVED]);
+      expect(order.tickets[0]!.googleWalletUrl!.startsWith(`${OTHER}/google-wallet/`)).toBe(true);
+    });
+
+    it('refuses a redirect off the accesso apex before fetching it', async () => {
+      const { seen, fetch } = recording({
+        [HOST]: { status: 302, headers: { location: 'http://169.254.169.254/latest/meta-data/' } },
+      });
+      await expect(new AccessoClient({ fetch }).getOrder(TICKET_URL)).rejects.toThrow(/non-accesso/i);
+      expect(seen.map((s) => s.url)).toEqual([TICKET_URL]);
+    });
+
+    it('upgrades a redirect to plain-http accesso to https', async () => {
+      const { seen, fetch } = recording({
+        [HOST]: { status: 301, headers: { location: MOVED.replace('https:', 'http:') } },
+        [OTHER]: { body: ORDER_HTML },
+      });
+      await new AccessoClient({ fetch }).getOrder(TICKET_URL);
+      expect(seen.map((s) => s.url)).toEqual([TICKET_URL, MOVED]);
+    });
+
+    it('treats a redirect with no location as an HTTP error', async () => {
+      const { fetch } = recording({ [HOST]: { status: 302 } });
+      await expect(new AccessoClient({ fetch }).getOrder(TICKET_URL)).rejects.toThrow(/HTTP 302/);
+    });
+
+    it('gives up rather than looping forever', async () => {
+      const { fetch } = recording({ [HOST]: { status: 302, headers: { location: TICKET_URL } } });
+      await expect(new AccessoClient({ fetch }).getOrder(TICKET_URL)).rejects.toThrow(/redirects/i);
+    });
+
+    it('cancels a redirect hop\'s body instead of leaving it open', async () => {
+      const hop = new Response('moved', { status: 302, headers: { location: MOVED } });
+      const fetch = (async (u: RequestInfo | URL) =>
+        String(u) === TICKET_URL ? hop : new Response(ORDER_HTML)) as typeof globalThis.fetch;
+      await new AccessoClient({ fetch }).getOrder(TICKET_URL);
+      expect(hop.bodyUsed).toBe(true);
+    });
+  });
+
   it('falls back to the requested URL when the response reports none', async () => {
     const fetchNoUrl = (async () =>
       ({
