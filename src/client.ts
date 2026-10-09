@@ -1,4 +1,6 @@
-import { readEnvVar, McpToolError, currentCallSignal } from '@chrischall/mcp-utils';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { readEnvVar, McpToolError, currentCallSignal, loadDotenvSafely } from '@chrischall/mcp-utils';
 import { parseTicketPage, isExpiredOrderPage } from './parse.js';
 import type { AccessoOrder, ParseOptions } from './types.js';
 import { assertPublicHost, systemLookup, type Lookup } from './netguard.js';
@@ -275,5 +277,13 @@ export class AccessoClient {
     return `https://pay.google.com/gp/v/save/${jwt}`;
   }
 }
+
+// Load .env for local dev before the singleton reads its config; a silent
+// no-op where dotenv is absent (the .mcpb bundle), and never overrides a
+// host-provided value.
+await loadDotenvSafely({
+  path: join(dirname(fileURLToPath(import.meta.url)), '..', '.env'),
+  override: false,
+});
 
 export const client = new AccessoClient();
