@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { McpToolError } from '@chrischall/mcp-utils';
+import { McpToolError, withCallSignal } from '@chrischall/mcp-utils';
 import { AccessoClient, isAccessoUrl, redactUrl } from '../src/client.js';
 import { ORDER_HTML, EXPIRED_HTML, HOST, TICKET_URL, fakeFetch } from './helpers.js';
 
@@ -11,6 +11,8 @@ describe('isAccessoUrl', () => {
     [`${HOST}/tickets/v1/accesso155`, true],
     ['https://accessoticketing.com/x', true],
     ['https://whitewater.secure.na3.accessoticketing.com/', true],
+    // The URL carries the order token: never sent in cleartext as-is.
+    [`http://media-engine.na3.accessoticketing.com/tickets/v1/accesso155`, false],
     // The guard is a security boundary: these are what an SSRF attempt looks like.
     ['https://evil.com/', false],
     ['https://accessoticketing.com.evil.com/', false],
@@ -64,6 +66,11 @@ describe('resolveTicketUrl', () => {
   it('refuses a non-accesso URL', () => {
     expect(() => new AccessoClient().resolveTicketUrl('https://evil.com/x')).toThrow(/non-accesso/i);
   });
+
+  it('upgrades a plain-http accesso link to https rather than sending the token in cleartext', () => {
+    const http = TICKET_URL.replace('https:', 'http:');
+    expect(new AccessoClient().resolveTicketUrl(http)).toBe(TICKET_URL);
+  });
 });
 
 describe('getOrder', () => {
@@ -98,6 +105,86 @@ describe('getOrder', () => {
     const c = new AccessoClient({ fetch: fakeFetch({ [HOST]: { status: 500 } }) });
     await expect(c.getOrder(TICKET_URL)).rejects.toMatchObject({
       hint: expect.stringMatching(/revoked/i),
+    });
+  });
+
+  it('fetches a plain-http accesso link over https', async () => {
+    const seen: string[] = [];
+    const inner = fakeFetch(orderRoutes);
+    const c = new AccessoClient({
+      fetch: (async (u: RequestInfo | URL, init?: RequestInit) => {
+        seen.push(String(u));
+        return inner(u, init);
+      }) as typeof globalThis.fetch,
+    });
+    const order = await c.getOrder(TICKET_URL.replace('https:', 'http:'));
+    expect(seen).toEqual([TICKET_URL]);
+    expect(order.tickets[0]!.googleWalletUrl).toMatch(/^https:/);
+  });
+
+  describe('redirects (each hop must stay on the accesso apex)', () => {
+    const OTHER = 'https://media-engine.eu1.accessoticketing.com';
+    const MOVED = `${OTHER}/tickets/v1/accesso155?oToken=A1:TOK&cToken=A1:CTOK`;
+
+    function recording(routes: Parameters<typeof fakeFetch>[0]) {
+      const seen: { url: string; redirect?: RequestRedirect }[] = [];
+      const inner = fakeFetch(routes);
+      const fetch = (async (u: RequestInfo | URL, init?: RequestInit) => {
+        seen.push({ url: String(u), redirect: init?.redirect });
+        return inner(u, init);
+      }) as typeof globalThis.fetch;
+      return { seen, fetch };
+    }
+
+    it('never lets fetch follow a redirect on its own', async () => {
+      const { seen, fetch } = recording(orderRoutes);
+      await new AccessoClient({ fetch }).getOrder(TICKET_URL);
+      expect(seen).toEqual([{ url: TICKET_URL, redirect: 'manual' }]);
+    });
+
+    it('follows a redirect that stays on accesso, and parses against the final URL', async () => {
+      const { seen, fetch } = recording({
+        [HOST]: { status: 302, headers: { location: MOVED } },
+        [OTHER]: { body: ORDER_HTML },
+      });
+      const order = await new AccessoClient({ fetch }).getOrder(TICKET_URL);
+      expect(seen.map((s) => s.url)).toEqual([TICKET_URL, MOVED]);
+      expect(order.tickets[0]!.googleWalletUrl!.startsWith(`${OTHER}/google-wallet/`)).toBe(true);
+    });
+
+    it('refuses a redirect off the accesso apex before fetching it', async () => {
+      const { seen, fetch } = recording({
+        [HOST]: { status: 302, headers: { location: 'http://169.254.169.254/latest/meta-data/' } },
+      });
+      await expect(new AccessoClient({ fetch }).getOrder(TICKET_URL)).rejects.toThrow(/non-accesso/i);
+      expect(seen.map((s) => s.url)).toEqual([TICKET_URL]);
+    });
+
+    it('upgrades a redirect to plain-http accesso to https', async () => {
+      const { seen, fetch } = recording({
+        [HOST]: { status: 301, headers: { location: MOVED.replace('https:', 'http:') } },
+        [OTHER]: { body: ORDER_HTML },
+      });
+      await new AccessoClient({ fetch }).getOrder(TICKET_URL);
+      expect(seen.map((s) => s.url)).toEqual([TICKET_URL, MOVED]);
+    });
+
+    it('treats a redirect with no location as an HTTP error', async () => {
+      const { fetch } = recording({ [HOST]: { status: 302 } });
+      await expect(new AccessoClient({ fetch }).getOrder(TICKET_URL)).rejects.toThrow(/HTTP 302/);
+    });
+
+    it('gives up rather than looping forever', async () => {
+      const { fetch } = recording({ [HOST]: { status: 302, headers: { location: TICKET_URL } } });
+      await expect(new AccessoClient({ fetch }).getOrder(TICKET_URL)).rejects.toThrow(/redirects/i);
+    });
+
+    it('cancels a redirect hop\'s body instead of leaving it open', async () => {
+      const hop = new Response('moved', { status: 302, headers: { location: MOVED } });
+      const fetch = (async (u: RequestInfo | URL) =>
+        String(u) === TICKET_URL ? hop : new Response(ORDER_HTML)) as typeof globalThis.fetch;
+      await new AccessoClient({ fetch }).getOrder(TICKET_URL);
+      expect(hop.bodyUsed).toBe(true);
     });
   });
 
@@ -143,6 +230,22 @@ describe('resolveLink', () => {
       }),
     });
     expect(await c.resolveLink('https://track.example.com/a')).toEqual({ url: TICKET_URL, hops: 2 });
+  });
+
+  it('returns a plain-http accesso link as https, without fetching it in cleartext', async () => {
+    const seen: string[] = [];
+    const inner = fakeFetch({
+      'https://track.example.com': { status: 302, headers: { location: TICKET_URL.replace('https:', 'http:') } },
+    });
+    const c = new AccessoClient({
+      lookup: publicLookup,
+      fetch: (async (u: RequestInfo | URL, init?: RequestInit) => {
+        seen.push(String(u));
+        return inner(u, init);
+      }) as typeof globalThis.fetch,
+    });
+    expect(await c.resolveLink('https://track.example.com/a')).toEqual({ url: TICKET_URL, hops: 1 });
+    expect(seen).toEqual(['https://track.example.com/a']);
   });
 
   it('reports a chain that never reaches accesso', async () => {
@@ -241,8 +344,76 @@ describe('getWalletSaveUrl', () => {
     await expect(c.getWalletSaveUrl(wallet)).rejects.toThrow(/did not return a Google Wallet pass/);
   });
 
+  it.each([
+    ['an HTML page', '<html><body>Something went wrong</body></html>'],
+    ['an empty body', ''],
+    ['JSON null', 'null'],
+    ['a JSON array', '["JWT123"]'],
+  ])('reports %s at HTTP 200 as no pass, not a raw parse error', async (_label, body) => {
+    const c = new AccessoClient({ fetch: fakeFetch({ [HOST]: { body } }) });
+    const err = await c.getWalletSaveUrl(wallet).catch((e: unknown) => e);
+    expect(err).toBeInstanceOf(McpToolError);
+    expect(String(err)).toMatch(/did not return a Google Wallet pass/);
+  });
+
   it('refuses a wallet URL off the accesso apex', async () => {
     const c = new AccessoClient({ fetch: fakeFetch({}) });
     await expect(c.getWalletSaveUrl('https://evil.com/jwt')).rejects.toThrow(/non-accesso/i);
+  });
+});
+
+describe('timeouts and cancellation', () => {
+  /** A fetch that never answers until its signal fires, recording each init. */
+  function stalled() {
+    const inits: (RequestInit | undefined)[] = [];
+    const fetch = ((_u: RequestInfo | URL, init?: RequestInit) => {
+      inits.push(init);
+      return new Promise<Response>((_resolve, reject) => {
+        init?.signal?.addEventListener('abort', () => reject(init.signal!.reason));
+      });
+    }) as typeof globalThis.fetch;
+    return { inits, fetch };
+  }
+
+  it('gives up on a stalled accesso fetch after the timeout', async () => {
+    const { inits, fetch } = stalled();
+    const c = new AccessoClient({ fetch, timeoutMs: 20 });
+    const err = await c.getOrder(TICKET_URL).catch((e: unknown) => e);
+    expect(err).toBeInstanceOf(McpToolError);
+    expect(String(err)).toMatch(/Could not reach accesso/);
+    expect((err as McpToolError).hint).toMatch(/in time|cancelled/i);
+    expect(inits[0]?.signal).toBeInstanceOf(AbortSignal);
+  });
+
+  it('gives up on a stalled click-tracker after the timeout', async () => {
+    const { fetch } = stalled();
+    const c = new AccessoClient({ fetch, lookup: publicLookup, timeoutMs: 20 });
+    const err = await c.resolveLink('https://track.example.com/a').catch((e: unknown) => e);
+    expect(String(err)).toMatch(/Could not follow/);
+    expect((err as McpToolError).hint).toMatch(/in time|cancelled/i);
+  });
+
+  it("stops fetching when the caller cancels the tool call", async () => {
+    const { inits, fetch } = stalled();
+    const c = new AccessoClient({ fetch });
+    const caller = new AbortController();
+    const pending = withCallSignal(caller.signal, () => c.getOrder(TICKET_URL)).catch((e: unknown) => e);
+    await vi.waitFor(() => expect(inits).toHaveLength(1));
+    caller.abort();
+    expect(String(await pending)).toMatch(/Could not reach accesso/);
+    expect(inits[0]!.signal!.aborted).toBe(true);
+  });
+
+  it('defaults to a bounded timeout', async () => {
+    const seen: (AbortSignal | null | undefined)[] = [];
+    const inner = fakeFetch(orderRoutes);
+    const c = new AccessoClient({
+      fetch: (async (u: RequestInfo | URL, init?: RequestInit) => {
+        seen.push(init?.signal);
+        return inner(u, init);
+      }) as typeof globalThis.fetch,
+    });
+    await c.getOrder(TICKET_URL);
+    expect(seen[0]).toBeInstanceOf(AbortSignal);
   });
 });

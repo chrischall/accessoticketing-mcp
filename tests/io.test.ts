@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 import { chmodSync, existsSync, mkdtempSync, readFileSync, readdirSync, symlinkSync, writeFileSync } from 'node:fs';
-import { tmpdir } from 'node:os';
-import { dirname, join } from 'node:path';
+import { homedir, tmpdir } from 'node:os';
+import { dirname, join, parse } from 'node:path';
 import { DiskFileIO, NoFileIO, defaultFileIO } from '../src/io.js';
 
 const bytes = Buffer.from([1, 2, 3]);
@@ -63,6 +63,17 @@ describe('DiskFileIO', () => {
 
   it('falls back to the working directory', () => {
     expect(new DiskFileIO().outputDir).toBe(process.cwd());
+  });
+
+  it('falls back to ~/Downloads when the working directory is the filesystem root', () => {
+    // Claude Desktop starts .mcpb servers with cwd "/", where every write
+    // fails with EACCES — so the default must not be the bare cwd there.
+    const cwd = vi.spyOn(process, 'cwd').mockReturnValue(parse(process.cwd()).root);
+    try {
+      expect(new DiskFileIO().outputDir).toBe(join(homedir(), 'Downloads'));
+    } finally {
+      cwd.mockRestore();
+    }
   });
 
   it('propagates a write failure that is not a name collision', async () => {
@@ -131,4 +142,12 @@ describe('defaultFileIO', () => {
     vi.stubEnv('ACCESSO_NO_FILE_OUTPUT', '1');
     expect(defaultFileIO().persistsFiles).toBe(false);
   });
+
+  it.each(['0', 'false', 'no', 'off'])(
+    'keeps writing files when ACCESSO_NO_FILE_OUTPUT=%s (an explicit "no")',
+    (value) => {
+      vi.stubEnv('ACCESSO_NO_FILE_OUTPUT', value);
+      expect(defaultFileIO().persistsFiles).toBe(true);
+    },
+  );
 });

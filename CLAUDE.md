@@ -11,7 +11,7 @@ before changing anything that touches the wire.
   every hop must be a public DNS name resolving only to public addresses.
 - `src/present.ts` — projections for tool output (and the reason barcodes never reach `textResult`).
 - `src/io.ts` — the file-output boundary, so hosted deployments don't report paths nobody can open.
-- `src/tools/tickets.ts` — the six read-only tools.
+- `src/tools/tickets.ts` — the six tools (read-only, except `accesso_save_barcodes`, which writes PNGs).
 
 ## Things that will bite you
 

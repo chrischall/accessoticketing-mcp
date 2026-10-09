@@ -1,4 +1,6 @@
-import { readEnvVar, McpToolError } from '@chrischall/mcp-utils';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { readEnvVar, McpToolError, currentCallSignal, loadDotenvSafely } from '@chrischall/mcp-utils';
 import { parseTicketPage, isExpiredOrderPage } from './parse.js';
 import type { AccessoOrder, ParseOptions } from './types.js';
 import { assertPublicHost, systemLookup, type Lookup } from './netguard.js';
@@ -15,25 +17,54 @@ const ALLOWED_APEX = '.accessoticketing.com';
 
 const MAX_REDIRECTS = 10;
 
-export function isAccessoUrl(value: string): boolean {
+/** Default bound on one fetch (every hop plus the body), in milliseconds. */
+const DEFAULT_TIMEOUT_MS = 15_000;
+
+const TIMEOUT_HINT = 'The request did not finish in time (or the call was cancelled); retry.';
+
+/** An http(s) URL on the accesso apex, parsed; null for anything else. */
+function parseAccessoUrl(value: string): URL | null {
   try {
     const url = new URL(value);
-    if (url.protocol !== 'https:' && url.protocol !== 'http:') return false;
-    return url.hostname === 'accessoticketing.com' || url.hostname.endsWith(ALLOWED_APEX);
+    if (url.protocol !== 'https:' && url.protocol !== 'http:') return null;
+    if (url.hostname !== 'accessoticketing.com' && !url.hostname.endsWith(ALLOWED_APEX)) return null;
+    return url;
   } catch {
-    return false;
+    return null;
   }
 }
 
+/**
+ * The https form of an accesso URL, or null for anything off the accesso apex.
+ *
+ * A plain-http accesso link is upgraded rather than refused: links in older
+ * emails can be http, and the token they carry must never travel in cleartext,
+ * so the fetch (and every URL derived from the page's origin, such as the
+ * Wallet endpoint) uses https.
+ */
+function toAccessoHttps(value: string): string | null {
+  const url = parseAccessoUrl(value);
+  if (url === null) return null;
+  url.protocol = 'https:';
+  return url.toString();
+}
+
+/** True for an https URL on the accesso apex — one these tools fetch as-is. */
+export function isAccessoUrl(value: string): boolean {
+  return parseAccessoUrl(value)?.protocol === 'https:';
+}
+
+/** The https URL to fetch for an accesso link; throws for anything else. */
 function requireAccessoUrl(value: string): string {
-  if (!isAccessoUrl(value)) {
+  const https = toAccessoHttps(value);
+  if (https === null) {
     throw new McpToolError(`Refusing to fetch a non-accesso URL: ${redactUrl(value)}`, {
       hint:
         'This server only fetches https://*.accessoticketing.com. If you have an email ' +
         'tracking link, resolve it first with accesso_resolve_link.',
     });
   }
-  return value;
+  return https;
 }
 
 /**
@@ -52,15 +83,35 @@ export function redactUrl(value: string): string {
   }
 }
 
+/**
+ * The `jwt` from a Wallet endpoint's body, or null. accesso answers some error
+ * states with an HTML page at HTTP 200, so the body is not trusted to be JSON,
+ * or an object, at all.
+ */
+function readJwt(text: string): string | null {
+  let body: unknown;
+  try {
+    body = JSON.parse(text);
+  } catch {
+    return null;
+  }
+  if (typeof body !== 'object' || body === null) return null;
+  const { jwt } = body as { jwt?: unknown };
+  return typeof jwt === 'string' && jwt !== '' ? jwt : null;
+}
+
 export interface FetchDeps {
   fetch?: typeof globalThis.fetch;
   /** DNS resolver for the click-tracker SSRF guard; defaults to the OS resolver. */
   lookup?: Lookup;
+  /** Bound on one fetch, redirects and body included. Default 15s. */
+  timeoutMs?: number;
 }
 
 export class AccessoClient {
   readonly #fetch: typeof globalThis.fetch;
   readonly #lookup: Lookup;
+  readonly #timeoutMs: number;
   /**
    * Deferred config: a missing default URL is not an error at construction, so
    * the server still boots and answers the host's install-time tools/list probe.
@@ -71,7 +122,19 @@ export class AccessoClient {
   constructor(deps: FetchDeps = {}) {
     this.#fetch = deps.fetch ?? globalThis.fetch.bind(globalThis);
     this.#lookup = deps.lookup ?? systemLookup;
+    this.#timeoutMs = deps.timeoutMs ?? DEFAULT_TIMEOUT_MS;
     this.#defaultUrl = readEnvVar('ACCESSO_TICKET_URL') ?? null;
+  }
+
+  /**
+   * The signal for one fetch: a timeout, combined with the tool call's own
+   * cancellation (set by the server runtime), so a stalled host or a caller
+   * that has gone away stops the request instead of holding it for minutes.
+   */
+  #signal(): AbortSignal {
+    const timeout = AbortSignal.timeout(this.#timeoutMs);
+    const caller = currentCallSignal();
+    return caller ? AbortSignal.any([timeout, caller]) : timeout;
   }
 
   get hasDefaultUrl(): boolean {
@@ -91,33 +154,55 @@ export class AccessoClient {
     return requireAccessoUrl(chosen);
   }
 
-  async #get(url: string, accept: string): Promise<Response> {
-    let res: Response;
-    try {
-      res = await this.#fetch(url, { redirect: 'follow', headers: { accept } });
-    } catch (cause) {
-      throw new McpToolError(`Could not reach accesso: ${redactUrl(url)}`, {
-        hint: 'Check network connectivity; accesso ticket pages need no login.',
-        cause,
-      });
+  /**
+   * GET an accesso URL, following redirects by hand so every hop is held to
+   * the accesso allowlist (and upgraded to https) before it is requested. With
+   * `redirect: 'follow'` only the first URL was checked, so a 3xx from any
+   * accesso host could steer the server anywhere. Returns the final URL too,
+   * since the page's links are resolved against it.
+   */
+  async #get(requested: string, accept: string): Promise<{ res: Response; url: string }> {
+    let url = requireAccessoUrl(requested);
+    const signal = this.#signal();
+    for (let hops = 0; hops <= MAX_REDIRECTS; hops++) {
+      let res: Response;
+      try {
+        res = await this.#fetch(url, { redirect: 'manual', headers: { accept }, signal });
+      } catch (cause) {
+        throw new McpToolError(`Could not reach accesso: ${redactUrl(url)}`, {
+          hint: signal.aborted
+            ? TIMEOUT_HINT
+            : 'Check network connectivity; accesso ticket pages need no login.',
+          cause,
+        });
+      }
+      const location = res.status >= 300 && res.status < 400 ? res.headers.get('location') : null;
+      if (location !== null) {
+        await res.body?.cancel();
+        url = requireAccessoUrl(new URL(location, url).toString());
+        continue;
+      }
+      if (!res.ok) {
+        throw new McpToolError(`accesso returned HTTP ${res.status} for ${redactUrl(url)}`, {
+          hint:
+            res.status === 404
+              ? 'The island/merchant path in the link looks wrong — re-copy it from the email.'
+              : 'Retry; if it persists the ticket link may have been revoked.',
+        });
+      }
+      return { res, url };
     }
-    if (!res.ok) {
-      throw new McpToolError(`accesso returned HTTP ${res.status} for ${redactUrl(url)}`, {
-        hint:
-          res.status === 404
-            ? 'The island/merchant path in the link looks wrong — re-copy it from the email.'
-            : 'Retry; if it persists the ticket link may have been revoked.',
-      });
-    }
-    return res;
+    throw new McpToolError(`accesso exceeded ${MAX_REDIRECTS} redirects for ${redactUrl(requested)}`, {
+      hint: 'Retry; if it persists the ticket link may have been revoked.',
+    });
   }
 
   /** Fetch and parse an order page. */
   async getOrder(url: string, opts: ParseOptions = {}): Promise<AccessoOrder> {
-    const res = await this.#get(url, 'text/html');
+    const { res, url: finalUrl } = await this.#get(url, 'text/html');
     const html = await res.text();
 
-    const order = parseTicketPage(html, { ...opts, sourceUrl: res.url || url });
+    const order = parseTicketPage(html, { ...opts, sourceUrl: finalUrl });
     if (order.tickets.length === 0) {
       // Verified live: accesso answers a dead token with 200, not 4xx, so the
       // status code above cannot catch this.
@@ -146,16 +231,18 @@ export class AccessoClient {
    */
   async resolveLink(url: string): Promise<{ url: string; hops: number }> {
     let current = url;
+    const signal = this.#signal();
     for (let hops = 0; hops <= MAX_REDIRECTS; hops++) {
-      if (isAccessoUrl(current)) return { url: current, hops };
+      const accesso = toAccessoHttps(current);
+      if (accesso !== null) return { url: accesso, hops };
       await assertPublicHost(new URL(current), this.#lookup);
 
       let res: Response;
       try {
-        res = await this.#fetch(current, { redirect: 'manual', headers: { accept: 'text/html' } });
+        res = await this.#fetch(current, { redirect: 'manual', headers: { accept: 'text/html' }, signal });
       } catch (cause) {
         throw new McpToolError(`Could not follow the link: ${redactUrl(current)}`, {
-          hint: 'Check network connectivity.',
+          hint: signal.aborted ? TIMEOUT_HINT : 'Check network connectivity.',
           cause,
         });
       }
@@ -180,15 +267,23 @@ export class AccessoClient {
   /** Exchange a Google Wallet pass endpoint for its save URL. */
   async getWalletSaveUrl(walletUrl: string): Promise<string> {
     requireAccessoUrl(walletUrl);
-    const res = await this.#get(walletUrl, 'application/json');
-    const body = (await res.json()) as { jwt?: unknown };
-    if (typeof body.jwt !== 'string' || body.jwt === '') {
+    const { res } = await this.#get(walletUrl, 'application/json');
+    const jwt = readJwt(await res.text());
+    if (jwt === null) {
       throw new McpToolError('accesso did not return a Google Wallet pass for that ticket.', {
         hint: 'Not every merchant enables Wallet passes.',
       });
     }
-    return `https://pay.google.com/gp/v/save/${body.jwt}`;
+    return `https://pay.google.com/gp/v/save/${jwt}`;
   }
 }
+
+// Load .env for local dev before the singleton reads its config; a silent
+// no-op where dotenv is absent (the .mcpb bundle), and never overrides a
+// host-provided value.
+await loadDotenvSafely({
+  path: join(dirname(fileURLToPath(import.meta.url)), '..', '.env'),
+  override: false,
+});
 
 export const client = new AccessoClient();

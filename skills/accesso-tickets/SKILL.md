@@ -26,7 +26,7 @@ node "$P" "$TICKET_URL" | jq .
 
 Useful flags:
 
-- `--barcodes <dir>` — write each ticket's barcode as a PNG (`ticket-<idx>-<ticketId>.png`) and add `barcodeFile` to the output.
+- `--barcodes <dir>` — write each ticket's barcode as a PNG (`ticket-<idx>-<ticketId>.png`; an existing file is never overwritten — a re-run writes `…-2.png`) and add `barcodeFile` to the output.
 - `--terms` — include the (long, boilerplate, per-ticket-identical) `termsAndConditions`. Omitted by default.
 - `--url <original-url>` — supply the source URL when parsing a saved file, so `googleWalletUrl` can be built.
 
