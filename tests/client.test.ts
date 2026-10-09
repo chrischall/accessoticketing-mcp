@@ -342,6 +342,18 @@ describe('resolveLink', () => {
     expect(fetchSpy).not.toHaveBeenCalled();
   });
 
+  it('refuses a tracker that rebinds to a private address between the check and the connect', async () => {
+    // No fetch injected: the production path. The guard's own lookup sees a
+    // public address; the connection's lookup sees loopback. The pinned
+    // dispatcher must refuse at connect instead of resolving a second time.
+    let calls = 0;
+    const c = new AccessoClient({
+      lookup: async () => (calls++ === 0 ? ['93.184.215.14'] : ['127.0.0.1']),
+    });
+    await expect(c.resolveLink('https://track.example.com/a')).rejects.toThrow(/private, local or IP-address/i);
+    expect(calls).toBe(2);
+  });
+
   it('refuses a redirect into the internal network before fetching it', async () => {
     const seen: string[] = [];
     const inner = fakeFetch({

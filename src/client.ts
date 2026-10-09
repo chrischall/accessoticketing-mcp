@@ -3,7 +3,9 @@ import { fileURLToPath } from 'node:url';
 import { readEnvVar, McpToolError, currentCallSignal, loadDotenvSafely } from '@chrischall/mcp-utils';
 import { parseTicketPage, isExpiredOrderPage } from './parse.js';
 import type { AccessoOrder, ParseOptions } from './types.js';
-import { assertPublicHost, systemLookup, type Lookup } from './netguard.js';
+import { createPublicOnlyDispatcher } from '@chrischall/mcp-utils/netguard';
+import { fetch as undiciFetch, type Dispatcher } from 'undici';
+import { assertPublicHost, refusePrivateHost, systemLookup, type Lookup } from './netguard.js';
 
 /**
  * accesso serves ticket pages from regional media-engine hosts under this
@@ -112,6 +114,10 @@ function readJwt(text: string): string | null {
 }
 
 export interface FetchDeps {
+  /**
+   * Replaces every request, accesso and click-tracker alike (tests). Without
+   * it, tracker hops go through a public-only pinned-address dispatcher.
+   */
   fetch?: typeof globalThis.fetch;
   /** DNS resolver for the click-tracker SSRF guard; defaults to the OS resolver. */
   lookup?: Lookup;
@@ -119,8 +125,34 @@ export interface FetchDeps {
   timeoutMs?: number;
 }
 
+/**
+ * A fetch whose connections may only reach public addresses. The dispatcher
+ * resolves each host itself and hands the socket exactly the addresses it
+ * checked, so a DNS-rebinding tracker cannot answer public to
+ * `assertPublicHost` and private at connect time.
+ */
+function pinnedFetch(lookup: Lookup): typeof globalThis.fetch {
+  let dispatcher: Dispatcher | undefined;
+  return ((input: RequestInfo | URL, init?: RequestInit) => {
+    dispatcher ??= createPublicOnlyDispatcher({ resolve: lookup });
+    return undiciFetch(input as string, { ...(init as object), dispatcher });
+  }) as unknown as typeof globalThis.fetch;
+}
+
+/** True when the pinned dispatcher refused the connection (anywhere in the cause chain). */
+function refusedAtConnect(err: unknown): boolean {
+  let e: unknown = err;
+  for (let i = 0; i < 8 && e; i += 1) {
+    if ((e as { name?: unknown }).name === 'UrlNotAllowedError') return true;
+    e = (e as { cause?: unknown }).cause;
+  }
+  return false;
+}
+
 export class AccessoClient {
   readonly #fetch: typeof globalThis.fetch;
+  /** Fetch for click-tracker hops: never reaches a non-public address. */
+  readonly #trackerFetch: typeof globalThis.fetch;
   readonly #lookup: Lookup;
   readonly #timeoutMs: number;
   /**
@@ -133,6 +165,7 @@ export class AccessoClient {
   constructor(deps: FetchDeps = {}) {
     this.#fetch = deps.fetch ?? globalThis.fetch.bind(globalThis);
     this.#lookup = deps.lookup ?? systemLookup;
+    this.#trackerFetch = deps.fetch ?? pinnedFetch(this.#lookup);
     this.#timeoutMs = deps.timeoutMs ?? DEFAULT_TIMEOUT_MS;
     this.#defaultUrl = readEnvVar('ACCESSO_TICKET_URL') ?? null;
   }
@@ -250,8 +283,9 @@ export class AccessoClient {
 
       let res: Response;
       try {
-        res = await this.#fetch(current, { redirect: 'manual', headers: { accept: 'text/html' }, signal });
+        res = await this.#trackerFetch(current, { redirect: 'manual', headers: { accept: 'text/html' }, signal });
       } catch (cause) {
+        if (refusedAtConnect(cause)) refusePrivateHost();
         throw new McpToolError(`Could not follow the link: ${redactUrl(current)}`, {
           hint: signal.aborted ? TIMEOUT_HINT : 'Check network connectivity.',
           cause,

@@ -8,10 +8,10 @@ import { McpToolError } from '@chrischall/mcp-utils';
  * someone other than the user, so before each hop the host must be a public
  * DNS name that resolves only to public addresses.
  *
- * Known limit: `fetch` resolves the name again itself, so a DNS-rebinding host
- * could still answer differently between the check and the request. Closing
- * that needs a pinned-address dispatcher; this guard removes the direct routes
- * (IP literals, local names, names that plainly resolve inward).
+ * This check gives a clear early refusal (IP literals, local names, names that
+ * plainly resolve inward). DNS rebinding between this lookup and the connect is
+ * closed separately: tracker requests go through mcp-utils' public-only
+ * pinned-address dispatcher, which re-checks the addresses it connects to.
  */
 
 /** Resolves a hostname to its addresses. Injectable so tests never touch DNS. */
@@ -60,7 +60,7 @@ export function isPrivateAddress(ip: string): boolean {
 
 const LOCAL_SUFFIXES = ['.localhost', '.local', '.internal', '.arpa'];
 
-function refuse(): never {
+export function refusePrivateHost(): never {
   throw new McpToolError('Refusing to follow a link to a private, local or IP-address host.', {
     hint: 'accesso_resolve_link only follows public email click-tracking links.',
   });
@@ -71,10 +71,10 @@ export async function assertPublicHost(url: URL, lookup: Lookup): Promise<void> 
   const host = url.hostname.replace(/^\[|\]$/g, '').replace(/\.$/, '').toLowerCase();
   // IP literals are refused outright: a real tracker uses a name. (WHATWG URL
   // has already normalised decimal/octal/hex IPv4 forms to dotted quads.)
-  if (isIP(host) !== 0) refuse();
+  if (isIP(host) !== 0) refusePrivateHost();
   // Single-label names (localhost, intranet hosts) resolve via local search
   // domains, never the public DNS.
-  if (!host.includes('.') || LOCAL_SUFFIXES.some((s) => host.endsWith(s))) refuse();
+  if (!host.includes('.') || LOCAL_SUFFIXES.some((s) => host.endsWith(s))) refusePrivateHost();
 
   let addresses: string[];
   try {
@@ -85,5 +85,5 @@ export async function assertPublicHost(url: URL, lookup: Lookup): Promise<void> 
       cause,
     });
   }
-  if (addresses.length === 0 || addresses.some(isPrivateAddress)) refuse();
+  if (addresses.length === 0 || addresses.some(isPrivateAddress)) refusePrivateHost();
 }

@@ -50,7 +50,7 @@
   ],
   "scripts": {
     "build": "tsc && npm run bundle",
-    "bundle": "esbuild src/index.ts --bundle --alias:zod/v4=./node_modules/zod/v4/index.cjs --platform=node --format=esm --external:dotenv --outfile=dist/bundle.js",
+    "bundle": "esbuild src/index.ts --bundle --alias:zod/v4=./node_modules/zod/v4/index.cjs --platform=node --format=esm --external:dotenv --banner:js=\"import { createRequire as __createRequire } from 'module'; import { fileURLToPath as __fileURLToPath } from 'url'; import { dirname as __pathDirname } from 'path'; const require = __createRequire(import.meta.url); const __filename = __fileURLToPath(import.meta.url); const __dirname = __pathDirname(__filename);\" --outfile=dist/bundle.js",
     "dev": "node dist/index.js",
     "typecheck": "tsc --noEmit",
     "test": "npm run typecheck && vitest run",
@@ -62,6 +62,7 @@
     "@modelcontextprotocol/server": "^2.3.0",
     "dotenv": "^18.0.2",
     "node-html-parser": "^9.0.1",
+    "undici": "^8.11.2",
     "zod": "^4.6.5"
   },
   "devDependencies": {
