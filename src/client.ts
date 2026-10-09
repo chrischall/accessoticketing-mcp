@@ -1,4 +1,4 @@
-import { readEnvVar, McpToolError } from '@chrischall/mcp-utils';
+import { readEnvVar, McpToolError, currentCallSignal } from '@chrischall/mcp-utils';
 import { parseTicketPage, isExpiredOrderPage } from './parse.js';
 import type { AccessoOrder, ParseOptions } from './types.js';
 import { assertPublicHost, systemLookup, type Lookup } from './netguard.js';
@@ -14,6 +14,11 @@ import { assertPublicHost, systemLookup, type Lookup } from './netguard.js';
 const ALLOWED_APEX = '.accessoticketing.com';
 
 const MAX_REDIRECTS = 10;
+
+/** Default bound on one fetch (every hop plus the body), in milliseconds. */
+const DEFAULT_TIMEOUT_MS = 15_000;
+
+const TIMEOUT_HINT = 'The request did not finish in time (or the call was cancelled); retry.';
 
 /** An http(s) URL on the accesso apex, parsed; null for anything else. */
 function parseAccessoUrl(value: string): URL | null {
@@ -97,11 +102,14 @@ export interface FetchDeps {
   fetch?: typeof globalThis.fetch;
   /** DNS resolver for the click-tracker SSRF guard; defaults to the OS resolver. */
   lookup?: Lookup;
+  /** Bound on one fetch, redirects and body included. Default 15s. */
+  timeoutMs?: number;
 }
 
 export class AccessoClient {
   readonly #fetch: typeof globalThis.fetch;
   readonly #lookup: Lookup;
+  readonly #timeoutMs: number;
   /**
    * Deferred config: a missing default URL is not an error at construction, so
    * the server still boots and answers the host's install-time tools/list probe.
@@ -112,7 +120,19 @@ export class AccessoClient {
   constructor(deps: FetchDeps = {}) {
     this.#fetch = deps.fetch ?? globalThis.fetch.bind(globalThis);
     this.#lookup = deps.lookup ?? systemLookup;
+    this.#timeoutMs = deps.timeoutMs ?? DEFAULT_TIMEOUT_MS;
     this.#defaultUrl = readEnvVar('ACCESSO_TICKET_URL') ?? null;
+  }
+
+  /**
+   * The signal for one fetch: a timeout, combined with the tool call's own
+   * cancellation (set by the server runtime), so a stalled host or a caller
+   * that has gone away stops the request instead of holding it for minutes.
+   */
+  #signal(): AbortSignal {
+    const timeout = AbortSignal.timeout(this.#timeoutMs);
+    const caller = currentCallSignal();
+    return caller ? AbortSignal.any([timeout, caller]) : timeout;
   }
 
   get hasDefaultUrl(): boolean {
@@ -141,13 +161,16 @@ export class AccessoClient {
    */
   async #get(requested: string, accept: string): Promise<{ res: Response; url: string }> {
     let url = requireAccessoUrl(requested);
+    const signal = this.#signal();
     for (let hops = 0; hops <= MAX_REDIRECTS; hops++) {
       let res: Response;
       try {
-        res = await this.#fetch(url, { redirect: 'manual', headers: { accept } });
+        res = await this.#fetch(url, { redirect: 'manual', headers: { accept }, signal });
       } catch (cause) {
         throw new McpToolError(`Could not reach accesso: ${redactUrl(url)}`, {
-          hint: 'Check network connectivity; accesso ticket pages need no login.',
+          hint: signal.aborted
+            ? TIMEOUT_HINT
+            : 'Check network connectivity; accesso ticket pages need no login.',
           cause,
         });
       }
@@ -206,6 +229,7 @@ export class AccessoClient {
    */
   async resolveLink(url: string): Promise<{ url: string; hops: number }> {
     let current = url;
+    const signal = this.#signal();
     for (let hops = 0; hops <= MAX_REDIRECTS; hops++) {
       const accesso = toAccessoHttps(current);
       if (accesso !== null) return { url: accesso, hops };
@@ -213,10 +237,10 @@ export class AccessoClient {
 
       let res: Response;
       try {
-        res = await this.#fetch(current, { redirect: 'manual', headers: { accept: 'text/html' } });
+        res = await this.#fetch(current, { redirect: 'manual', headers: { accept: 'text/html' }, signal });
       } catch (cause) {
         throw new McpToolError(`Could not follow the link: ${redactUrl(current)}`, {
-          hint: 'Check network connectivity.',
+          hint: signal.aborted ? TIMEOUT_HINT : 'Check network connectivity.',
           cause,
         });
       }

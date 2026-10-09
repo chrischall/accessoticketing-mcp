@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { McpToolError } from '@chrischall/mcp-utils';
+import { McpToolError, withCallSignal } from '@chrischall/mcp-utils';
 import { AccessoClient, isAccessoUrl, redactUrl } from '../src/client.js';
 import { ORDER_HTML, EXPIRED_HTML, HOST, TICKET_URL, fakeFetch } from './helpers.js';
 
@@ -359,5 +359,61 @@ describe('getWalletSaveUrl', () => {
   it('refuses a wallet URL off the accesso apex', async () => {
     const c = new AccessoClient({ fetch: fakeFetch({}) });
     await expect(c.getWalletSaveUrl('https://evil.com/jwt')).rejects.toThrow(/non-accesso/i);
+  });
+});
+
+describe('timeouts and cancellation', () => {
+  /** A fetch that never answers until its signal fires, recording each init. */
+  function stalled() {
+    const inits: (RequestInit | undefined)[] = [];
+    const fetch = ((_u: RequestInfo | URL, init?: RequestInit) => {
+      inits.push(init);
+      return new Promise<Response>((_resolve, reject) => {
+        init?.signal?.addEventListener('abort', () => reject(init.signal!.reason));
+      });
+    }) as typeof globalThis.fetch;
+    return { inits, fetch };
+  }
+
+  it('gives up on a stalled accesso fetch after the timeout', async () => {
+    const { inits, fetch } = stalled();
+    const c = new AccessoClient({ fetch, timeoutMs: 20 });
+    const err = await c.getOrder(TICKET_URL).catch((e: unknown) => e);
+    expect(err).toBeInstanceOf(McpToolError);
+    expect(String(err)).toMatch(/Could not reach accesso/);
+    expect((err as McpToolError).hint).toMatch(/in time|cancelled/i);
+    expect(inits[0]?.signal).toBeInstanceOf(AbortSignal);
+  });
+
+  it('gives up on a stalled click-tracker after the timeout', async () => {
+    const { fetch } = stalled();
+    const c = new AccessoClient({ fetch, lookup: publicLookup, timeoutMs: 20 });
+    const err = await c.resolveLink('https://track.example.com/a').catch((e: unknown) => e);
+    expect(String(err)).toMatch(/Could not follow/);
+    expect((err as McpToolError).hint).toMatch(/in time|cancelled/i);
+  });
+
+  it("stops fetching when the caller cancels the tool call", async () => {
+    const { inits, fetch } = stalled();
+    const c = new AccessoClient({ fetch });
+    const caller = new AbortController();
+    const pending = withCallSignal(caller.signal, () => c.getOrder(TICKET_URL)).catch((e: unknown) => e);
+    await vi.waitFor(() => expect(inits).toHaveLength(1));
+    caller.abort();
+    expect(String(await pending)).toMatch(/Could not reach accesso/);
+    expect(inits[0]!.signal!.aborted).toBe(true);
+  });
+
+  it('defaults to a bounded timeout', async () => {
+    const seen: (AbortSignal | null | undefined)[] = [];
+    const inner = fakeFetch(orderRoutes);
+    const c = new AccessoClient({
+      fetch: (async (u: RequestInfo | URL, init?: RequestInit) => {
+        seen.push(init?.signal);
+        return inner(u, init);
+      }) as typeof globalThis.fetch,
+    });
+    await c.getOrder(TICKET_URL);
+    expect(seen[0]).toBeInstanceOf(AbortSignal);
   });
 });
