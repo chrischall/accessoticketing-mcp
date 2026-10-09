@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 import { McpToolError, withCallSignal } from '@chrischall/mcp-utils';
 import { AccessoClient, isAccessoUrl, redactUrl } from '../src/client.js';
+import * as lib from '../src/lib.js';
 import { ORDER_HTML, EXPIRED_HTML, HOST, TICKET_URL, fakeFetch } from './helpers.js';
 
 const orderRoutes = { [HOST]: { body: ORDER_HTML } };
@@ -21,6 +22,33 @@ describe('isAccessoUrl', () => {
     ['not a url', false],
   ])('%s -> %s', (url, expected) => {
     expect(isAccessoUrl(url)).toBe(expected);
+  });
+});
+
+describe('toAccessoHttps (library export)', () => {
+  // isAccessoUrl is https-only since the cleartext-token fix; library callers
+  // that accepted http accesso links need an http-tolerant check that still
+  // never hands back a cleartext URL.
+  it.each([
+    [`${HOST}/tickets/v1/accesso155`, `${HOST}/tickets/v1/accesso155`],
+    [
+      'http://media-engine.na3.accessoticketing.com/tickets/v1/accesso155?oToken=A1:X',
+      'https://media-engine.na3.accessoticketing.com/tickets/v1/accesso155?oToken=A1:X',
+    ],
+    ['http://accessoticketing.com/x', 'https://accessoticketing.com/x'],
+    ['https://evil.com/', null],
+    ['http://accessoticketing.com.evil.com/', null],
+    ['http://169.254.169.254/latest/meta-data/', null],
+    ['file:///etc/passwd', null],
+    ['not a url', null],
+  ])('%s -> %s', (url, expected) => {
+    expect(lib.toAccessoHttps(url)).toBe(expected);
+  });
+
+  it('accepts exactly the URLs isAccessoUrl accepts once upgraded', () => {
+    const http = 'http://media-engine.na3.accessoticketing.com/tickets/v1/accesso155';
+    expect(lib.isAccessoUrl(http)).toBe(false);
+    expect(lib.isAccessoUrl(lib.toAccessoHttps(http) as string)).toBe(true);
   });
 });
 

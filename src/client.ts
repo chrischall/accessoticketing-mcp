@@ -41,15 +41,26 @@ function parseAccessoUrl(value: string): URL | null {
  * emails can be http, and the token they carry must never travel in cleartext,
  * so the fetch (and every URL derived from the page's origin, such as the
  * Wallet endpoint) uses https.
+ *
+ * Library callers that need to accept http accesso links (which
+ * {@link isAccessoUrl} rejects) should use this instead: it is the
+ * http-tolerant check, and it never hands back a cleartext URL.
  */
-function toAccessoHttps(value: string): string | null {
+export function toAccessoHttps(value: string): string | null {
   const url = parseAccessoUrl(value);
   if (url === null) return null;
   url.protocol = 'https:';
   return url.toString();
 }
 
-/** True for an https URL on the accesso apex — one these tools fetch as-is. */
+/**
+ * True for an https URL on the accesso apex — one these tools fetch as-is.
+ *
+ * Behaviour change after 1.0.6 (#80): this now returns false for plain-http
+ * accesso URLs (it used to return true), because those carry the order token
+ * in cleartext. To accept an http link, upgrade it with
+ * {@link toAccessoHttps} (null = not accesso).
+ */
 export function isAccessoUrl(value: string): boolean {
   return parseAccessoUrl(value)?.protocol === 'https:';
 }
