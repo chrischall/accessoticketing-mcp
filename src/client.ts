@@ -175,7 +175,7 @@ export class AccessoClient {
   async #get(requested: string, accept: string): Promise<{ res: Response; url: string }> {
     let url = requireAccessoUrl(requested);
     const signal = this.#signal();
-    for (let hops = 0; hops <= MAX_REDIRECTS; hops++) {
+    for (let hops = 0; hops < MAX_REDIRECTS; hops++) {
       let res: Response;
       try {
         res = await this.#fetch(url, { redirect: 'manual', headers: { accept }, signal });
@@ -243,7 +243,7 @@ export class AccessoClient {
   async resolveLink(url: string): Promise<{ url: string; hops: number }> {
     let current = url;
     const signal = this.#signal();
-    for (let hops = 0; hops <= MAX_REDIRECTS; hops++) {
+    for (let hops = 0; hops < MAX_REDIRECTS; hops++) {
       const accesso = toAccessoHttps(current);
       if (accesso !== null) return { url: accesso, hops };
       await assertPublicHost(new URL(current), this.#lookup);
