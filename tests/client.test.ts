@@ -11,6 +11,8 @@ describe('isAccessoUrl', () => {
     [`${HOST}/tickets/v1/accesso155`, true],
     ['https://accessoticketing.com/x', true],
     ['https://whitewater.secure.na3.accessoticketing.com/', true],
+    // The URL carries the order token: never sent in cleartext as-is.
+    [`http://media-engine.na3.accessoticketing.com/tickets/v1/accesso155`, false],
     // The guard is a security boundary: these are what an SSRF attempt looks like.
     ['https://evil.com/', false],
     ['https://accessoticketing.com.evil.com/', false],
@@ -64,6 +66,11 @@ describe('resolveTicketUrl', () => {
   it('refuses a non-accesso URL', () => {
     expect(() => new AccessoClient().resolveTicketUrl('https://evil.com/x')).toThrow(/non-accesso/i);
   });
+
+  it('upgrades a plain-http accesso link to https rather than sending the token in cleartext', () => {
+    const http = TICKET_URL.replace('https:', 'http:');
+    expect(new AccessoClient().resolveTicketUrl(http)).toBe(TICKET_URL);
+  });
 });
 
 describe('getOrder', () => {
@@ -99,6 +106,20 @@ describe('getOrder', () => {
     await expect(c.getOrder(TICKET_URL)).rejects.toMatchObject({
       hint: expect.stringMatching(/revoked/i),
     });
+  });
+
+  it('fetches a plain-http accesso link over https', async () => {
+    const seen: string[] = [];
+    const inner = fakeFetch(orderRoutes);
+    const c = new AccessoClient({
+      fetch: (async (u: RequestInfo | URL, init?: RequestInit) => {
+        seen.push(String(u));
+        return inner(u, init);
+      }) as typeof globalThis.fetch,
+    });
+    const order = await c.getOrder(TICKET_URL.replace('https:', 'http:'));
+    expect(seen).toEqual([TICKET_URL]);
+    expect(order.tickets[0]!.googleWalletUrl).toMatch(/^https:/);
   });
 
   it('falls back to the requested URL when the response reports none', async () => {
@@ -143,6 +164,22 @@ describe('resolveLink', () => {
       }),
     });
     expect(await c.resolveLink('https://track.example.com/a')).toEqual({ url: TICKET_URL, hops: 2 });
+  });
+
+  it('returns a plain-http accesso link as https, without fetching it in cleartext', async () => {
+    const seen: string[] = [];
+    const inner = fakeFetch({
+      'https://track.example.com': { status: 302, headers: { location: TICKET_URL.replace('https:', 'http:') } },
+    });
+    const c = new AccessoClient({
+      lookup: publicLookup,
+      fetch: (async (u: RequestInfo | URL, init?: RequestInit) => {
+        seen.push(String(u));
+        return inner(u, init);
+      }) as typeof globalThis.fetch,
+    });
+    expect(await c.resolveLink('https://track.example.com/a')).toEqual({ url: TICKET_URL, hops: 1 });
+    expect(seen).toEqual(['https://track.example.com/a']);
   });
 
   it('reports a chain that never reaches accesso', async () => {

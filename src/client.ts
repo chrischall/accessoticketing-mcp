@@ -15,25 +15,49 @@ const ALLOWED_APEX = '.accessoticketing.com';
 
 const MAX_REDIRECTS = 10;
 
-export function isAccessoUrl(value: string): boolean {
+/** An http(s) URL on the accesso apex, parsed; null for anything else. */
+function parseAccessoUrl(value: string): URL | null {
   try {
     const url = new URL(value);
-    if (url.protocol !== 'https:' && url.protocol !== 'http:') return false;
-    return url.hostname === 'accessoticketing.com' || url.hostname.endsWith(ALLOWED_APEX);
+    if (url.protocol !== 'https:' && url.protocol !== 'http:') return null;
+    if (url.hostname !== 'accessoticketing.com' && !url.hostname.endsWith(ALLOWED_APEX)) return null;
+    return url;
   } catch {
-    return false;
+    return null;
   }
 }
 
+/**
+ * The https form of an accesso URL, or null for anything off the accesso apex.
+ *
+ * A plain-http accesso link is upgraded rather than refused: links in older
+ * emails can be http, and the token they carry must never travel in cleartext,
+ * so the fetch (and every URL derived from the page's origin, such as the
+ * Wallet endpoint) uses https.
+ */
+function toAccessoHttps(value: string): string | null {
+  const url = parseAccessoUrl(value);
+  if (url === null) return null;
+  url.protocol = 'https:';
+  return url.toString();
+}
+
+/** True for an https URL on the accesso apex — one these tools fetch as-is. */
+export function isAccessoUrl(value: string): boolean {
+  return parseAccessoUrl(value)?.protocol === 'https:';
+}
+
+/** The https URL to fetch for an accesso link; throws for anything else. */
 function requireAccessoUrl(value: string): string {
-  if (!isAccessoUrl(value)) {
+  const https = toAccessoHttps(value);
+  if (https === null) {
     throw new McpToolError(`Refusing to fetch a non-accesso URL: ${redactUrl(value)}`, {
       hint:
         'This server only fetches https://*.accessoticketing.com. If you have an email ' +
         'tracking link, resolve it first with accesso_resolve_link.',
     });
   }
-  return value;
+  return https;
 }
 
 /**
@@ -108,7 +132,8 @@ export class AccessoClient {
     return requireAccessoUrl(chosen);
   }
 
-  async #get(url: string, accept: string): Promise<Response> {
+  async #get(requested: string, accept: string): Promise<Response> {
+    const url = requireAccessoUrl(requested);
     let res: Response;
     try {
       res = await this.#fetch(url, { redirect: 'follow', headers: { accept } });
@@ -134,7 +159,7 @@ export class AccessoClient {
     const res = await this.#get(url, 'text/html');
     const html = await res.text();
 
-    const order = parseTicketPage(html, { ...opts, sourceUrl: res.url || url });
+    const order = parseTicketPage(html, { ...opts, sourceUrl: res.url || requireAccessoUrl(url) });
     if (order.tickets.length === 0) {
       // Verified live: accesso answers a dead token with 200, not 4xx, so the
       // status code above cannot catch this.
@@ -164,7 +189,8 @@ export class AccessoClient {
   async resolveLink(url: string): Promise<{ url: string; hops: number }> {
     let current = url;
     for (let hops = 0; hops <= MAX_REDIRECTS; hops++) {
-      if (isAccessoUrl(current)) return { url: current, hops };
+      const accesso = toAccessoHttps(current);
+      if (accesso !== null) return { url: accesso, hops };
       await assertPublicHost(new URL(current), this.#lookup);
 
       let res: Response;
