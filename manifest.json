@@ -31,10 +31,37 @@
       ],
       "env": {
         "ACCESSO_TICKET_URL": "${user_config.ticket_url}",
-        "ACCESSO_OUTPUT_DIR": "${user_config.output_dir}"
+        "ACCESSO_OUTPUT_DIR": "${user_config.output_dir}",
+        "ACCESSO_NO_FILE_OUTPUT": "${user_config.no_file_output}"
       }
     }
   },
+  "tools": [
+    {
+      "name": "accesso_get_order",
+      "description": "Read an accesso ticket link: the order number and every admission on it — product, participant, date, start time, barcode text, and the merchant instructions."
+    },
+    {
+      "name": "accesso_get_ticket",
+      "description": "One admission from an accesso order in full detail, including the merchant instructions and (on request) the terms."
+    },
+    {
+      "name": "accesso_save_barcodes",
+      "description": "Save the scannable barcode images from an accesso order. Writes PNGs and returns their paths; set inline to receive the images directly instead."
+    },
+    {
+      "name": "accesso_get_wallet_passes",
+      "description": "Google Wallet save links for the tickets on an accesso order. Not every merchant enables passes."
+    },
+    {
+      "name": "accesso_resolve_link",
+      "description": "Turn an order-confirmation email's click-tracking link into the direct accesso ticket URL it wraps."
+    },
+    {
+      "name": "accesso_healthcheck",
+      "description": "Check that this server can reach accesso and whether a default ticket link is configured."
+    }
+  ],
   "user_config": {
     "ticket_url": {
       "type": "string",
@@ -48,6 +75,13 @@
       "title": "Barcode output directory",
       "description": "Optional. Where saved barcode images are written. Defaults to the working directory, or ~/Downloads when that is the filesystem root (as under Claude Desktop).",
       "required": false
+    },
+    "no_file_output": {
+      "type": "boolean",
+      "title": "Return barcodes inline",
+      "description": "Set where the filesystem isn't the user's (a hosted deployment) so barcodes return inline.",
+      "required": false,
+      "default": false
     }
   },
   "compatibility": {

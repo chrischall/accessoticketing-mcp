@@ -5,7 +5,7 @@ import { AccessoClient } from '../src/client.js';
 import { NoFileIO, DiskFileIO } from '../src/io.js';
 import { registerTicketTools } from '../src/tools/tickets.js';
 import { ORDER_HTML, HOST, TICKET_URL, fakeFetch } from './helpers.js';
-import { mkdtempSync, readdirSync } from 'node:fs';
+import { mkdtempSync, readdirSync, readFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
@@ -75,6 +75,38 @@ describe('tool surface', () => {
     for (const tool of tools.filter((t) => t.name !== 'accesso_save_barcodes')) {
       expect(tool.annotations?.readOnlyHint, tool.name).toBe(true);
     }
+    await h.close();
+  });
+
+  // Fleet invariants, read off the REGISTERED tools rather than a hand-kept
+  // list, so a tool added later is checked without anyone remembering to.
+  // destructiveHint DEFAULTS TO TRUE when readOnlyHint is false, so a write
+  // that forgets it publishes as destructive and nothing else fails.
+  it('sets an explicit boolean destructiveHint on every write, and no read claims destructive', async () => {
+    const h = await harness();
+    const { tools } = await h.client.listTools();
+    expect(tools.filter((t) => typeof t.annotations?.readOnlyHint !== 'boolean').map((t) => t.name)).toEqual([]);
+    expect(
+      tools
+        .filter((t) => t.annotations?.readOnlyHint === false && typeof t.annotations?.destructiveHint !== 'boolean')
+        .map((t) => t.name),
+    ).toEqual([]);
+    expect(
+      tools
+        .filter((t) => t.annotations?.readOnlyHint === true && t.annotations?.destructiveHint === true)
+        .map((t) => t.name),
+    ).toEqual([]);
+    expect(tools.filter((t) => t.annotations?.openWorldHint !== true).map((t) => t.name)).toEqual([]);
+    await h.close();
+  });
+
+  it('lists exactly the served tools in manifest.json', async () => {
+    const h = await harness();
+    const { tools } = await h.client.listTools();
+    const manifest = JSON.parse(readFileSync(join(import.meta.dirname, '..', 'manifest.json'), 'utf8')) as {
+      tools: { name: string }[];
+    };
+    expect(manifest.tools.map((t) => t.name).sort()).toEqual(tools.map((t) => t.name).sort());
     await h.close();
   });
 });
