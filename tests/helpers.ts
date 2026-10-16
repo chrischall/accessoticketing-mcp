@@ -1,3 +1,4 @@
+import { MockAgent } from 'undici';
 import { readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -34,4 +35,39 @@ export function fakeFetch(
       json: async () => JSON.parse(body),
     } as unknown as Response;
   }) as typeof globalThis.fetch;
+}
+
+/**
+ * An undici MockAgent standing in for the click-tracker network: the
+ * `trackerDispatcher` test seam of AccessoClient. Routes match like
+ * {@link fakeFetch} (longest URL prefix wins); `seen` records every request.
+ * Net connect is disabled, so an unrouted request fails instead of escaping.
+ */
+export function mockTracker(
+  routes: Record<string, { status?: number; body?: string; headers?: Record<string, string> }>,
+): { dispatcher: MockAgent; seen: string[] } {
+  const agent = new MockAgent();
+  agent.disableNetConnect();
+  const seen: string[] = [];
+  const origins = new Set(Object.keys(routes).map((k) => new URL(k).origin));
+  for (const origin of origins) {
+    agent
+      .get(origin)
+      .intercept({ path: () => true, method: () => true })
+      .reply((req) => {
+        const url = `${origin}${req.path}`;
+        seen.push(url);
+        const key = Object.keys(routes)
+          .sort((a, b) => b.length - a.length)
+          .find((k) => url === k || url.startsWith(k));
+        const route = key === undefined ? { status: 599 } : routes[key]!;
+        return {
+          statusCode: route.status ?? 200,
+          data: route.body ?? '',
+          responseOptions: { headers: route.headers ?? {} },
+        };
+      })
+      .persist();
+  }
+  return { dispatcher: agent, seen };
 }

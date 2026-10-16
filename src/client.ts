@@ -1,11 +1,18 @@
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { readEnvVar, McpToolError, currentCallSignal, loadDotenvSafely } from '@chrischall/mcp-utils';
+import {
+  readEnvVar,
+  McpToolError,
+  currentCallSignal,
+  loadDotenvSafely,
+  UrlNotAllowedError,
+  RedirectRefusedError,
+} from '@chrischall/mcp-utils';
 import { parseTicketPage, isExpiredOrderPage } from './parse.js';
 import type { AccessoOrder, ParseOptions } from './types.js';
-import { createPublicOnlyDispatcher } from '@chrischall/mcp-utils/netguard';
-import { fetch as undiciFetch, type Dispatcher } from 'undici';
-import { assertPublicHost, refusePrivateHost, systemLookup, type Lookup } from './netguard.js';
+import { fetchPublic } from '@chrischall/mcp-utils/netguard';
+import type { Dispatcher } from 'undici';
+import { isIP } from 'node:net';
 
 /**
  * accesso serves ticket pages from regional media-engine hosts under this
@@ -80,9 +87,17 @@ function requireAccessoUrl(value: string): string {
   return https;
 }
 
+/** An accesso order token, raw or with its colon percent-encoded. */
+const TOKEN_TEXT = /A1(?::|%3A)[A-Za-z0-9_-]+/gi;
+
 /**
  * Strip the order tokens out of a URL before it can reach a log, an error
  * message or a tool result. `oToken` alone grants the whole order.
+ *
+ * Tokens ride in the query (`oToken`/`cToken`/`token`) on ticket pages and in
+ * the PATH on Google Wallet endpoints
+ * (`/google-wallet/v1/<island>/<oToken>/<ticketId>`), so both are scrubbed;
+ * a final token-shaped sweep catches any other position.
  */
 export function redactUrl(value: string): string {
   try {
@@ -90,9 +105,12 @@ export function redactUrl(value: string): string {
     for (const key of ['oToken', 'cToken', 'token']) {
       if (url.searchParams.has(key)) url.searchParams.set(key, 'REDACTED');
     }
-    return url.toString();
+    const segments = url.pathname.split('/');
+    if (segments[1] === 'google-wallet' && segments.length > 4) segments[4] = 'REDACTED';
+    url.pathname = segments.map((seg) => (/^A1(?::|%3A)/i.test(seg) ? 'REDACTED' : seg)).join('/');
+    return url.toString().replace(TOKEN_TEXT, 'A1:REDACTED');
   } catch {
-    return value.replace(/A1:[A-Za-z0-9_-]+/g, 'A1:REDACTED');
+    return value.replace(TOKEN_TEXT, 'A1:REDACTED');
   }
 }
 
@@ -113,47 +131,62 @@ function readJwt(text: string): string | null {
   return typeof jwt === 'string' && jwt !== '' ? jwt : null;
 }
 
+/** Resolves a hostname to its addresses. Injectable so tests never touch DNS. */
+export type Lookup = (hostname: string) => Promise<string[]>;
+
 export interface FetchDeps {
-  /**
-   * Replaces every request, accesso and click-tracker alike (tests). Without
-   * it, tracker hops go through a public-only pinned-address dispatcher.
-   */
+  /** Replaces every accesso request (tests). Tracker hops never use it. */
   fetch?: typeof globalThis.fetch;
-  /** DNS resolver for the click-tracker SSRF guard; defaults to the OS resolver. */
+  /**
+   * DNS resolver for click-tracker connections; defaults to the OS resolver.
+   * The public-only dispatcher resolves each host once and connects to
+   * exactly the addresses it checked.
+   */
   lookup?: Lookup;
+  /**
+   * Test seam: the dispatcher tracker hops are sent through (e.g. an undici
+   * MockAgent). Production omits it, and every resolveLink call gets a fresh
+   * mcp-utils public-only dispatcher.
+   */
+  trackerDispatcher?: Dispatcher;
   /** Bound on one fetch, redirects and body included. Default 15s. */
   timeoutMs?: number;
 }
 
-/**
- * A fetch whose connections may only reach public addresses. The dispatcher
- * resolves each host itself and hands the socket exactly the addresses it
- * checked, so a DNS-rebinding tracker cannot answer public to
- * `assertPublicHost` and private at connect time.
- */
-function pinnedFetch(lookup: Lookup): typeof globalThis.fetch {
-  let dispatcher: Dispatcher | undefined;
-  return ((input: RequestInfo | URL, init?: RequestInit) => {
-    dispatcher ??= createPublicOnlyDispatcher({ resolve: lookup });
-    return undiciFetch(input as string, { ...(init as object), dispatcher });
-  }) as unknown as typeof globalThis.fetch;
+const LOCAL_SUFFIXES = ['.localhost', '.local', '.internal', '.arpa'];
+
+function refusePrivateHost(): never {
+  throw new McpToolError('Refusing to follow a link to a private, local or IP-address host.', {
+    hint: 'accesso_resolve_link only follows public email click-tracking links.',
+  });
 }
 
-/** True when the pinned dispatcher refused the connection (anywhere in the cause chain). */
-function refusedAtConnect(err: unknown): boolean {
+/**
+ * Early, lookup-free refusal for a tracker hop: IP literals (a real tracker
+ * uses a name) and local/single-label names (resolved via local search
+ * domains, never public DNS). Names that RESOLVE inward are refused at
+ * connect by the public-only dispatcher.
+ */
+function assertTrackerHostShape(url: URL): void {
+  const host = url.hostname.replace(/^\[|\]$/g, '').replace(/\.$/, '').toLowerCase();
+  if (isIP(host) !== 0) refusePrivateHost();
+  if (!host.includes('.') || LOCAL_SUFFIXES.some((s) => host.endsWith(s))) refusePrivateHost();
+}
+
+/** The URL refusal anywhere in an error's cause chain, if any. */
+function urlRefusal(err: unknown): UrlNotAllowedError | undefined {
   let e: unknown = err;
   for (let i = 0; i < 8 && e; i += 1) {
-    if ((e as { name?: unknown }).name === 'UrlNotAllowedError') return true;
+    if (e instanceof UrlNotAllowedError) return e;
     e = (e as { cause?: unknown }).cause;
   }
-  return false;
+  return undefined;
 }
 
 export class AccessoClient {
   readonly #fetch: typeof globalThis.fetch;
-  /** Fetch for click-tracker hops: never reaches a non-public address. */
-  readonly #trackerFetch: typeof globalThis.fetch;
-  readonly #lookup: Lookup;
+  readonly #lookup: Lookup | undefined;
+  readonly #trackerDispatcher: Dispatcher | undefined;
   readonly #timeoutMs: number;
   /**
    * Deferred config: a missing default URL is not an error at construction, so
@@ -164,8 +197,8 @@ export class AccessoClient {
 
   constructor(deps: FetchDeps = {}) {
     this.#fetch = deps.fetch ?? globalThis.fetch.bind(globalThis);
-    this.#lookup = deps.lookup ?? systemLookup;
-    this.#trackerFetch = deps.fetch ?? pinnedFetch(this.#lookup);
+    this.#lookup = deps.lookup;
+    this.#trackerDispatcher = deps.trackerDispatcher;
     this.#timeoutMs = deps.timeoutMs ?? DEFAULT_TIMEOUT_MS;
     this.#defaultUrl = readEnvVar('ACCESSO_TICKET_URL') ?? null;
   }
@@ -267,46 +300,63 @@ export class AccessoClient {
   /**
    * Follow an email click-tracker to the accesso link it wraps.
    *
-   * Redirects are followed manually so the chain can be capped and every hop
-   * checked. This is the one place the server fetches a non-accesso URL, so
-   * each hop must pass the SSRF guard (public name, public addresses) before it
-   * is requested; the body is never read, and is cancelled so the connection
-   * is released.
+   * This is the one place the server fetches a non-accesso URL, so it goes
+   * through mcp-utils netguard `fetchPublic`: every connection is pinned to
+   * public addresses (a name that resolves or rebinds inward is refused at
+   * connect), redirects are followed by hand with each target checked before
+   * it is requested, credentials are dropped across origins, and one deadline
+   * covers the chain. `stopBefore` ends the walk at the first accesso link
+   * without requesting it, and refuses IP-literal/local hops up front.
    */
   async resolveLink(url: string): Promise<{ url: string; hops: number }> {
-    let current = url;
     const signal = this.#signal();
-    for (let hops = 0; hops < MAX_REDIRECTS; hops++) {
-      const accesso = toAccessoHttps(current);
-      if (accesso !== null) return { url: accesso, hops };
-      await assertPublicHost(new URL(current), this.#lookup);
-
-      let res: Response;
-      try {
-        res = await this.#trackerFetch(current, { redirect: 'manual', headers: { accept: 'text/html' }, signal });
-      } catch (cause) {
-        if (refusedAtConnect(cause)) refusePrivateHost();
-        throw new McpToolError(`Could not follow the link: ${redactUrl(current)}`, {
-          hint: signal.aborted ? TIMEOUT_HINT : 'Check network connectivity.',
-          cause,
-        });
+    let result: { stopped: boolean; url: string; hops: number };
+    try {
+      result = await fetchPublic(url, {
+        stopBefore: (u) => {
+          if (toAccessoHttps(u.href) !== null) return true;
+          assertTrackerHostShape(u);
+          return false;
+        },
+        requireHttps: false,
+        // MAX_REDIRECTS requests in all: the first plus MAX_REDIRECTS - 1 hops.
+        maxRedirects: MAX_REDIRECTS - 1,
+        // Only a non-redirect final answer has a body, and it is an error
+        // either way; read none of it.
+        maxBytes: 0,
+        signal,
+        headers: { accept: 'text/html' },
+        ...(this.#lookup ? { resolve: this.#lookup } : {}),
+        ...(this.#trackerDispatcher ? { dispatcher: this.#trackerDispatcher } : {}),
+      });
+    } catch (cause) {
+      if (cause instanceof McpToolError && /private, local or IP-address/.test(cause.message)) throw cause;
+      const refused = urlRefusal(cause);
+      if (refused?.reason === 'scheme' || refused?.reason === 'invalid') {
+        throw new McpToolError('Link redirected to a non-HTTP scheme; refusing to follow.');
       }
-      await res.body?.cancel();
-      const next = res.headers.get('location');
-      if (!next) {
-        // The upstream status is deliberately not echoed: it would let the
-        // tool be used to probe which hosts and ports answer.
+      if (refused) refusePrivateHost();
+      if (cause instanceof RedirectRefusedError) {
+        throw new McpToolError(`Link exceeded ${MAX_REDIRECTS} redirects without reaching accesso.`);
+      }
+      if ((cause as { kind?: unknown } | null)?.kind === 'too_large') {
         throw new McpToolError('Link did not lead to an accesso ticket page.', {
           hint: 'Check you copied the whole link from the email.',
         });
       }
-      const resolved = new URL(next, current).toString();
-      if (!/^https?:/.test(resolved)) {
-        throw new McpToolError('Link redirected to a non-HTTP scheme; refusing to follow.');
-      }
-      current = resolved;
+      throw new McpToolError(`Could not follow the link: ${redactUrl(url)}`, {
+        hint: signal.aborted ? TIMEOUT_HINT : 'Check network connectivity.',
+        cause,
+      });
     }
-    throw new McpToolError(`Link exceeded ${MAX_REDIRECTS} redirects without reaching accesso.`);
+    if (result.stopped) {
+      return { url: toAccessoHttps(result.url) as string, hops: result.hops };
+    }
+    // The upstream status is deliberately not echoed: it would let the
+    // tool be used to probe which hosts and ports answer.
+    throw new McpToolError('Link did not lead to an accesso ticket page.', {
+      hint: 'Check you copied the whole link from the email.',
+    });
   }
 
   /** Exchange a Google Wallet pass endpoint for its save URL. */

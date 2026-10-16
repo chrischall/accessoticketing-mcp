@@ -4,7 +4,8 @@ import type { CallToolResult } from '@modelcontextprotocol/server';
 import { AccessoClient } from '../src/client.js';
 import { NoFileIO, DiskFileIO } from '../src/io.js';
 import { registerTicketTools } from '../src/tools/tickets.js';
-import { ORDER_HTML, HOST, TICKET_URL, fakeFetch } from './helpers.js';
+import { ORDER_HTML, HOST, TICKET_URL, fakeFetch, mockTracker } from './helpers.js';
+import type { Dispatcher } from 'undici';
 import { mkdtempSync, readdirSync, readFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -12,10 +13,15 @@ import { join } from 'node:path';
 const WALLET_JWT = { jwt: 'JWT123' };
 
 function harness(
-  opts: { fetch?: typeof globalThis.fetch; io?: DiskFileIO | NoFileIO; maxInlineBytes?: number } = {},
+  opts: {
+    fetch?: typeof globalThis.fetch;
+    trackerDispatcher?: Dispatcher;
+    io?: DiskFileIO | NoFileIO;
+    maxInlineBytes?: number;
+  } = {},
 ) {
   const client = new AccessoClient({
-    lookup: async () => ['93.184.215.14'],
+    ...(opts.trackerDispatcher ? { trackerDispatcher: opts.trackerDispatcher } : {}),
     fetch:
       opts.fetch ??
       fakeFetch({
@@ -328,7 +334,9 @@ describe('accesso_get_wallet_passes', () => {
 describe('accesso_resolve_link', () => {
   it('unwraps a tracking link', async () => {
     const h = await harness({
-      fetch: fakeFetch({ 'https://track.example.com': { status: 302, headers: { location: TICKET_URL } } }),
+      trackerDispatcher: mockTracker({
+        'https://track.example.com': { status: 302, headers: { location: TICKET_URL } },
+      }).dispatcher,
     });
     const out = parseToolResult<{ url: string; hops: number }>(
       await h.callTool('accesso_resolve_link', { url: 'https://track.example.com/a' }),

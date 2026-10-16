@@ -7,8 +7,10 @@ before changing anything that touches the wire.
 
 - `src/parse.ts` — HTML → `AccessoOrder`. All the hard-won knowledge lives here.
 - `src/client.ts` — fetch, redirect resolution, the accesso-host allowlist, error mapping.
-- `src/netguard.ts` — SSRF guard for `resolveLink`, the one path that fetches non-accesso hosts:
-  every hop must be a public DNS name resolving only to public addresses.
+- `resolveLink` (in `src/client.ts`) is the one path that fetches non-accesso hosts. It rides
+  `@chrischall/mcp-utils/netguard` `fetchPublic` (public-only pinned dispatcher, per-hop checks,
+  one deadline) with `stopBefore` ending at the first accesso link; IP-literal and local names
+  are refused before any request. Tests inject an undici `MockAgent` via `trackerDispatcher`.
 - `src/present.ts` — projections for tool output (and the reason barcodes never reach `textResult`).
 - `src/io.ts` — the file-output boundary, so hosted deployments don't report paths nobody can open.
 - `src/tools/tickets.ts` — the six tools (read-only, except `accesso_save_barcodes`, which writes PNGs).
