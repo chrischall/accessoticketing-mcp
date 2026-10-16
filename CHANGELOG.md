@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.1.1](https://github.com/chrischall/accessoticketing-mcp/compare/v1.1.0...v1.1.1) (2026-10-16)
+
+
+### Bug Fixes
+
+* **deps:** Bump the production-dependencies group with 2 updates ([#90](https://github.com/chrischall/accessoticketing-mcp/issues/90)) ([addf158](https://github.com/chrischall/accessoticketing-mcp/commit/addf158ce4a0f0d0ac117415dfa4a403894bfd50))
+* **privacy:** redact the order token from Google Wallet endpoint errors ([#92](https://github.com/chrischall/accessoticketing-mcp/issues/92)) ([7ca5569](https://github.com/chrischall/accessoticketing-mcp/commit/7ca55698d28a24f890c2b04553e7666a5f8e527a))
+
 ## [1.1.0](https://github.com/chrischall/accessoticketing-mcp/compare/v1.0.6...v1.1.0) (2026-10-09)
 
 
