@@ -4,6 +4,13 @@ slug: accessoticketing
 summary: >-
   Read accesso-powered mobile ticket links: orders, admissions, barcodes and
   Google Wallet passes.
+examples:
+  - prompt: What do we have booked on my accesso ticket link, and what time does each admission start?
+    note: Lists every admission on the order with its date and start time.
+  - prompt: Show me the full details and entry instructions for the second ticket on my order.
+    note: Reads one admission in full by its position on the order.
+  - prompt: Give me the Google Wallet links for all the tickets on my order.
+    note: Returns save-to-Wallet links; nothing on the order changes.
 env:
   - name: ACCESSO_TICKET_URL
     secret: true
