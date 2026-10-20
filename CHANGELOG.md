@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.1.2](https://github.com/chrischall/accessoticketing-mcp/compare/v1.1.1...v1.1.2) (2026-10-19)
+
+
+### Bug Fixes
+
+* **deps:** Bump the production-dependencies group with 2 updates ([#96](https://github.com/chrischall/accessoticketing-mcp/issues/96)) ([91722d2](https://github.com/chrischall/accessoticketing-mcp/commit/91722d21160a07fd1fdd93d3f7913433c75f7c19))
+
+
+### Documentation
+
+* **mint:** add sample prompts for the public catalog ([#99](https://github.com/chrischall/accessoticketing-mcp/issues/99)) ([febb122](https://github.com/chrischall/accessoticketing-mcp/commit/febb12224be5c300aa7b6f671eac8768d700f117))
+
 ## [1.1.1](https://github.com/chrischall/accessoticketing-mcp/compare/v1.1.0...v1.1.1) (2026-10-16)
 
 
