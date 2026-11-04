@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.2.0](https://github.com/chrischall/accessoticketing-mcp/compare/v1.1.2...v1.2.0) (2026-11-04)
+
+
+### Features
+
+* context-group hints, lookup and write hints only (nothing here answers what's new/due/on) ([#104](https://github.com/chrischall/accessoticketing-mcp/issues/104)) ([353745e](https://github.com/chrischall/accessoticketing-mcp/commit/353745e206acaee9ed19919503567dd0708af371))
+
+
+### Bug Fixes
+
+* **deps:** Bump the production-dependencies group across 1 directory with 3 updates ([#103](https://github.com/chrischall/accessoticketing-mcp/issues/103)) ([718e421](https://github.com/chrischall/accessoticketing-mcp/commit/718e421435f8b73f472f93eab6a031a44d2f133a))
+* **deps:** Bump the production-dependencies group with 3 updates ([#100](https://github.com/chrischall/accessoticketing-mcp/issues/100)) ([f6800a8](https://github.com/chrischall/accessoticketing-mcp/commit/f6800a894e1f63ea6ff6ab46ded1f3aea1132f8c))
+
 ## [1.1.2](https://github.com/chrischall/accessoticketing-mcp/compare/v1.1.1...v1.1.2) (2026-10-19)
 
 
