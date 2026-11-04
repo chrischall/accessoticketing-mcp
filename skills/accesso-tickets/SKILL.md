@@ -47,3 +47,7 @@ Extra fields are harvested generically from the page's label/value markup rather
 - **`ticketId` lives in neither rendering** — it is in the trailing "Register this ticket" modal section, one hidden input per ticket in ticket order. The parser maps it positionally and *omits* it (with a warning) if the counts disagree, rather than guessing.
 - `date`/`time` are the merchant's local wall-clock strings (`MM/DD/YYYY`, `9:00 AM`) with no timezone. Don't convert them.
 - Barcodes are inline base64 PNGs of the same order-level code (`%RC<order>`), not per-ticket unique on every merchant.
+
+## In context groups
+
+The accessoticketing MCP's tools sit in the **family** group (mcp-host context groups). It has **no canonical read**: it reads one order behind an emailed link, so it never answers the group's "what's new / what's due / what's on" fan-out, declares no subjects (an order link is not a listable set of people) and takes no date range. Its tools carry `lookup` hints (order, one ticket, Wallet passes, resolving a tracking link) and one `other` (saving barcode images), so a compound ask such as "what's on this weekend, and pull up the barcodes for our tickets" reaches it only for the tickets half, with the link. It needs no browser: no "needs your browser open" answer comes from this source.

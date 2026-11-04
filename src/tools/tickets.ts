@@ -6,6 +6,7 @@ import type { AccessoClient } from '../client.js';
 import { redactUrl } from '../client.js';
 import type { FileIO } from '../io.js';
 import { presentOrder, presentTicket, selectTickets } from '../present.js';
+import { BARCODE_ALIASES, ORDER_ALIASES, WALLET_ALIASES, familyMeta } from './hints.js';
 
 export interface ToolDeps {
   client: AccessoClient;
@@ -41,6 +42,7 @@ export function registerTicketTools(server: McpServer, deps: ToolDeps): void {
     {
       description:
         'Read an accesso ticket link: the order number and every admission on it — product, participant, date, start time, barcode text, and the merchant instructions. Covers any accesso-powered venue (theme parks, camps, festivals). Needs no login; the emailed link is the credential.',
+      _meta: familyMeta('lookup', ORDER_ALIASES),
       annotations: { readOnlyHint: true, openWorldHint: true },
       inputSchema: z.object({
         url: urlArg,
@@ -63,6 +65,7 @@ export function registerTicketTools(server: McpServer, deps: ToolDeps): void {
     {
       description:
         'One admission from an accesso order in full detail, including the merchant instructions and (on request) the terms. Identify it by its `index` from accesso_get_order.',
+      _meta: familyMeta('lookup'),
       annotations: { readOnlyHint: true, openWorldHint: true },
       inputSchema: z.object({
         index: z.number().int().nonnegative().describe('Ticket index, from accesso_get_order.'),
@@ -88,6 +91,8 @@ export function registerTicketTools(server: McpServer, deps: ToolDeps): void {
     {
       description:
         'Save the scannable barcode images from an accesso order. Writes PNGs and returns their paths; set inline to receive the images directly instead (which is the only useful mode when this server runs remotely, since its filesystem is not the user\'s).',
+      // A write, but not a change to anything the person owns: `other`.
+      _meta: familyMeta('other', BARCODE_ALIASES),
       // Not read-only: it creates files on disk. Never destructive (it never
       // overwrites — a taken name gets a fresh one), and not idempotent (a
       // repeat call writes another copy under a new name).
@@ -171,6 +176,7 @@ export function registerTicketTools(server: McpServer, deps: ToolDeps): void {
     {
       description:
         'Google Wallet save links for the tickets on an accesso order. Open one on a phone to add that ticket to Google Wallet. Not every merchant enables passes.',
+      _meta: familyMeta('lookup', WALLET_ALIASES),
       annotations: { readOnlyHint: true, openWorldHint: true },
       inputSchema: z.object({ url: urlArg, indexes: indexesArg }),
     },
@@ -214,6 +220,7 @@ export function registerTicketTools(server: McpServer, deps: ToolDeps): void {
     {
       description:
         'Turn an order-confirmation email\'s click-tracking link into the direct accesso ticket URL it wraps. Use when a link is not already an accessoticketing.com address.',
+      _meta: familyMeta('lookup'),
       annotations: { readOnlyHint: true, openWorldHint: true },
       inputSchema: z.object({
         url: z.string().url().describe('The tracking link from the email.'),
