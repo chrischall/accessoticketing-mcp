@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.2.1](https://github.com/chrischall/accessoticketing-mcp/compare/v1.2.0...v1.2.1) (2026-11-07)
+
+
+### Bug Fixes
+
+* **barcodes:** deliver saved barcodes as download links on hosted deployments ([#105](https://github.com/chrischall/accessoticketing-mcp/issues/105)) ([3b75473](https://github.com/chrischall/accessoticketing-mcp/commit/3b754737c3d583b1117f8629857a768a8e69872c))
+* **deps:** upgrade @chrischall/mcp-utils to 3.7.2 so uploads carry only the file's bytes ([#108](https://github.com/chrischall/accessoticketing-mcp/issues/108)) ([7b2fecf](https://github.com/chrischall/accessoticketing-mcp/commit/7b2fecf1718cd7b8a9da7911c31f2fc45686fe80))
+
 ## [1.2.0](https://github.com/chrischall/accessoticketing-mcp/compare/v1.1.2...v1.2.0) (2026-11-04)
 
 
