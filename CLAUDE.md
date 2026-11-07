@@ -12,8 +12,8 @@ before changing anything that touches the wire.
   one deadline) with `stopBefore` ending at the first accesso link; IP-literal and local names
   are refused before any request. Tests inject an undici `MockAgent` via `trackerDispatcher`.
 - `src/present.ts` — projections for tool output (and the reason barcodes never reach `textResult`).
-- `src/io.ts` — the file-output boundary, so hosted deployments don't report paths nobody can open.
-- `src/tools/tickets.ts` — the six tools (read-only, except `accesso_save_barcodes`, which writes PNGs).
+- `src/io.ts` — the file-output boundary, so hosted deployments (detected via `isHostedEnv`) never write to disk or report paths nobody can open. Hosted saves go through `deliverFile` to the blob store instead: one signed link per barcode (not a zip — each is opened alone, on a phone, at the gate).
+- `src/tools/tickets.ts` — the six tools (read-only, except `accesso_save_barcodes`, which writes PNGs locally or blob-store links when hosted).
 - `src/tools/hints.ts` — the `_meta.mint` context-group hints (group `family`; lookups and one write, nothing canonical — see the file's comment before marking a tool canonical). `tests/hints.test.ts` holds every served tool to the contract.
 
 ## Things that will bite you

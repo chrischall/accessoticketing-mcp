@@ -4,8 +4,10 @@ import type { McpServer } from '@modelcontextprotocol/server';
 import { McpToolError, imageResult, minifiedResult } from '@chrischall/mcp-utils';
 import type { AccessoClient } from '../client.js';
 import { redactUrl } from '../client.js';
+import { blobStoreFromEnv, deliverFile, type BlobStore } from '@chrischall/mcp-utils/export';
 import type { FileIO } from '../io.js';
 import { presentOrder, presentTicket, selectTickets } from '../present.js';
+import type { AccessoTicket as Ticket } from '../types.js';
 import { BARCODE_ALIASES, ORDER_ALIASES, WALLET_ALIASES, familyMeta } from './hints.js';
 
 export interface ToolDeps {
@@ -17,7 +19,17 @@ export interface ToolDeps {
    * local stdio host and a remote connector.
    */
   maxInlineBytes?: number;
+  /**
+   * Where download links come from on a hosted deployment. Omitted: read from
+   * the environment (`MCP_BLOB_BASE_URL` + `MCP_BLOB_SIGNING_KEY`) on each
+   * call, so a malformed value fails the save tool rather than server start-up.
+   * `null`: no blob store.
+   */
+  store?: BlobStore | null;
 }
+
+/** First key segment of barcode links in the blob store. */
+const BARCODE_KEY_PREFIX = 'barcodes';
 
 const urlArg = z
   .string()
@@ -36,6 +48,8 @@ export const MAX_INLINE_BYTES = 2 * 1024 * 1024;
 
 export function registerTicketTools(server: McpServer, deps: ToolDeps): void {
   const { client, io, maxInlineBytes = MAX_INLINE_BYTES } = deps;
+  const blobStore = (): BlobStore | undefined =>
+    deps.store === undefined ? blobStoreFromEnv() : (deps.store ?? undefined);
 
   server.registerTool(
     'accesso_get_order',
@@ -90,12 +104,13 @@ export function registerTicketTools(server: McpServer, deps: ToolDeps): void {
     'accesso_save_barcodes',
     {
       description:
-        'Save the scannable barcode images from an accesso order. Writes PNGs and returns their paths; set inline to receive the images directly instead (which is the only useful mode when this server runs remotely, since its filesystem is not the user\'s).',
+        'Save the scannable barcode images from an accesso order. Run locally, writes PNGs and returns their paths. Run remotely (hosted), returns the images inline by default, with a download link for any past the size cap; set inline to false for one expiring download link per barcode instead. Set inline to true to receive the images directly in any deployment.',
       // A write, but not a change to anything the person owns: `other`.
       _meta: familyMeta('other', BARCODE_ALIASES),
-      // Not read-only: it creates files on disk. Never destructive (it never
-      // overwrites — a taken name gets a fresh one), and not idempotent (a
-      // repeat call writes another copy under a new name).
+      // Not read-only: it creates files (on disk, or in the blob store behind a
+      // link). Never destructive (it never overwrites — a taken name gets a
+      // fresh one, a link a fresh key), and not idempotent (a repeat call
+      // writes another copy).
       annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: false, openWorldHint: true },
       inputSchema: z.object({
         url: urlArg,
@@ -103,7 +118,9 @@ export function registerTicketTools(server: McpServer, deps: ToolDeps): void {
         inline: z
           .boolean()
           .optional()
-          .describe('Return the images in the response instead of writing files.'),
+          .describe(
+            'true: return the images in the response. false: save them — files on a local install, expiring download links when hosted. Omitted: save locally, inline when hosted.',
+          ),
       }),
     },
     (async ({ url, indexes, inline }) => {
@@ -121,53 +138,109 @@ export function registerTicketTools(server: McpServer, deps: ToolDeps): void {
         throw new McpToolError('None of the selected tickets carry a barcode image.');
       }
 
-      // Inline whenever asked, and always when a written path would be a lie.
-      if (inline === true || !io.persistsFiles) {
-        const images = [];
-        // Tracked in the same loop as `images`: a skipped large barcode can be
-        // followed by smaller ones that fit, so the included tickets are not a
-        // prefix of the selection, and labelling by position would mismatch.
-        const included = [];
-        const dropped: number[] = [];
-        let bytes = 0;
-        for (const t of withBarcodes) {
-          const png = t.barcodePng!;
-          if (bytes + png.length > maxInlineBytes) {
-            dropped.push(t.index);
-            continue;
-          }
-          bytes += png.length;
-          images.push(imageResult(png.toString('base64'), 'image/png'));
-          included.push(t);
-        }
-        const note = {
-          order: order.orderNumber,
-          returned: images.length,
-          ...(dropped.length > 0 ? { omittedForSize: dropped.length, omittedIndexes: dropped } : {}),
-          // Same order as the images above: tickets[i] describes image i.
-          tickets: included.map((t) => ({
-            index: t.index,
-            participant: t.participant,
-            packageName: t.packageName,
-            barcodeText: t.barcodeText,
-          })),
-        };
+      const store = blobStore();
+      const fileName = (t: Ticket): string =>
+        `accesso-${order.orderNumber ?? 'order'}-${String(t.index).padStart(2, '0')}.png`;
+      // One signed, expiring GET link per barcode. Per-file rather than one
+      // zip (openExportSink): a barcode is shown at the gate one admission at
+      // a time, usually from a phone, where a link opens straight to the image
+      // and a zip has to be unpacked first. An order is a handful of small
+      // PNGs, so the extra PUTs cost nothing worth trading that for.
+      const linkOf = async (t: Ticket) => {
+        const delivered = await deliverFile({
+          bytes: t.barcodePng!,
+          fileName: fileName(t),
+          mimeType: 'image/png',
+          store: store!,
+          prefer: 'link',
+          keyPrefix: BARCODE_KEY_PREFIX,
+        });
         return {
-          content: [...images.flatMap((r) => r.content), ...minifiedResult(note).content],
-        };
-      }
-
-      const written = [];
-      for (const t of withBarcodes) {
-        const name = `accesso-${order.orderNumber ?? 'order'}-${String(t.index).padStart(2, '0')}.png`;
-        written.push({
           index: t.index,
           participant: t.participant,
           packageName: t.packageName,
-          path: await io.write(name, t.barcodePng!),
-        });
+          barcodeText: t.barcodeText,
+          url: delivered.url!,
+          expiresAt: delivered.expiresAt!,
+        };
+      };
+      const LINK_NOTE =
+        'Each url opens one barcode image and expires at expiresAt. Anyone holding a link can use the barcode until then — share it only with the ticket holder.';
+
+      // "Save" means a file the caller can keep: asked for with inline:false,
+      // and the default wherever written paths are real. Hosted, that file is
+      // a download link — never the runner's disk, which nobody can open.
+      const save = inline === false || (inline === undefined && io.persistsFiles);
+      if (save && store) {
+        const saved = [];
+        for (const t of withBarcodes) saved.push(await linkOf(t));
+        return minifiedResult({ order: order.orderNumber, note: LINK_NOTE, saved });
       }
-      return minifiedResult({ outputDir: io.outputDir, saved: written });
+
+      if (save && io.persistsFiles) {
+        const written = [];
+        for (const t of withBarcodes) {
+          written.push({
+            index: t.index,
+            participant: t.participant,
+            packageName: t.packageName,
+            path: await io.write(fileName(t), t.barcodePng!),
+          });
+        }
+        return minifiedResult({ outputDir: io.outputDir, saved: written });
+      }
+
+      // Inline: asked for, the default where a written path would be a lie,
+      // and the only route left when there is neither a disk nor a blob store.
+      const images = [];
+      // Tracked in the same loop as `images`: a skipped large barcode can be
+      // followed by smaller ones that fit, so the included tickets are not a
+      // prefix of the selection, and labelling by position would mismatch.
+      const included = [];
+      const overflow: Ticket[] = [];
+      let bytes = 0;
+      for (const t of withBarcodes) {
+        const png = t.barcodePng!;
+        if (bytes + png.length > maxInlineBytes) {
+          overflow.push(t);
+          continue;
+        }
+        bytes += png.length;
+        images.push(imageResult(png.toString('base64'), 'image/png'));
+        included.push(t);
+      }
+      // Past the cap, a blob store turns a dropped barcode into a link.
+      const linked = [];
+      if (store) for (const t of overflow) linked.push(await linkOf(t));
+      const dropped = store ? [] : overflow.map((t) => t.index);
+      if (images.length === 0 && linked.length === 0) {
+        throw new McpToolError(
+          `None of the ${withBarcodes.length} barcode image(s) fit the ${maxInlineBytes}-byte inline limit, and this server has no other way to hand them over (no blob store for a download link, no download directory).`,
+          {
+            kind: 'too_large',
+            hint: 'Ask for fewer tickets with `indexes`, or open the ticket link itself in a browser.',
+          },
+        );
+      }
+      const note = {
+        order: order.orderNumber,
+        returned: images.length,
+        ...(dropped.length > 0 ? { omittedForSize: dropped.length, omittedIndexes: dropped } : {}),
+        ...(save
+          ? { note: 'There is no download link or download directory here, so the barcodes are returned inline instead.' }
+          : {}),
+        // Same order as the images above: tickets[i] describes image i.
+        tickets: included.map((t) => ({
+          index: t.index,
+          participant: t.participant,
+          packageName: t.packageName,
+          barcodeText: t.barcodeText,
+        })),
+        ...(linked.length > 0 ? { linkNote: LINK_NOTE, linked } : {}),
+      };
+      return {
+        content: [...images.flatMap((r) => r.content), ...minifiedResult(note).content],
+      };
     }),
   );
 

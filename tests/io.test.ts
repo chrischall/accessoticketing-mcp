@@ -143,6 +143,15 @@ describe('defaultFileIO', () => {
     expect(defaultFileIO().persistsFiles).toBe(false);
   });
 
+  it.each([
+    ['MCP_DATA_DIR', '/data'],
+    ['MCP_BLOB_BASE_URL', 'https://host.example/b/reg_0123456789abcdef01234567'],
+  ])('never writes to disk on a hosted deployment (%s set)', (name, value) => {
+    // The runner's disk is not the caller's: a path there is one nobody can open.
+    vi.stubEnv(name, value);
+    expect(defaultFileIO().persistsFiles).toBe(false);
+  });
+
   it.each(['0', 'false', 'no', 'off'])(
     'keeps writing files when ACCESSO_NO_FILE_OUTPUT=%s (an explicit "no")',
     (value) => {
