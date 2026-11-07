@@ -1,6 +1,7 @@
 import { homedir } from 'node:os';
 import { extname, join, parse, resolve } from 'node:path';
 import { readEnvVar, parseBoolEnv, expandPath, writeUniqueFile } from '@chrischall/mcp-utils';
+import { isHostedEnv } from '@chrischall/mcp-utils/export';
 
 /**
  * Where generated files go.
@@ -75,6 +76,11 @@ export class NoFileIO implements FileIO {
 }
 
 export function defaultFileIO(): FileIO {
+  // Hosted (mcp-host sets MCP_DATA_DIR / MCP_BLOB_BASE_URL): the disk is the
+  // runner's, so a saved path is one nobody can open. Detected, not configured
+  // — a registration that forgot ACCESSO_NO_FILE_OUTPUT used to write barcodes
+  // to the runner and report those paths.
+  if (isHostedEnv()) return new NoFileIO();
   // A real boolean, not "any value": ACCESSO_NO_FILE_OUTPUT=0/false/no/off
   // means "do write files", and must not silently switch saves to inline.
   return parseBoolEnv('ACCESSO_NO_FILE_OUTPUT') ? new NoFileIO() : new DiskFileIO();

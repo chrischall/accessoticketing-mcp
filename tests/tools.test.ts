@@ -1,4 +1,5 @@
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
+import { createBlobStore, type BlobStore } from '@chrischall/mcp-utils/export';
 import { createTestHarness, parseToolResult } from '@chrischall/mcp-utils/test';
 import type { CallToolResult } from '@modelcontextprotocol/server';
 import { AccessoClient } from '../src/client.js';
@@ -18,6 +19,7 @@ function harness(
     trackerDispatcher?: Dispatcher;
     io?: DiskFileIO | NoFileIO;
     maxInlineBytes?: number;
+    store?: BlobStore | null;
   } = {},
 ) {
   const client = new AccessoClient({
@@ -35,6 +37,7 @@ function harness(
       client,
       io,
       ...(opts.maxInlineBytes !== undefined ? { maxInlineBytes: opts.maxInlineBytes } : {}),
+      ...(opts.store !== undefined ? { store: opts.store } : {}),
     }),
   );
 }
@@ -288,6 +291,133 @@ describe('accesso_save_barcodes', () => {
     const res = await h.callTool('accesso_save_barcodes', { url: TICKET_URL });
     expect(res.isError).toBe(true);
     expect(text(res)).toMatch(/carry a barcode/i);
+    await h.close();
+  });
+});
+
+const BLOB_BASE = 'https://host.example/b/reg_0123456789abcdef01234567';
+
+/**
+ * A real mcp-utils blob store whose PUTs land on a stubbed global `fetch` (the
+ * ticket client has its own injected fetch, so the two never cross).
+ */
+function fakeStore(status = 201) {
+  const puts: Array<{ url: string; type: string; bytes: Uint8Array }> = [];
+  vi.stubGlobal(
+    'fetch',
+    vi.fn(async (url: string, init?: RequestInit) => {
+      puts.push({
+        url,
+        type: new Headers(init!.headers).get('content-type')!,
+        bytes: new Uint8Array(init!.body as ArrayBuffer),
+      });
+      return new Response(null, { status });
+    }),
+  );
+  return { store: createBlobStore({ baseUrl: BLOB_BASE, signingKey: 'a2V5' }), puts };
+}
+
+const noteOf = <T,>(r: CallToolResult): T =>
+  JSON.parse(r.content.filter((c) => c.type === 'text').map((c) => c.text).join('')) as T;
+
+type Linked = { index: number; participant: string; url: string; expiresAt: string };
+
+describe('accesso_save_barcodes on a hosted deployment', () => {
+  afterEach(() => vi.unstubAllGlobals());
+
+  it('returns one signed link per barcode when inline is false, and writes nothing to disk', async () => {
+    const { store, puts } = fakeStore();
+    const h = await harness({ io: new NoFileIO(), store });
+    const res = await h.callTool('accesso_save_barcodes', { url: TICKET_URL, indexes: [0, 1], inline: false });
+    expect(res.content.some((c) => c.type === 'image')).toBe(false);
+    const out = parseToolResult<{ saved: Linked[]; outputDir?: string; note: string }>(res);
+    expect(out.outputDir).toBeUndefined();
+    expect(out.saved.map((s) => s.index)).toEqual([0, 1]);
+    for (const s of out.saved) {
+      expect(s.url).toMatch(new RegExp(`^${BLOB_BASE}/barcodes/[0-9a-f-]{36}/accesso-[^/?]+-0[01]\\.png\\?exp=`));
+      expect(Number.isNaN(Date.parse(s.expiresAt))).toBe(false);
+      expect(s).not.toHaveProperty('path');
+    }
+    expect(out.note).toMatch(/expire/i);
+    expect(puts).toHaveLength(2);
+    expect(puts.every((p) => p.type === 'image/png')).toBe(true);
+    await h.close();
+  });
+
+  it('still inlines small barcodes by default, as images', async () => {
+    const { store, puts } = fakeStore();
+    const h = await harness({ io: new NoFileIO(), store });
+    const res = await h.callTool('accesso_save_barcodes', { url: TICKET_URL, indexes: [0] });
+    expect(res.content.filter((c) => c.type === 'image')).toHaveLength(1);
+    expect(puts).toHaveLength(0);
+    await h.close();
+  });
+
+  it('links the barcodes past the inline cap instead of dropping them', async () => {
+    const { store, puts } = fakeStore();
+    const h = await harness({ io: new NoFileIO(), store, maxInlineBytes: 100 });
+    const res = await h.callTool('accesso_save_barcodes', { url: TICKET_URL });
+    const note = noteOf<{
+      returned: number;
+      omittedForSize?: number;
+      linked: Linked[];
+      tickets: { index: number }[];
+    }>(res);
+    expect(note.returned).toBeGreaterThan(0);
+    expect(note.omittedForSize).toBeUndefined();
+    expect(note.returned + note.linked.length).toBe(12);
+    expect(puts).toHaveLength(note.linked.length);
+    const indexes = [...note.tickets, ...note.linked].map((t) => t.index).sort((a, b) => a - b);
+    expect(indexes).toEqual([...Array(12).keys()]);
+    await h.close();
+  });
+
+  it('never writes to the runner disk, even when one is configured, once a blob store exists', async () => {
+    // A hosted runner's disk is not the caller's: inline:false must link.
+    const dir = mkdtempSync(join(tmpdir(), 'accesso-tool-'));
+    const { store } = fakeStore();
+    const h = await harness({ io: new DiskFileIO(dir), store });
+    const out = parseToolResult<{ saved: Linked[] }>(
+      await h.callTool('accesso_save_barcodes', { url: TICKET_URL, indexes: [0] }),
+    );
+    expect(out.saved[0]!.url).toMatch(/^https:\/\/host\.example\//);
+    expect(readdirSync(dir)).toHaveLength(0);
+    await h.close();
+  });
+
+  it('surfaces a failed upload as a tool error rather than a half-answer', async () => {
+    const { store } = fakeStore(500);
+    const h = await harness({ io: new NoFileIO(), store });
+    const res = await h.callTool('accesso_save_barcodes', { url: TICKET_URL, indexes: [0], inline: false });
+    expect(res.isError).toBe(true);
+    await h.close();
+  });
+
+  it('with no blob store, inline:false still returns the images and says why', async () => {
+    const h = await harness({ io: new NoFileIO(), store: null });
+    const res = await h.callTool('accesso_save_barcodes', { url: TICKET_URL, indexes: [0], inline: false });
+    expect(res.content.filter((c) => c.type === 'image')).toHaveLength(1);
+    expect(noteOf<{ note: string }>(res).note).toMatch(/no download link/i);
+    await h.close();
+  });
+
+  it('with no blob store, refuses as too_large when not one barcode fits inline', async () => {
+    const h = await harness({ io: new NoFileIO(), store: null, maxInlineBytes: 1 });
+    const res = await h.callTool('accesso_save_barcodes', { url: TICKET_URL });
+    expect(res.isError).toBe(true);
+    expect(text(res)).toMatch(/too large|inline limit/i);
+    await h.close();
+  });
+
+  it('reads the blob store from the environment when none is injected', async () => {
+    fakeStore();
+    vi.stubEnv('MCP_BLOB_BASE_URL', BLOB_BASE);
+    vi.stubEnv('MCP_BLOB_SIGNING_KEY', 'a2V5');
+    const h = await harness({ io: new NoFileIO() });
+    const out = parseToolResult<{ saved: Linked[] }>(
+      await h.callTool('accesso_save_barcodes', { url: TICKET_URL, indexes: [0], inline: false }),
+    );
+    expect(out.saved[0]!.url.startsWith(BLOB_BASE)).toBe(true);
     await h.close();
   });
 });
