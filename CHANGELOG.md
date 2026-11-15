@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.2.2](https://github.com/chrischall/accessoticketing-mcp/compare/v1.2.1...v1.2.2) (2026-11-15)
+
+
+### Bug Fixes
+
+* **deps:** Bump the production-dependencies group with 2 updates ([#110](https://github.com/chrischall/accessoticketing-mcp/issues/110)) ([80500cb](https://github.com/chrischall/accessoticketing-mcp/commit/80500cbb15c1603543f13c944779918e10ad7e6d))
+* **deps:** Bump the production-dependencies group with 3 updates ([#112](https://github.com/chrischall/accessoticketing-mcp/issues/112)) ([cf200e4](https://github.com/chrischall/accessoticketing-mcp/commit/cf200e4f38e2314319aa657d4ad435f9182b8ec3))
+
 ## [1.2.1](https://github.com/chrischall/accessoticketing-mcp/compare/v1.2.0...v1.2.1) (2026-11-07)
 
 
